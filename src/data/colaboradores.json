@@ -1,0 +1,23 @@
+[
+  {
+    "nome": "oscar Rodrigues",
+    "funcao": "dev senion",
+    "liderImediatoId": null,
+    "id": "26655950-4d47-44d5-9806-f5dfcbf58680",
+    "createdAt": "2026-05-12T02:24:51.534Z"
+  },
+  {
+    "nome": "thiago",
+    "funcao": "dev junior",
+    "liderImediatoId": "26655950-4d47-44d5-9806-f5dfcbf58680",
+    "id": "c7786c10-4020-448d-8426-bb4660985fdb",
+    "createdAt": "2026-05-12T02:25:30.008Z"
+  },
+  {
+    "nome": "malcon",
+    "funcao": "auxiliar de ti",
+    "liderImediatoId": "26655950-4d47-44d5-9806-f5dfcbf58680",
+    "id": "0ef5112c-68b5-43a1-8b77-7eb7bd725437",
+    "createdAt": "2026-05-12T02:25:52.008Z"
+  }
+]

@@ -1,0 +1,32 @@
+# Memória do Projeto - Organograma Inteligente
+
+## 📌 Sobre
+Sistema gerenciador de organogramas de empresas. Permite cadastrar colaboradores, definir hierarquias e visualizar a estrutura organizacional.
+
+## 🧱 Stack
+- **Framework:** Next.js 16.2.6
+- **React:** 19.2.4
+- **Styling:** Tailwind CSS v4
+- **Linguagem:** TypeScript
+- **Linter:** ESLint (config next)
+
+## 🎯 Escopo Inicial
+1. Cadastro de colaboradores (nome, função, líder imediato)
+2. Visualização do organograma hierárquico
+3. CRUD completo de colaboradores
+4. Interface simplificada e intuitiva
+
+## 🧠 Decisões de Arquitetura
+- **Armazenamento:** arquivo JSON (`src/data/colaboradores.json`) via Server Actions — sem banco externo para simplificar o protótipo
+- **Server Actions:** ações de formulário no servidor com `'use server'`, seguidas de `revalidatePath` e `redirect`
+- **Rotas:** `/colaboradores` (listagem), `/colaboradores/novo` (cadastro)
+- **Navegação:** header global no layout raiz com link para colaboradores
+
+## 📂 Estrutura de Diretórios
+```
+src/
+  app/          # App Router do Next.js
+```
+
+## ⚠️ Observações
+- Next.js 16 tem breaking changes — consultar `node_modules/next/dist/docs/` antes de implementar.
