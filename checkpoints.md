@@ -15,6 +15,7 @@
 | 6 | `v0.6-seed` | Seed de 100 colaboradores com hierarquia, 2 meses de métricas/avaliações e 33 iniciativas mock. | ✅ |
 | 7 | `v0.7-organograma` | Organograma interativo com React Flow (@xyflow/react). Layout hierárquico automático, pan, zoom, minimapa. | ✅ |
 | 7.1 | `v0.7.1-organograma-fix` | Fix: container React Flow com width/height explícitos para evitar erro #004. | ✅ |
+| 8 | `v0.8-organograma-interativo` | Organograma em árvore expansível: clique para expandir/recolher subordinados. Nós móveis (arrastar), editáveis (duplo clique inline), adicionar subordinado (modal) e excluir com transferência de subordinados. Navegação progressiva (CEO inicial → expansão por níveis). | ✅ |
 
 ## Próximos checkpoints previstos
-- `v0.8-crud-completo` — CRUD completo com edição e exclusão
+- `v0.9-melhorias-ux` — Animações, filtros, busca, temas

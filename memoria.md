@@ -26,6 +26,15 @@ Sistema gerenciador de organogramas de empresas. Permite cadastrar colaboradores
 - **Métricas Mensais:** acompanhamento de dias trabalhados, faltas injustificadas e horas de atraso por colaborador/mês. Indicador de perfil (Bom/Ruim) baseado em regras (>2 faltas ou >4h atraso = Ruim). Armazenamento em `src/data/metricas.json`
 - **Seed data:** `npm run seed` gera 100 colaboradores com hierarquia realista (CEO → Diretores → Gerentes → Analistas), 2 meses de métricas e avaliações, ~33 iniciativas
 - **Organograma interativo:** React Flow (@xyflow/react v12) com layout hierárquico automático. Nós customizados mostrando nome e cargo. Suporte a pan, zoom, minimapa. Rota `/organograma`
+- **Organograma em árvore expansível (v0.8):**
+  - Estado inicial: apenas o CEO (raiz) visível
+  - **Clique** no nó → expande/recolhe seus subordinados diretos
+  - **Duplo clique** → edição inline de nome e função
+  - **Hover** → botões de ação: `+` adicionar subordinado (modal), `×` excluir (com confirmação)
+  - Exclusão transfere subordinados para o líder imediato do excluído
+  - Nós são **arrastáveis** livremente no canvas
+  - Auto `fitView` ao expandir/recolher
+  - Server actions: `atualizarColaboradorAction`, `excluirColaboradorComSubordinados`, `adicionarColaboradorRapido`
 
 ## 📂 Estrutura de Diretórios
 ```

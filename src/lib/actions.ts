@@ -3,6 +3,8 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import {
+  atualizarColaborador,
+  buscarColaborador,
   criarColaborador,
   listarColaboradores,
   removerColaborador,
@@ -27,6 +29,38 @@ export async function cadastrarColaborador(formData: FormData) {
 export async function excluirColaborador(id: string) {
   removerColaborador(id)
   revalidatePath('/colaboradores')
+}
+
+export async function excluirColaboradorComSubordinados(id: string) {
+  const colaborador = buscarColaborador(id)
+  if (!colaborador) return
+
+  const todos = listarColaboradores()
+  const subordinados = todos.filter((c) => c.liderImediatoId === id)
+
+  for (const sub of subordinados) {
+    atualizarColaborador(sub.id, { liderImediatoId: colaborador.liderImediatoId })
+  }
+
+  removerColaborador(id)
+  revalidatePath('/organograma')
+  revalidatePath('/colaboradores')
+}
+
+export async function adicionarColaboradorRapido(
+  nome: string,
+  funcao: string,
+  liderImediatoId: string | null
+) {
+  const col = criarColaborador({ nome, funcao, liderImediatoId })
+  revalidatePath('/organograma')
+  revalidatePath('/colaboradores')
+  return col
+}
+
+export async function atualizarColaboradorAction(id: string, nome: string, funcao: string) {
+  atualizarColaborador(id, { nome, funcao })
+  revalidatePath('/organograma')
 }
 
 export async function listarPossiveisLideres() {
