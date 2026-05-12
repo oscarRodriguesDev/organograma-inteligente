@@ -34,6 +34,9 @@ export default function RootLayout({
               Organograma
             </a>
             <div className="flex gap-6 text-sm">
+              <a href="/organograma" className="text-zinc-600 hover:text-zinc-900">
+                Organograma
+              </a>
               <a href="/colaboradores" className="text-zinc-600 hover:text-zinc-900">
                 Colaboradores
               </a>

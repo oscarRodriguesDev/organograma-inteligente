@@ -14,8 +14,14 @@ export default function Home() {
 
         <div className="flex flex-col gap-3 sm:flex-row justify-center">
           <Link
-            href="/colaboradores"
+            href="/organograma"
             className="rounded-lg bg-black px-6 py-3 text-sm font-medium text-white hover:bg-zinc-800"
+          >
+            Ver Organograma
+          </Link>
+          <Link
+            href="/colaboradores"
+            className="rounded-lg border border-zinc-300 px-6 py-3 text-sm font-medium hover:bg-zinc-50"
           >
             Ver Colaboradores
           </Link>

@@ -20,11 +20,12 @@ Sistema gerenciador de organogramas de empresas. Permite cadastrar colaboradores
 - **Armazenamento:** arquivo JSON (`src/data/colaboradores.json`) via Server Actions — sem banco externo para simplificar o protótipo
 - **Server Actions:** ações de formulário no servidor com `'use server'`, seguidas de `revalidatePath` e `redirect`
 - **Rotas:** `/colaboradores` (listagem), `/colaboradores/novo` (cadastro)
-- **Navegação:** header global no layout raiz com links para Colaboradores e Avaliações
+- **Navegação:** header global no layout raiz com links para Organograma, Colaboradores, Avaliações, Iniciativas, Métricas
 - **Avaliações:** líder avalia liderado com 6 critérios (nota 1-5) + comentário geral. Armazenamento em JSON separado (`src/data/avaliacoes.json`)
 - **Iniciativas:** registro de ideias/ações de colaboradores com descrição, resultado numérico mensurável e unidade. Conta como pontuação para crescimento na empresa. Armazenamento em `src/data/iniciativas.json`
 - **Métricas Mensais:** acompanhamento de dias trabalhados, faltas injustificadas e horas de atraso por colaborador/mês. Indicador de perfil (Bom/Ruim) baseado em regras (>2 faltas ou >4h atraso = Ruim). Armazenamento em `src/data/metricas.json`
 - **Seed data:** `npm run seed` gera 100 colaboradores com hierarquia realista (CEO → Diretores → Gerentes → Analistas), 2 meses de métricas e avaliações, ~33 iniciativas
+- **Organograma interativo:** React Flow (@xyflow/react v12) com layout hierárquico automático. Nós customizados mostrando nome e cargo. Suporte a pan, zoom, minimapa. Rota `/organograma`
 
 ## 📂 Estrutura de Diretórios
 ```

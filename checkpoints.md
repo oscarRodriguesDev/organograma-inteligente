@@ -13,7 +13,7 @@
 | 4.1 | `v0.4.1-iniciativas-numericas` | Iniciativas com resultado numérico mensurável e unidade de medida. | ✅ |
 | 5 | `v0.5-metricas` | Métricas mensais: dias trabalhados, faltas injustificadas, atrasos. Indicador de perfil do colaborador. | ✅ |
 | 6 | `v0.6-seed` | Seed de 100 colaboradores com hierarquia, 2 meses de métricas/avaliações e 33 iniciativas mock. | ✅ |
+| 7 | `v0.7-organograma` | Organograma interativo com React Flow (@xyflow/react). Layout hierárquico automático, pan, zoom, minimapa. | ✅ |
 
 ## Próximos checkpoints previstos
-- `v0.7-organograma` — Visualização do organograma em árvore
 - `v0.8-crud-completo` — CRUD completo com edição e exclusão
