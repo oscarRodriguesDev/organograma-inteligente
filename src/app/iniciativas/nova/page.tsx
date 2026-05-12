@@ -65,15 +65,45 @@ export default function NovaIniciativa() {
           </div>
 
           <div>
+            <label htmlFor="valorResultado" className="mb-1 block text-sm font-medium">
+              Resultado Numérico
+            </label>
+            <div className="flex gap-3">
+              <input
+                id="valorResultado"
+                name="valorResultado"
+                type="number"
+                step="0.01"
+                className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
+                placeholder="Ex: 5000"
+              />
+              <select
+                id="unidadeMedida"
+                name="unidadeMedida"
+                className="w-40 rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
+              >
+                <option value="">Unidade</option>
+                <option value="R$/mês">R$/mês</option>
+                <option value="R$ (único)">R$ (único)</option>
+                <option value="horas/semana">horas/semana</option>
+                <option value="horas/mês">horas/mês</option>
+                <option value="%">%</option>
+                <option value="unidades/dia">unidades/dia</option>
+                <option value="pontos">pontos</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
             <label htmlFor="resultado" className="mb-1 block text-sm font-medium">
-              Resultado Obtido
+              Descrição do Resultado
             </label>
             <textarea
               id="resultado"
               name="resultado"
               rows={3}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
-              placeholder="Qual foi o impacto? Economia de tempo, redução de custos, melhoria de processo..."
+              placeholder="Explique qual foi o impacto qualitativo..."
             />
           </div>
 

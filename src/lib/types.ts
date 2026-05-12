@@ -32,6 +32,8 @@ export interface Iniciativa {
   titulo: string
   descricao: string
   resultado: string
+  valorResultado: number
+  unidadeMedida: string
   data: string
 }
 

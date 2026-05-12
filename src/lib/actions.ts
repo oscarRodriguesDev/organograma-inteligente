@@ -54,10 +54,18 @@ export async function cadastrarIniciativa(formData: FormData) {
   const titulo = formData.get('titulo')?.toString().trim()
   const descricao = formData.get('descricao')?.toString().trim()
   const resultado = formData.get('resultado')?.toString().trim()
+  const valorResultado = Number(formData.get('valorResultado')) || 0
+  const unidadeMedida = formData.get('unidadeMedida')?.toString().trim() || ''
 
   if (!colaboradorId || !titulo) return
 
-  criarIniciativa({ colaboradorId, titulo, descricao: descricao || '', resultado: resultado || '' })
+  criarIniciativa({
+    colaboradorId, titulo,
+    descricao: descricao || '',
+    resultado: resultado || '',
+    valorResultado,
+    unidadeMedida,
+  })
   revalidatePath('/iniciativas')
   redirect('/iniciativas')
 }

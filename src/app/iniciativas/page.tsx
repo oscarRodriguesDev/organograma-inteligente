@@ -55,6 +55,11 @@ export default function ListaIniciativas() {
                 {iniciativa.descricao && (
                   <p className="text-sm text-zinc-600 mb-2">{iniciativa.descricao}</p>
                 )}
+                {iniciativa.valorResultado > 0 && (
+                  <div className="mb-2 inline-block rounded bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800">
+                    {iniciativa.valorResultado.toLocaleString('pt-BR')} {iniciativa.unidadeMedida}
+                  </div>
+                )}
                 {iniciativa.resultado && (
                   <div className="rounded bg-green-50 px-3 py-2 text-sm text-green-800">
                     <span className="font-medium">Resultado:</span> {iniciativa.resultado}
