@@ -8,6 +8,7 @@ import {
   removerColaborador,
   criarAvaliacao,
   criarIniciativa,
+  criarMetrica,
 } from './db'
 import { CRITERIOS_AVALIACAO } from './types'
 
@@ -68,4 +69,20 @@ export async function cadastrarIniciativa(formData: FormData) {
   })
   revalidatePath('/iniciativas')
   redirect('/iniciativas')
+}
+
+export async function cadastrarMetrica(formData: FormData) {
+  const colaboradorId = formData.get('colaboradorId')?.toString()
+  const mes = Number(formData.get('mes'))
+  const ano = Number(formData.get('ano'))
+  const diasTrabalhados = Number(formData.get('diasTrabalhados')) || 0
+  const faltasInjustificadas = Number(formData.get('faltasInjustificadas')) || 0
+  const horasAtraso = Number(formData.get('horasAtraso')) || 0
+  const observacao = formData.get('observacao')?.toString().trim() || ''
+
+  if (!colaboradorId || !mes || !ano) return
+
+  criarMetrica({ colaboradorId, mes, ano, diasTrabalhados, faltasInjustificadas, horasAtraso, observacao })
+  revalidatePath('/metricas')
+  redirect('/metricas')
 }

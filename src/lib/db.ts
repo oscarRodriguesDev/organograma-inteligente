@@ -1,10 +1,11 @@
-import { Colaborador, Avaliacao, Iniciativa } from './types'
+import { Colaborador, Avaliacao, Iniciativa, MetricaMensal } from './types'
 import fs from 'node:fs'
 import path from 'node:path'
 
 const COLABORADORES_FILE = path.join(process.cwd(), 'src', 'data', 'colaboradores.json')
 const AVALIACOES_FILE = path.join(process.cwd(), 'src', 'data', 'avaliacoes.json')
 const INICIATIVAS_FILE = path.join(process.cwd(), 'src', 'data', 'iniciativas.json')
+const METRICAS_FILE = path.join(process.cwd(), 'src', 'data', 'metricas.json')
 
 function lerColaboradores(): Colaborador[] {
   try {
@@ -43,6 +44,19 @@ function lerIniciativas(): Iniciativa[] {
 
 function escreverIniciativas(data: Iniciativa[]): void {
   fs.writeFileSync(INICIATIVAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
+}
+
+function lerMetricas(): MetricaMensal[] {
+  try {
+    const raw = fs.readFileSync(METRICAS_FILE, 'utf-8')
+    return JSON.parse(raw) as MetricaMensal[]
+  } catch {
+    return []
+  }
+}
+
+function escreverMetricas(data: MetricaMensal[]): void {
+  fs.writeFileSync(METRICAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
 }
 
 export function listarColaboradores(): Colaborador[] {
@@ -156,4 +170,35 @@ export function removerIniciativa(id: string): boolean {
 
 export function listarIniciativasPorColaborador(colaboradorId: string): Iniciativa[] {
   return lerIniciativas().filter((i) => i.colaboradorId === colaboradorId)
+}
+
+export function listarMetricas(): MetricaMensal[] {
+  return lerMetricas()
+}
+
+export function criarMetrica(
+  dados: Omit<MetricaMensal, 'id' | 'data'>
+): MetricaMensal {
+  const data = lerMetricas()
+  const metrica: MetricaMensal = {
+    ...dados,
+    id: crypto.randomUUID(),
+    data: new Date().toISOString(),
+  }
+  data.push(metrica)
+  escreverMetricas(data)
+  return metrica
+}
+
+export function removerMetrica(id: string): boolean {
+  const data = lerMetricas()
+  const idx = data.findIndex((m) => m.id === id)
+  if (idx === -1) return false
+  data.splice(idx, 1)
+  escreverMetricas(data)
+  return true
+}
+
+export function listarMetricasPorColaborador(colaboradorId: string): MetricaMensal[] {
+  return lerMetricas().filter((m) => m.colaboradorId === colaboradorId)
 }

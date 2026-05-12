@@ -26,6 +26,18 @@ export interface Avaliacao {
   comentarioGeral: string
 }
 
+export interface MetricaMensal {
+  id: string
+  colaboradorId: string
+  mes: number
+  ano: number
+  diasTrabalhados: number
+  faltasInjustificadas: number
+  horasAtraso: number
+  observacao: string
+  data: string
+}
+
 export interface Iniciativa {
   id: string
   colaboradorId: string

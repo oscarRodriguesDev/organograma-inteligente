@@ -43,6 +43,9 @@ export default function RootLayout({
               <a href="/iniciativas" className="text-zinc-600 hover:text-zinc-900">
                 Iniciativas
               </a>
+              <a href="/metricas" className="text-zinc-600 hover:text-zinc-900">
+                Métricas
+              </a>
             </div>
           </nav>
         </header>

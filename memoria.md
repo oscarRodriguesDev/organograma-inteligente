@@ -22,7 +22,8 @@ Sistema gerenciador de organogramas de empresas. Permite cadastrar colaboradores
 - **Rotas:** `/colaboradores` (listagem), `/colaboradores/novo` (cadastro)
 - **Navegação:** header global no layout raiz com links para Colaboradores e Avaliações
 - **Avaliações:** líder avalia liderado com 6 critérios (nota 1-5) + comentário geral. Armazenamento em JSON separado (`src/data/avaliacoes.json`)
-- **Iniciativas:** registro de ideias/ações de colaboradores com descrição e resultado obtido. Conta como pontuação para crescimento na empresa. Armazenamento em `src/data/iniciativas.json`
+- **Iniciativas:** registro de ideias/ações de colaboradores com descrição, resultado numérico mensurável e unidade. Conta como pontuação para crescimento na empresa. Armazenamento em `src/data/iniciativas.json`
+- **Métricas Mensais:** acompanhamento de dias trabalhados, faltas injustificadas e horas de atraso por colaborador/mês. Indicador de perfil (Bom/Ruim) baseado em regras (>2 faltas ou >4h atraso = Ruim). Armazenamento em `src/data/metricas.json`
 
 ## 📂 Estrutura de Diretórios
 ```

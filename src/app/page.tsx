@@ -37,6 +37,12 @@ export default function Home() {
           >
             Ver Iniciativas
           </Link>
+          <Link
+            href="/metricas"
+            className="rounded-lg border border-zinc-300 px-6 py-3 text-sm font-medium hover:bg-zinc-50"
+          >
+            Ver Métricas
+          </Link>
         </div>
 
         {colaboradores.length > 0 && (
