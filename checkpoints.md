@@ -8,7 +8,8 @@
 |---|-----|-----------|--------|
 | 1 | `v0.1-inicio` | Projeto Next.js inicializado com TypeScript, Tailwind, ESLint | ✅ |
 | 2 | `v0.2-cadastro-colaboradores` | Cadastro de colaboradores com nome, função e líder imediato. CRUD via Server Actions com JSON. | ✅ |
+| 3 | `v0.3-avaliacoes` | Sistema de avaliação de desempenho: líder avaliando liderado com 6 critérios (1-5) e comentário. | ✅ |
 
 ## Próximos checkpoints previstos
-- `v0.3-organograma` — Visualização do organograma em árvore
-- `v0.4-crud-completo` — CRUD completo com edição e exclusão
+- `v0.4-organograma` — Visualização do organograma em árvore
+- `v0.5-crud-completo` — CRUD completo com edição e exclusão

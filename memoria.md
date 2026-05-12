@@ -20,7 +20,8 @@ Sistema gerenciador de organogramas de empresas. Permite cadastrar colaboradores
 - **Armazenamento:** arquivo JSON (`src/data/colaboradores.json`) via Server Actions — sem banco externo para simplificar o protótipo
 - **Server Actions:** ações de formulário no servidor com `'use server'`, seguidas de `revalidatePath` e `redirect`
 - **Rotas:** `/colaboradores` (listagem), `/colaboradores/novo` (cadastro)
-- **Navegação:** header global no layout raiz com link para colaboradores
+- **Navegação:** header global no layout raiz com links para Colaboradores e Avaliações
+- **Avaliações:** líder avalia liderado com 6 critérios (nota 1-5) + comentário geral. Armazenamento em JSON separado (`src/data/avaliacoes.json`)
 
 ## 📂 Estrutura de Diretórios
 ```

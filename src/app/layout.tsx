@@ -37,6 +37,9 @@ export default function RootLayout({
               <a href="/colaboradores" className="text-zinc-600 hover:text-zinc-900">
                 Colaboradores
               </a>
+              <a href="/avaliacoes" className="text-zinc-600 hover:text-zinc-900">
+                Avaliações
+              </a>
             </div>
           </nav>
         </header>
