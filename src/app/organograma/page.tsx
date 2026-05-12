@@ -4,5 +4,9 @@ import OrganogramaWrapper from '@/components/OrganogramaWrapper'
 export default function PaginaOrganograma() {
   const colaboradores = listarColaboradores()
 
-  return <OrganogramaWrapper colaboradores={colaboradores} />
+  return (
+    <div className="flex-1">
+      <OrganogramaWrapper colaboradores={colaboradores} />
+    </div>
+  )
 }

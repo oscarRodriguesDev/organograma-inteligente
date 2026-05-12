@@ -101,7 +101,7 @@ export default function OrganogramaFlow({
   )
 
   return (
-    <div className="flex-1 w-full" style={{ height: 'calc(100vh - 57px)' }}>
+    <div style={{ width: '100%', height: 'calc(100vh - 57px)' }}>
       <ReactFlow
         nodes={layoutNodes}
         edges={layoutEdges}

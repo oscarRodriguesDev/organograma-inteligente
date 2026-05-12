@@ -14,6 +14,7 @@
 | 5 | `v0.5-metricas` | Métricas mensais: dias trabalhados, faltas injustificadas, atrasos. Indicador de perfil do colaborador. | ✅ |
 | 6 | `v0.6-seed` | Seed de 100 colaboradores com hierarquia, 2 meses de métricas/avaliações e 33 iniciativas mock. | ✅ |
 | 7 | `v0.7-organograma` | Organograma interativo com React Flow (@xyflow/react). Layout hierárquico automático, pan, zoom, minimapa. | ✅ |
+| 7.1 | `v0.7.1-organograma-fix` | Fix: container React Flow com width/height explícitos para evitar erro #004. | ✅ |
 
 ## Próximos checkpoints previstos
 - `v0.8-crud-completo` — CRUD completo com edição e exclusão
