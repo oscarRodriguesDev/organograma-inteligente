@@ -1,7 +1,207 @@
 [
   {
-    "avaliadorId": "26655950-4d47-44d5-9806-f5dfcbf58680",
-    "avaliadoId": "c7786c10-4020-448d-8426-bb4660985fdb",
+    "id": "7e1f28c7-8350-4979-a44a-d5599ad0ce9c",
+    "avaliadorId": "1",
+    "avaliadoId": "2",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "d658208e-2c89-46f3-9967-9520a0ab2848",
+    "avaliadorId": "1",
+    "avaliadoId": "2",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "36608f3b-f10f-4abd-a01b-8525981fd1a3",
+    "avaliadorId": "1",
+    "avaliadoId": "3",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "506e7211-2f89-446c-8777-48ccb7eb8286",
+    "avaliadorId": "1",
+    "avaliadoId": "3",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "5378ccad-4431-4277-ae9c-17fec7f21655",
+    "avaliadorId": "1",
+    "avaliadoId": "4",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "9b59685b-83fd-453f-b58d-fbdd04be1e1c",
+    "avaliadorId": "1",
+    "avaliadoId": "4",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "708c3bf6-b344-4be5-8d41-b8853111f253",
+    "avaliadorId": "1",
+    "avaliadoId": "5",
+    "data": "2026-01-27T14:00:00.000Z",
     "criterios": [
       {
         "criterio": "Qualidade do Trabalho",
@@ -13,11 +213,3179 @@
       },
       {
         "criterio": "Trabalho em Equipe",
-        "nota": 1
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "90248417-cdd0-417a-b8fd-273c4c15915c",
+    "avaliadorId": "1",
+    "avaliadoId": "5",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "8f63bab3-01ef-40d2-a4c3-7671fe84392a",
+    "avaliadorId": "2",
+    "avaliadoId": "6",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "3463a683-eac0-403a-a97e-6fa1080e5a40",
+    "avaliadorId": "2",
+    "avaliadoId": "6",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "95d8f7b0-fd46-46da-aa06-dfd3bc6eb4bc",
+    "avaliadorId": "2",
+    "avaliadoId": "7",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
       },
       {
         "criterio": "Pontualidade",
         "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "72fe5f27-97ae-4040-9e49-222a2a20efdc",
+    "avaliadorId": "2",
+    "avaliadoId": "7",
+    "data": "2026-02-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "31a001dc-c5ce-4be2-bda5-afb050038966",
+    "avaliadorId": "2",
+    "avaliadoId": "8",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "718dea85-870d-40f3-96dd-c2eb4635d306",
+    "avaliadorId": "2",
+    "avaliadoId": "8",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "2dc4be63-502d-4c61-8d6e-fe78573a7d63",
+    "avaliadorId": "3",
+    "avaliadoId": "9",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "ca23ff7b-6986-41c9-a618-04d64f22ad40",
+    "avaliadorId": "3",
+    "avaliadoId": "9",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "9ce80789-01c9-4f8a-8931-4a2846571a57",
+    "avaliadorId": "3",
+    "avaliadoId": "10",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "6c7b2bea-c2ff-48c2-bd73-71fc8a171a04",
+    "avaliadorId": "3",
+    "avaliadoId": "10",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "fc348a15-d514-4349-bea4-8c16e9b1de0e",
+    "avaliadorId": "4",
+    "avaliadoId": "11",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "5f41abe2-ebc5-4ac4-9d61-c44e3e5dc8e2",
+    "avaliadorId": "4",
+    "avaliadoId": "11",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "5d1cea39-1377-47ad-af32-fe1816c51d2f",
+    "avaliadorId": "4",
+    "avaliadoId": "12",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "6a6b69db-7e7a-457b-9d7c-20f43872e2a1",
+    "avaliadorId": "4",
+    "avaliadoId": "12",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "da4b72f8-2d45-4b70-a019-0e5e2c8f0df9",
+    "avaliadorId": "4",
+    "avaliadoId": "13",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "bd782fb1-438d-4f2e-a0da-548335335481",
+    "avaliadorId": "4",
+    "avaliadoId": "13",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "1d372e24-012a-4473-9556-a8273afe93bd",
+    "avaliadorId": "5",
+    "avaliadoId": "14",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "64d10073-ddfd-4f40-9711-f32acebce6e2",
+    "avaliadorId": "5",
+    "avaliadoId": "14",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "08024a6c-4cbf-4b65-a65e-4f121b414dab",
+    "avaliadorId": "5",
+    "avaliadoId": "15",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "1c328960-94d6-44a9-9e94-e0bf71dbda82",
+    "avaliadorId": "5",
+    "avaliadoId": "15",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "70328f92-b688-4163-a756-a3a49af0836f",
+    "avaliadorId": "6",
+    "avaliadoId": "16",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "4afb6c04-3a6c-45e8-aad8-76a3be94966a",
+    "avaliadorId": "6",
+    "avaliadoId": "16",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "c4dc5fc8-d34a-4d82-82b8-0c138824b802",
+    "avaliadorId": "6",
+    "avaliadoId": "17",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "3a70429c-6363-4eaf-8b6c-32b4b8514227",
+    "avaliadorId": "6",
+    "avaliadoId": "17",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "b4884782-34a4-4e28-8966-b9c19a054ae1",
+    "avaliadorId": "6",
+    "avaliadoId": "18",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "b45e7f59-a4d7-4225-ab62-9f7aa90ad759",
+    "avaliadorId": "6",
+    "avaliadoId": "18",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "b5e59c98-8b11-4cbb-8b7c-7a4c3b775ec5",
+    "avaliadorId": "6",
+    "avaliadoId": "19",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "8f871bee-472a-4691-8776-bf3da2551056",
+    "avaliadorId": "6",
+    "avaliadoId": "19",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "9f987a28-8993-4938-8360-c0e9bf69de6e",
+    "avaliadorId": "6",
+    "avaliadoId": "20",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "968b1a37-3b6c-41e3-a482-42ea306ace9a",
+    "avaliadorId": "6",
+    "avaliadoId": "20",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "23920f55-6a00-45b7-8369-2620b3eaaf18",
+    "avaliadorId": "6",
+    "avaliadoId": "21",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "44013ae0-13b4-4b6b-a5d0-5db0def66a87",
+    "avaliadorId": "6",
+    "avaliadoId": "21",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "2e754cd3-9c64-4dbe-9ff2-20d6532c8177",
+    "avaliadorId": "6",
+    "avaliadoId": "22",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "d5e92995-b426-4f3c-80e9-63d118e34790",
+    "avaliadorId": "6",
+    "avaliadoId": "22",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "554b5a89-ca3f-4557-8ff7-b5f9225ed59f",
+    "avaliadorId": "6",
+    "avaliadoId": "23",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "6f3a051f-8792-4882-aeac-12e3e866d39a",
+    "avaliadorId": "6",
+    "avaliadoId": "23",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "cf515008-31d1-4b30-9aff-9a2aa9ad896f",
+    "avaliadorId": "6",
+    "avaliadoId": "24",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "027b50ce-22c4-4abb-98bc-4df27fbd8656",
+    "avaliadorId": "6",
+    "avaliadoId": "24",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "2116c82b-4591-4743-8a40-fe075046c984",
+    "avaliadorId": "7",
+    "avaliadoId": "25",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "51579ef1-e980-41e3-9100-cbad5533c95b",
+    "avaliadorId": "7",
+    "avaliadoId": "25",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "b11afd2f-b275-4516-ab5e-79e39ab3b064",
+    "avaliadorId": "7",
+    "avaliadoId": "26",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "d6f0f968-7a65-46cd-b0d1-38cf7cb1a580",
+    "avaliadorId": "7",
+    "avaliadoId": "26",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "70fb5ce1-9a32-4920-8082-facb49c17777",
+    "avaliadorId": "7",
+    "avaliadoId": "27",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "0dd3b16b-735e-4cdf-8e70-90a8474bc4d9",
+    "avaliadorId": "7",
+    "avaliadoId": "27",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "6ad03c87-316d-41ca-bef1-7fd9c61f7096",
+    "avaliadorId": "7",
+    "avaliadoId": "28",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "c6f911c8-b2bb-42b0-94ea-9c5021bc7b8d",
+    "avaliadorId": "7",
+    "avaliadoId": "28",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "eea7057a-3fa7-4844-a02a-fc0cd8697869",
+    "avaliadorId": "7",
+    "avaliadoId": "29",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "d7d86083-3fc7-4e70-aba6-c1101dbd0f27",
+    "avaliadorId": "7",
+    "avaliadoId": "29",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "f514e098-592a-4647-936a-ad2907bc702a",
+    "avaliadorId": "7",
+    "avaliadoId": "30",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "7fc02e59-11c1-4e7d-abc9-7620a914f3c0",
+    "avaliadorId": "7",
+    "avaliadoId": "30",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "ce5702d0-c606-47b1-8dd9-31c099e01f6a",
+    "avaliadorId": "7",
+    "avaliadoId": "31",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "c5e3894a-a9f2-4059-a2ea-f78332bb56de",
+    "avaliadorId": "7",
+    "avaliadoId": "31",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "7d32c1a3-7739-40bd-8ea5-2eb1e4586ebc",
+    "avaliadorId": "7",
+    "avaliadoId": "32",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "11cb4ee2-b423-427c-89f3-769b2eee9255",
+    "avaliadorId": "7",
+    "avaliadoId": "32",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "4b851d43-7fc9-4e48-96f2-1e93613ce476",
+    "avaliadorId": "7",
+    "avaliadoId": "33",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "bdd8ae15-1648-4b95-859f-604a079b6aa8",
+    "avaliadorId": "7",
+    "avaliadoId": "33",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "f689a825-8a55-4609-b396-eea67b81d5c9",
+    "avaliadorId": "8",
+    "avaliadoId": "34",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "572dad4c-9a03-4635-b605-b08fc750c2be",
+    "avaliadorId": "8",
+    "avaliadoId": "34",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "7df93950-030c-4629-86bb-2db0c62fc926",
+    "avaliadorId": "8",
+    "avaliadoId": "35",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "53a54cd5-65a0-4940-804f-28a0039da3e2",
+    "avaliadorId": "8",
+    "avaliadoId": "35",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "6f33692c-8d67-47ac-b637-c54e7ee23d8f",
+    "avaliadorId": "8",
+    "avaliadoId": "36",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "0a9116b5-d8eb-4bec-98a0-f97eba608cdf",
+    "avaliadorId": "8",
+    "avaliadoId": "36",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "8ea25a0f-3e51-4252-9e0f-3cd477b8ebdf",
+    "avaliadorId": "8",
+    "avaliadoId": "37",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "6180d4de-05c3-454f-ad4c-41042223eacc",
+    "avaliadorId": "8",
+    "avaliadoId": "37",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "3e24b643-3584-45e4-bf81-40920deb4d3d",
+    "avaliadorId": "8",
+    "avaliadoId": "38",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "2b79f1d9-d348-4fc8-9aa2-3a30648a6cc5",
+    "avaliadorId": "8",
+    "avaliadoId": "38",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "0034dba1-6fe2-4c69-afb3-2152691f0cfa",
+    "avaliadorId": "8",
+    "avaliadoId": "39",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "53a5679f-d267-4f98-a2b2-8fddc73915dd",
+    "avaliadorId": "8",
+    "avaliadoId": "39",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "0f82e201-38c7-4897-a846-b0af7f63215c",
+    "avaliadorId": "8",
+    "avaliadoId": "40",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "310f9f98-7ae3-4dbb-8d8a-01c5423c4e9c",
+    "avaliadorId": "8",
+    "avaliadoId": "40",
+    "data": "2026-02-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "f68af176-4bb2-4624-b60f-3de2fada5e9e",
+    "avaliadorId": "8",
+    "avaliadoId": "41",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "96f00764-9df5-492c-9b76-737704e301cd",
+    "avaliadorId": "8",
+    "avaliadoId": "41",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "a039e2ee-eaf6-4bc1-b170-823ed17fd562",
+    "avaliadorId": "8",
+    "avaliadoId": "42",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "e2bfa0ae-04ca-4c0a-af6c-271c1a12f82e",
+    "avaliadorId": "8",
+    "avaliadoId": "42",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "fec7c9c1-be1a-4633-85ad-d116685ddb10",
+    "avaliadorId": "9",
+    "avaliadoId": "43",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "659c2e64-ecab-45c7-8ed1-e8c7ee45ac89",
+    "avaliadorId": "9",
+    "avaliadoId": "43",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "8de93b28-9eba-4353-88be-56edf08bba1c",
+    "avaliadorId": "9",
+    "avaliadoId": "44",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "fdf04171-d540-42fe-8210-c4bff5d5753c",
+    "avaliadorId": "9",
+    "avaliadoId": "44",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "d5a2b178-8f05-42b8-b304-96ab0d0bbf31",
+    "avaliadorId": "9",
+    "avaliadoId": "45",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "db275d23-af4b-407b-9829-584d5206f3d9",
+    "avaliadorId": "9",
+    "avaliadoId": "45",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "d9a1c16e-e5b0-450e-90f2-8baabd5a9e5b",
+    "avaliadorId": "9",
+    "avaliadoId": "46",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "cc48f229-d275-4718-8f9f-f33e86f04766",
+    "avaliadorId": "9",
+    "avaliadoId": "46",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "45745923-85ab-4e16-9575-2f8a7fe61e49",
+    "avaliadorId": "9",
+    "avaliadoId": "47",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "e764468c-66db-439b-ab1b-1df40cd61319",
+    "avaliadorId": "9",
+    "avaliadoId": "47",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "3bb36189-d083-4f20-8391-2a0ffa9e5054",
+    "avaliadorId": "9",
+    "avaliadoId": "48",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "83302894-c24c-40ba-ad04-7d6027c229d6",
+    "avaliadorId": "9",
+    "avaliadoId": "48",
+    "data": "2026-02-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "3a43871b-f46f-42ac-8cee-bb108279b6bc",
+    "avaliadorId": "9",
+    "avaliadoId": "49",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "6ba2aba8-6224-4ef3-96da-214c5ea785fb",
+    "avaliadorId": "9",
+    "avaliadoId": "49",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "75961189-bb41-49bc-9ff2-834097ea59f4",
+    "avaliadorId": "9",
+    "avaliadoId": "50",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "43b63a74-bf5a-4d65-b272-c8281ac7a0fd",
+    "avaliadorId": "9",
+    "avaliadoId": "50",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "5aaf74e2-da58-4c60-9d50-888c6644daaa",
+    "avaliadorId": "10",
+    "avaliadoId": "51",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "5ea146f5-e365-4b77-a752-bc694ba6054b",
+    "avaliadorId": "10",
+    "avaliadoId": "51",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "79c8ac08-296a-49ef-9bc9-610d1eebbd6b",
+    "avaliadorId": "10",
+    "avaliadoId": "52",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "417c8ea9-2189-4b76-9e74-ceec719029ba",
+    "avaliadorId": "10",
+    "avaliadoId": "52",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "2337476c-fd81-4c63-bbd8-860cdd1731a0",
+    "avaliadorId": "10",
+    "avaliadoId": "53",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
       },
       {
         "criterio": "Comunicação",
@@ -28,8 +3396,3141 @@
         "nota": 3
       }
     ],
-    "comentarioGeral": "bom colaborador\r\n",
-    "id": "0635ee7f-6326-4a3f-99fa-adcd001dc81a",
-    "data": "2026-05-12T02:37:12.605Z"
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "47c616be-6404-4883-b87a-3598bb8ff022",
+    "avaliadorId": "10",
+    "avaliadoId": "53",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "2cad76b8-2fe6-4998-8934-d67221ca2f48",
+    "avaliadorId": "10",
+    "avaliadoId": "54",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "36bf06cd-deed-4a4d-bc0a-4129b262b9b6",
+    "avaliadorId": "10",
+    "avaliadoId": "54",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "0160d26d-eb77-46d1-ba74-4390743a5fcf",
+    "avaliadorId": "10",
+    "avaliadoId": "55",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "da67e37b-2aec-4a39-905f-870fb4006cc3",
+    "avaliadorId": "10",
+    "avaliadoId": "55",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "32499f75-0b01-455f-8e4c-30dcf83cff6c",
+    "avaliadorId": "10",
+    "avaliadoId": "56",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "13487e2e-d06b-4157-a2ab-17db994b20d2",
+    "avaliadorId": "10",
+    "avaliadoId": "56",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "39574c79-ae4b-4a8a-8ee5-233061dce4d5",
+    "avaliadorId": "10",
+    "avaliadoId": "57",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "e5580e7e-0872-4189-8ce7-9ee7f7663129",
+    "avaliadorId": "10",
+    "avaliadoId": "57",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "7a4e415f-b5ed-49d0-9d2c-9f5acda8c8dc",
+    "avaliadorId": "10",
+    "avaliadoId": "58",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "98aa4334-785d-46c5-826b-63be9b51dde2",
+    "avaliadorId": "10",
+    "avaliadoId": "58",
+    "data": "2026-02-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "3a38530d-b133-4586-8a5b-3b806499bed6",
+    "avaliadorId": "11",
+    "avaliadoId": "59",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "4f9817f2-19b5-4c65-9ae9-4280de267b02",
+    "avaliadorId": "11",
+    "avaliadoId": "59",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "f6e51926-ddd4-471b-9867-65560194abdb",
+    "avaliadorId": "11",
+    "avaliadoId": "60",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "91600b30-08d3-4914-9d1c-09aa2bf83818",
+    "avaliadorId": "11",
+    "avaliadoId": "60",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "4e43ea76-8d17-4a33-94a6-d47be6d369fd",
+    "avaliadorId": "11",
+    "avaliadoId": "61",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "5f872724-cd49-4fab-8b38-acc0abfc0544",
+    "avaliadorId": "11",
+    "avaliadoId": "61",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "d9e87a2a-215e-4c1a-860b-0a195c02d7e4",
+    "avaliadorId": "11",
+    "avaliadoId": "62",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "37a81d41-3f0c-4e69-9539-213a889a4bdd",
+    "avaliadorId": "11",
+    "avaliadoId": "62",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "449fd1ed-07d3-4864-b62c-0ed2cd185252",
+    "avaliadorId": "11",
+    "avaliadoId": "63",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "146b678e-6cc8-428b-b991-8b5371fda191",
+    "avaliadorId": "11",
+    "avaliadoId": "63",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "e4c730fc-6f0b-49f3-979a-10ad2d38f34b",
+    "avaliadorId": "11",
+    "avaliadoId": "64",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "a3a4020c-365b-4144-bdd8-600b2fc39992",
+    "avaliadorId": "11",
+    "avaliadoId": "64",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "494bfd88-088a-41d1-97fc-a9835deddb5c",
+    "avaliadorId": "11",
+    "avaliadoId": "65",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "a8094373-1f80-4d64-866f-3db705fff9f1",
+    "avaliadorId": "11",
+    "avaliadoId": "65",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "7fc268f9-04b6-46df-831f-1b0238e2008b",
+    "avaliadorId": "11",
+    "avaliadoId": "66",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "72e13dd5-78ee-497c-832c-792f9d51e7dd",
+    "avaliadorId": "11",
+    "avaliadoId": "66",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "be52a0da-84c3-4fa8-933c-446410494196",
+    "avaliadorId": "12",
+    "avaliadoId": "67",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "1cc161d1-b97c-4748-9ebe-49594adbc2c4",
+    "avaliadorId": "12",
+    "avaliadoId": "67",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "8d1edb81-d1df-4888-a0af-4baade537d16",
+    "avaliadorId": "12",
+    "avaliadoId": "68",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "b50dd127-6d32-4dcb-a633-b88d22db11ee",
+    "avaliadorId": "12",
+    "avaliadoId": "68",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "ac569273-29ae-4b3e-95d7-9b7ea527a2dd",
+    "avaliadorId": "12",
+    "avaliadoId": "69",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "882fa520-e57d-45f2-99da-b4d50b0ce352",
+    "avaliadorId": "12",
+    "avaliadoId": "69",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "f2f93591-4ebf-4c56-91fc-4b4861e39b85",
+    "avaliadorId": "12",
+    "avaliadoId": "70",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "cdf60df7-94d6-45f7-90c2-9e40c9927f97",
+    "avaliadorId": "12",
+    "avaliadoId": "70",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "9cbdd022-3efc-449c-b671-089b4b8d7a58",
+    "avaliadorId": "12",
+    "avaliadoId": "71",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "e6141298-daf4-41ae-845a-2e719a7959ea",
+    "avaliadorId": "12",
+    "avaliadoId": "71",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "e2a2b0a9-31d3-45bf-8567-1b684c98d464",
+    "avaliadorId": "12",
+    "avaliadoId": "72",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "089b058e-931b-47d0-939f-e2a7088cdfcb",
+    "avaliadorId": "12",
+    "avaliadoId": "72",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "ddd717e5-3896-42c3-88d1-5fa7e8917345",
+    "avaliadorId": "12",
+    "avaliadoId": "73",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "dcde5bdb-a91b-43e5-83c7-e4980c6acf4f",
+    "avaliadorId": "12",
+    "avaliadoId": "73",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "2d9345f9-0cd5-4f90-a3be-52bfccd981e1",
+    "avaliadorId": "12",
+    "avaliadoId": "74",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "a536eeae-7d6e-44e1-b4b6-41b26ba75978",
+    "avaliadorId": "12",
+    "avaliadoId": "74",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "602d6446-9f28-4b33-b1a1-bf460ebff33c",
+    "avaliadorId": "13",
+    "avaliadoId": "75",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "7e374503-9d24-47f0-ac40-13f89092c4f8",
+    "avaliadorId": "13",
+    "avaliadoId": "75",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "43eca3b1-255f-4f91-b974-79fa7702bdfa",
+    "avaliadorId": "13",
+    "avaliadoId": "76",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "26d231a6-e2f6-4946-8d8a-f5afade7bfb4",
+    "avaliadorId": "13",
+    "avaliadoId": "76",
+    "data": "2026-02-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "d78a594d-063d-401a-9787-2ba372a91857",
+    "avaliadorId": "13",
+    "avaliadoId": "77",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "9fd7d857-a17d-4312-b554-d0dea5ead413",
+    "avaliadorId": "13",
+    "avaliadoId": "77",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "cf33f713-4658-4503-b50f-f0999d270785",
+    "avaliadorId": "13",
+    "avaliadoId": "78",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "796074ea-c31d-4823-a463-4cc9bb50f251",
+    "avaliadorId": "13",
+    "avaliadoId": "78",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "86030b6c-b4ad-435b-a187-b303b822334f",
+    "avaliadorId": "13",
+    "avaliadoId": "79",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "888839a9-a8b4-4231-a2be-c99cf81636f7",
+    "avaliadorId": "13",
+    "avaliadoId": "79",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "87a4d4ce-6300-40c7-a925-f51a4c29e6fc",
+    "avaliadorId": "13",
+    "avaliadoId": "80",
+    "data": "2026-01-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "31f6359f-32ac-4a05-a23c-edd7478745c3",
+    "avaliadorId": "13",
+    "avaliadoId": "80",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "204b1ca3-931b-45ac-950a-567702689c57",
+    "avaliadorId": "13",
+    "avaliadoId": "81",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "588a577f-f875-41c5-b7a8-e7bb375417d3",
+    "avaliadorId": "13",
+    "avaliadoId": "81",
+    "data": "2026-02-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "e87d07b7-64f9-4f9c-a178-a6c93a90ca51",
+    "avaliadorId": "13",
+    "avaliadoId": "82",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "a43d6a9b-b208-4c7d-9f60-4689771b8017",
+    "avaliadorId": "13",
+    "avaliadoId": "82",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "cf837372-5eb4-4e73-b840-3148e794c484",
+    "avaliadorId": "14",
+    "avaliadoId": "83",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "2b9295e1-7fbb-42ee-82a9-007131cefc9f",
+    "avaliadorId": "14",
+    "avaliadoId": "83",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "dccee80f-19fd-4761-8232-830a34c79d26",
+    "avaliadorId": "14",
+    "avaliadoId": "84",
+    "data": "2026-01-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "bd49d1ec-4087-4529-b2ff-4cc35a272c3d",
+    "avaliadorId": "14",
+    "avaliadoId": "84",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "09f9c662-72d4-4234-9787-f1809a25fcbc",
+    "avaliadorId": "14",
+    "avaliadoId": "85",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "bad82201-b921-48d3-8cb4-fc789fca22ae",
+    "avaliadorId": "14",
+    "avaliadoId": "85",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "38093782-e27b-40b2-9646-c109ad0b55e6",
+    "avaliadorId": "14",
+    "avaliadoId": "86",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "49a0207d-5743-4fd1-b4d1-2c8da4632457",
+    "avaliadorId": "14",
+    "avaliadoId": "86",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "8dad4c3c-65f5-4aef-a79e-23c4f0cdec95",
+    "avaliadorId": "14",
+    "avaliadoId": "87",
+    "data": "2026-01-26T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "21c4fa91-f582-4b50-b3b0-97f00e991dbc",
+    "avaliadorId": "14",
+    "avaliadoId": "87",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "de0889da-cc00-4133-a8eb-176221ca698a",
+    "avaliadorId": "14",
+    "avaliadoId": "88",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "eedb60b2-329c-4fca-8a91-445d5f590989",
+    "avaliadorId": "14",
+    "avaliadoId": "88",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "0bedb5f8-c1fc-4ccc-83df-fb8560aa9c6e",
+    "avaliadorId": "14",
+    "avaliadoId": "89",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "9561e799-6ac9-4886-aca2-9616c166d9b3",
+    "avaliadorId": "14",
+    "avaliadoId": "89",
+    "data": "2026-02-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "abc44bc7-0b2c-42ca-9e77-c85aa4383a8f",
+    "avaliadorId": "14",
+    "avaliadoId": "90",
+    "data": "2026-01-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "403e56fa-3662-4bcb-8549-6d4bd40d93df",
+    "avaliadorId": "14",
+    "avaliadoId": "90",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "248718a3-24d7-47cf-880c-4ecac499a9bb",
+    "avaliadorId": "15",
+    "avaliadoId": "91",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "682a9a6d-1f17-4ef8-8ef3-07078a8d8bc0",
+    "avaliadorId": "15",
+    "avaliadoId": "91",
+    "data": "2026-02-20T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "27c6916d-b820-4b00-b1a0-a32f39f23bb0",
+    "avaliadorId": "15",
+    "avaliadoId": "92",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "ee9e70f0-8c0b-437f-8b7e-2c20bd7c8823",
+    "avaliadorId": "15",
+    "avaliadoId": "92",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3.5
+      }
+    ],
+    "comentarioGeral": "Resultados dentro do esperado."
+  },
+  {
+    "id": "32752d05-83f1-4f67-b578-605673c2aa7f",
+    "avaliadorId": "15",
+    "avaliadoId": "93",
+    "data": "2026-01-23T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Precisa melhorar pontualidade."
+  },
+  {
+    "id": "d2d7ce8f-1ee6-4cf4-9909-6345d3eae177",
+    "avaliadorId": "15",
+    "avaliadoId": "93",
+    "data": "2026-02-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4.5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "5417d5ec-6b09-4a1b-9380-435b96b85973",
+    "avaliadorId": "15",
+    "avaliadoId": "94",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "c5a534bf-498e-4758-97a4-16977fe054a8",
+    "avaliadorId": "15",
+    "avaliadoId": "94",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "09562c74-12bc-43a5-af0d-6d3872580cc6",
+    "avaliadorId": "15",
+    "avaliadoId": "95",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "d1d825e4-a127-4095-9b17-b26402e7e95f",
+    "avaliadorId": "15",
+    "avaliadoId": "95",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Bom desempenho no período."
+  },
+  {
+    "id": "9f69dedb-7e25-4426-884e-884bd78f8960",
+    "avaliadorId": "15",
+    "avaliadoId": "96",
+    "data": "2026-01-28T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "441adb65-b9ed-4cad-846d-5dd02a4a2308",
+    "avaliadorId": "15",
+    "avaliadoId": "96",
+    "data": "2026-02-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Superou as expectativas."
+  },
+  {
+    "id": "8f42e7a0-7559-4e30-81c0-82c05665c0df",
+    "avaliadorId": "15",
+    "avaliadoId": "97",
+    "data": "2026-01-27T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Evoluiu bem desde a última avaliação."
+  },
+  {
+    "id": "bce08ca9-7ee7-4cf5-9857-1a0a6e3ffa3a",
+    "avaliadorId": "15",
+    "avaliadoId": "97",
+    "data": "2026-02-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": ""
+  },
+  {
+    "id": "234aed8d-e6e4-4eee-9d46-e3131ff326ec",
+    "avaliadorId": "15",
+    "avaliadoId": "98",
+    "data": "2026-01-22T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 3
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Precisa de mais foco nas entregas."
+  },
+  {
+    "id": "e3cf40b2-40a0-4deb-bb00-c30155fe87dc",
+    "avaliadorId": "15",
+    "avaliadoId": "98",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 4
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2.5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "8d77b61b-4a48-4de7-89e6-2f46c33a143b",
+    "avaliadorId": "6",
+    "avaliadoId": "99",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 4.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Ótimo trabalho em equipe."
+  },
+  {
+    "id": "e1cf30ae-5caa-4493-8d00-5e0b600d5096",
+    "avaliadorId": "6",
+    "avaliadoId": "99",
+    "data": "2026-02-25T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 5
+      }
+    ],
+    "comentarioGeral": "Entregas consistentes."
+  },
+  {
+    "id": "6b3e1669-b5e5-4565-8e61-ad18cdbc3924",
+    "avaliadorId": "9",
+    "avaliadoId": "100",
+    "data": "2026-01-21T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 4
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 4
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
+  },
+  {
+    "id": "92b0090f-f419-4083-99fd-9c76149573c1",
+    "avaliadorId": "9",
+    "avaliadoId": "100",
+    "data": "2026-02-24T14:00:00.000Z",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3.5
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 5
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 2
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 2.5
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 2
+      }
+    ],
+    "comentarioGeral": "Demonstrou iniciativa nos projetos."
   }
 ]

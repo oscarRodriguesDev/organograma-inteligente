@@ -12,7 +12,8 @@
 | 4 | `v0.4-iniciativas` | Registro de iniciativas dos colaboradores (ideias/ações com resultado) para pontuar crescimento. | ✅ |
 | 4.1 | `v0.4.1-iniciativas-numericas` | Iniciativas com resultado numérico mensurável e unidade de medida. | ✅ |
 | 5 | `v0.5-metricas` | Métricas mensais: dias trabalhados, faltas injustificadas, atrasos. Indicador de perfil do colaborador. | ✅ |
+| 6 | `v0.6-seed` | Seed de 100 colaboradores com hierarquia, 2 meses de métricas/avaliações e 33 iniciativas mock. | ✅ |
 
 ## Próximos checkpoints previstos
-- `v0.6-organograma` — Visualização do organograma em árvore
-- `v0.7-crud-completo` — CRUD completo com edição e exclusão
+- `v0.7-organograma` — Visualização do organograma em árvore
+- `v0.8-crud-completo` — CRUD completo com edição e exclusão
