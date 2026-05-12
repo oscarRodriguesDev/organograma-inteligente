@@ -26,6 +26,15 @@ export interface Avaliacao {
   comentarioGeral: string
 }
 
+export interface Iniciativa {
+  id: string
+  colaboradorId: string
+  titulo: string
+  descricao: string
+  resultado: string
+  data: string
+}
+
 export const CRITERIOS_AVALIACAO = [
   'Qualidade do Trabalho',
   'Produtividade',

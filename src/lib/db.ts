@@ -1,9 +1,10 @@
-import { Colaborador, Avaliacao } from './types'
+import { Colaborador, Avaliacao, Iniciativa } from './types'
 import fs from 'node:fs'
 import path from 'node:path'
 
 const COLABORADORES_FILE = path.join(process.cwd(), 'src', 'data', 'colaboradores.json')
 const AVALIACOES_FILE = path.join(process.cwd(), 'src', 'data', 'avaliacoes.json')
+const INICIATIVAS_FILE = path.join(process.cwd(), 'src', 'data', 'iniciativas.json')
 
 function lerColaboradores(): Colaborador[] {
   try {
@@ -29,6 +30,19 @@ function lerAvaliacoes(): Avaliacao[] {
 
 function escreverAvaliacoes(data: Avaliacao[]): void {
   fs.writeFileSync(AVALIACOES_FILE, JSON.stringify(data, null, 2), 'utf-8')
+}
+
+function lerIniciativas(): Iniciativa[] {
+  try {
+    const raw = fs.readFileSync(INICIATIVAS_FILE, 'utf-8')
+    return JSON.parse(raw) as Iniciativa[]
+  } catch {
+    return []
+  }
+}
+
+function escreverIniciativas(data: Iniciativa[]): void {
+  fs.writeFileSync(INICIATIVAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
 }
 
 export function listarColaboradores(): Colaborador[] {
@@ -111,4 +125,35 @@ export function listarAvaliacoesPorAvaliador(avaliadorId: string): Avaliacao[] {
 
 export function listarAvaliacoesPorAvaliado(avaliadoId: string): Avaliacao[] {
   return lerAvaliacoes().filter((a) => a.avaliadoId === avaliadoId)
+}
+
+export function listarIniciativas(): Iniciativa[] {
+  return lerIniciativas()
+}
+
+export function criarIniciativa(
+  dados: Omit<Iniciativa, 'id' | 'data'>
+): Iniciativa {
+  const data = lerIniciativas()
+  const iniciativa: Iniciativa = {
+    ...dados,
+    id: crypto.randomUUID(),
+    data: new Date().toISOString(),
+  }
+  data.push(iniciativa)
+  escreverIniciativas(data)
+  return iniciativa
+}
+
+export function removerIniciativa(id: string): boolean {
+  const data = lerIniciativas()
+  const idx = data.findIndex((i) => i.id === id)
+  if (idx === -1) return false
+  data.splice(idx, 1)
+  escreverIniciativas(data)
+  return true
+}
+
+export function listarIniciativasPorColaborador(colaboradorId: string): Iniciativa[] {
+  return lerIniciativas().filter((i) => i.colaboradorId === colaboradorId)
 }

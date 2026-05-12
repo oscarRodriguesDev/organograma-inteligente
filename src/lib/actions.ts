@@ -7,6 +7,7 @@ import {
   listarColaboradores,
   removerColaborador,
   criarAvaliacao,
+  criarIniciativa,
 } from './db'
 import { CRITERIOS_AVALIACAO } from './types'
 
@@ -46,4 +47,17 @@ export async function criarAvaliacaoAction(formData: FormData) {
   criarAvaliacao({ avaliadorId, avaliadoId, criterios, comentarioGeral })
   revalidatePath('/avaliacoes')
   redirect('/avaliacoes')
+}
+
+export async function cadastrarIniciativa(formData: FormData) {
+  const colaboradorId = formData.get('colaboradorId')?.toString()
+  const titulo = formData.get('titulo')?.toString().trim()
+  const descricao = formData.get('descricao')?.toString().trim()
+  const resultado = formData.get('resultado')?.toString().trim()
+
+  if (!colaboradorId || !titulo) return
+
+  criarIniciativa({ colaboradorId, titulo, descricao: descricao || '', resultado: resultado || '' })
+  revalidatePath('/iniciativas')
+  redirect('/iniciativas')
 }

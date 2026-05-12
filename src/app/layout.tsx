@@ -40,6 +40,9 @@ export default function RootLayout({
               <a href="/avaliacoes" className="text-zinc-600 hover:text-zinc-900">
                 Avaliações
               </a>
+              <a href="/iniciativas" className="text-zinc-600 hover:text-zinc-900">
+                Iniciativas
+              </a>
             </div>
           </nav>
         </header>

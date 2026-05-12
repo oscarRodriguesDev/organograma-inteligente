@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "avaliadorId": "26655950-4d47-44d5-9806-f5dfcbf58680",
+    "avaliadoId": "c7786c10-4020-448d-8426-bb4660985fdb",
+    "criterios": [
+      {
+        "criterio": "Qualidade do Trabalho",
+        "nota": 3
+      },
+      {
+        "criterio": "Produtividade",
+        "nota": 3
+      },
+      {
+        "criterio": "Trabalho em Equipe",
+        "nota": 1
+      },
+      {
+        "criterio": "Pontualidade",
+        "nota": 3
+      },
+      {
+        "criterio": "Comunicação",
+        "nota": 4
+      },
+      {
+        "criterio": "Iniciativa",
+        "nota": 3
+      }
+    ],
+    "comentarioGeral": "bom colaborador\r\n",
+    "id": "0635ee7f-6326-4a3f-99fa-adcd001dc81a",
+    "data": "2026-05-12T02:37:12.605Z"
+  }
+]
