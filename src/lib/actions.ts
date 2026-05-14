@@ -2,6 +2,8 @@
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import fs from 'node:fs'
+import path from 'node:path'
 import {
   atualizarColaborador,
   buscarColaborador,
@@ -13,6 +15,7 @@ import {
   criarMetrica,
 } from './db'
 import { CRITERIOS_AVALIACAO } from './types'
+import type { Colaborador } from './types'
 
 export async function cadastrarColaborador(formData: FormData) {
   const nome = formData.get('nome')?.toString().trim()
@@ -62,6 +65,14 @@ export async function atualizarColaboradorAction(id: string, nome: string, funca
   atualizarColaborador(id, { nome, funcao })
   revalidatePath('/organograma')
 }
+
+export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
+  const filePath = path.join(process.cwd(), 'src', 'data', 'colaboradores.json')
+  fs.writeFileSync(filePath, JSON.stringify(colaboradores, null, 2), 'utf-8')
+  revalidatePath('/organograma')
+  revalidatePath('/colaboradores')
+}
+
 
 export async function listarPossiveisLideres() {
   return listarColaboradores()

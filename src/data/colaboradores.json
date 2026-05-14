@@ -1,58 +1,44 @@
 [
   {
-    "id": "1",
-    "nome": "Carlos Almeida",
-    "funcao": "Chief Executive Officer (CEO)",
-    "liderImediatoId": null,
-    "createdAt": "2025-01-15T08:00:00.000Z"
-  },
-  {
-    "id": "2",
-    "nome": "Roberta Mendes",
-    "funcao": "Diretora de Tecnologia (CTO)",
-    "liderImediatoId": "1",
-    "createdAt": "2025-01-15T08:00:00.000Z"
-  },
-  {
     "id": "3",
     "nome": "Fernando Oliveira",
     "funcao": "Diretor de Operações (COO)",
-    "liderImediatoId": "1",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
     "createdAt": "2025-01-15T08:00:00.000Z"
   },
   {
     "id": "4",
     "nome": "Juliana Costa",
     "funcao": "Diretora Comercial (CMO)",
-    "liderImediatoId": "1",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
     "createdAt": "2025-01-15T08:00:00.000Z"
   },
   {
     "id": "5",
     "nome": "Marcos Pereira",
     "funcao": "Diretor Financeiro (CFO)",
-    "liderImediatoId": "1",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
     "createdAt": "2025-01-15T08:00:00.000Z"
   },
   {
     "id": "6",
     "nome": "Thiago Monteiro Castro",
     "funcao": "Gerente de Engenharia",
-    "liderImediatoId": "2",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
     "createdAt": "2025-03-01T08:00:00.000Z"
   },
   {
     "id": "7",
     "nome": "Camila Rocha Azevedo",
     "funcao": "Gerente de Dados",
-    "liderImediatoId": "2",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
     "createdAt": "2025-03-01T08:00:00.000Z"
   },
   {
     "id": "8",
     "nome": "Rafael Martins Carvalho",
     "funcao": "Gerente de Infraestrutura",
-    "liderImediatoId": "2",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
     "createdAt": "2025-03-01T08:00:00.000Z"
   },
   {
@@ -107,268 +93,268 @@
   {
     "id": "16",
     "nome": "Letícia Mendes Faria",
-    "funcao": "Analista de TI",
+    "funcao": "Desenvolvedor Júnior",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-13T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "17",
     "nome": "Gustavo Vieira Lopes",
-    "funcao": "Analista de Dados",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "18",
     "nome": "Tatiana Freitas Barros",
-    "funcao": "Desenvolvedor Júnior",
+    "funcao": "Analista de Dados",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-13T08:00:00.000Z"
+    "createdAt": "2025-06-09T08:00:00.000Z"
   },
   {
     "id": "19",
     "nome": "Eduardo Araújo Pinto",
     "funcao": "Coordenador de Projetos",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-10T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "20",
     "nome": "Renata Duarte Vasconcelos",
-    "funcao": "Analista de Dados",
+    "funcao": "Coordenador de Projetos",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-08T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "21",
     "nome": "André Cavalcanti Rezende",
-    "funcao": "Coordenador de Projetos",
+    "funcao": "Analista de TI",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-13T08:00:00.000Z"
+    "createdAt": "2025-06-10T08:00:00.000Z"
   },
   {
     "id": "22",
     "nome": "Cristina Melo Peixoto",
-    "funcao": "Coordenador de Projetos",
+    "funcao": "Desenvolvedor Pleno",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-15T08:00:00.000Z"
+    "createdAt": "2025-06-11T08:00:00.000Z"
   },
   {
     "id": "23",
     "nome": "Marcelo Nogueira Bastos",
-    "funcao": "Desenvolvedor Pleno",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-05T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "24",
     "nome": "Débora Assis Santana",
-    "funcao": "Analista de Dados",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "6",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-13T08:00:00.000Z"
   },
   {
     "id": "25",
     "nome": "Leandro Pires Siqueira",
-    "funcao": "Coordenador de Projetos",
+    "funcao": "Analista de Dados",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-15T08:00:00.000Z"
+    "createdAt": "2025-06-01T08:00:00.000Z"
   },
   {
     "id": "26",
     "nome": "Fernanda Moura Toledo",
     "funcao": "Coordenador de Projetos",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-09T08:00:00.000Z"
+    "createdAt": "2025-06-04T08:00:00.000Z"
   },
   {
     "id": "27",
     "nome": "Alexandre Lemos Cordeiro",
-    "funcao": "Desenvolvedor Pleno",
+    "funcao": "Analista de Dados",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "28",
     "nome": "Priscila Brito Matos",
     "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-05T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "29",
     "nome": "Jorge Tavares Bueno",
-    "funcao": "Analista de TI",
+    "funcao": "Desenvolvedor Júnior",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-05T08:00:00.000Z"
   },
   {
     "id": "30",
     "nome": "Bianca Dantas Marques",
-    "funcao": "Desenvolvedor Pleno",
+    "funcao": "Analista de TI",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-03T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "31",
     "nome": "Vinicius Campos Xavier",
-    "funcao": "Coordenador de Projetos",
+    "funcao": "Analista de Dados",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "32",
     "nome": "Érica Figueiredo Braga",
-    "funcao": "Desenvolvedor Pleno",
+    "funcao": "Analista de TI",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-08T08:00:00.000Z"
+    "createdAt": "2025-06-12T08:00:00.000Z"
   },
   {
     "id": "33",
     "nome": "Rodrigo Fonseca Viana",
-    "funcao": "Desenvolvedor Júnior",
+    "funcao": "Analista de Dados",
     "liderImediatoId": "7",
-    "createdAt": "2025-06-15T08:00:00.000Z"
+    "createdAt": "2025-06-10T08:00:00.000Z"
   },
   {
     "id": "34",
     "nome": "Aline Porto Gusmão",
-    "funcao": "Coordenador de Projetos",
+    "funcao": "Desenvolvedor Júnior",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-10T08:00:00.000Z"
   },
   {
     "id": "35",
     "nome": "Henrique Salgado Maia",
     "funcao": "Analista de Dados",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-07T08:00:00.000Z"
   },
   {
     "id": "36",
     "nome": "Carolina Valente Ramalho",
-    "funcao": "Coordenador de Projetos",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-13T08:00:00.000Z"
+    "createdAt": "2025-06-07T08:00:00.000Z"
   },
   {
     "id": "37",
     "nome": "Leonardo Quadros Rosa",
     "funcao": "Desenvolvedor Pleno",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-07T08:00:00.000Z"
+    "createdAt": "2025-06-09T08:00:00.000Z"
   },
   {
     "id": "38",
     "nome": "Michele Sardinha Cruz",
-    "funcao": "Analista de Dados",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-04T08:00:00.000Z"
+    "createdAt": "2025-06-11T08:00:00.000Z"
   },
   {
     "id": "39",
     "nome": "Ricardo Amorim Gouveia",
     "funcao": "Desenvolvedor Pleno",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "40",
     "nome": "Daniela Barreto Veiga",
-    "funcao": "Desenvolvedor Pleno",
+    "funcao": "Desenvolvedor Júnior",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-12T08:00:00.000Z"
+    "createdAt": "2025-06-07T08:00:00.000Z"
   },
   {
     "id": "41",
     "nome": "Otávio Toledo Bastos",
-    "funcao": "Desenvolvedor Júnior",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-15T08:00:00.000Z"
+    "createdAt": "2025-06-13T08:00:00.000Z"
   },
   {
     "id": "42",
     "nome": "Thaís Beltrão Muniz",
-    "funcao": "Desenvolvedor Pleno",
+    "funcao": "Desenvolvedor Sênior",
     "liderImediatoId": "8",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-05T08:00:00.000Z"
   },
   {
     "id": "43",
     "nome": "William Estrada Caldeira",
     "funcao": "Analista de Operações",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-08T08:00:00.000Z"
+    "createdAt": "2025-06-01T08:00:00.000Z"
   },
   {
     "id": "44",
     "nome": "Gabriela Madeira Arantes",
-    "funcao": "Coordenador de Qualidade",
+    "funcao": "Assistente Administrativo",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-07T08:00:00.000Z"
+    "createdAt": "2025-06-14T08:00:00.000Z"
   },
   {
     "id": "45",
     "nome": "Márcio Amorim Bacelar",
     "funcao": "Assistente Administrativo",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-12T08:00:00.000Z"
+    "createdAt": "2025-06-06T08:00:00.000Z"
   },
   {
     "id": "46",
     "nome": "Sandra Lamego Mattos",
-    "funcao": "Coordenador de Qualidade",
+    "funcao": "Analista de Operações",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-08T08:00:00.000Z"
   },
   {
     "id": "47",
     "nome": "Frederico Vilaça Padilha",
-    "funcao": "Analista de Operações",
+    "funcao": "Assistente Administrativo",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-15T08:00:00.000Z"
+    "createdAt": "2025-06-06T08:00:00.000Z"
   },
   {
     "id": "48",
     "nome": "Jéssica Bittencourt Prado",
     "funcao": "Analista de Suprimentos",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-10T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "49",
     "nome": "Nelson Cezar Furtado",
-    "funcao": "Analista de Suprimentos",
+    "funcao": "Coordenador de Qualidade",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-08T08:00:00.000Z"
   },
   {
     "id": "50",
     "nome": "Roberta Miranda Câmara",
-    "funcao": "Coordenador de Qualidade",
+    "funcao": "Assistente Administrativo",
     "liderImediatoId": "9",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "51",
     "nome": "Adriano Campelo Guedes",
-    "funcao": "Analista de Suprimentos",
+    "funcao": "Coordenador de Qualidade",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-10T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "52",
     "nome": "Luciana Domingues Baião",
     "funcao": "Analista de Suprimentos",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-13T08:00:00.000Z"
+    "createdAt": "2025-06-14T08:00:00.000Z"
   },
   {
     "id": "53",
     "nome": "Sérgio Castilho Valle",
-    "funcao": "Analista de Operações",
+    "funcao": "Assistente Administrativo",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-10T08:00:00.000Z"
   },
   {
     "id": "54",
@@ -380,323 +366,347 @@
   {
     "id": "55",
     "nome": "Cícero Gravataí Morais",
-    "funcao": "Analista de Suprimentos",
+    "funcao": "Coordenador de Qualidade",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-03T08:00:00.000Z"
+    "createdAt": "2025-06-06T08:00:00.000Z"
   },
   {
     "id": "56",
     "nome": "Elaine Carneiro Gentil",
-    "funcao": "Assistente Administrativo",
+    "funcao": "Analista de Operações",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-07T08:00:00.000Z"
+    "createdAt": "2025-06-05T08:00:00.000Z"
   },
   {
     "id": "57",
     "nome": "João Pedro Sales Vilar",
-    "funcao": "Coordenador de Qualidade",
+    "funcao": "Analista de Suprimentos",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-12T08:00:00.000Z"
+    "createdAt": "2025-06-14T08:00:00.000Z"
   },
   {
     "id": "58",
     "nome": "Viviane Capistrano Lago",
-    "funcao": "Analista de Suprimentos",
+    "funcao": "Analista de Operações",
     "liderImediatoId": "10",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-12T08:00:00.000Z"
   },
   {
     "id": "59",
     "nome": "Artur Damasceno Villa",
     "funcao": "Analista de Vendas",
     "liderImediatoId": "11",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-07T08:00:00.000Z"
   },
   {
     "id": "60",
     "nome": "Carla Mourão Gramado",
-    "funcao": "Analista de Vendas",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "11",
-    "createdAt": "2025-06-10T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "61",
     "nome": "Gilberto Paranhos Godói",
+    "funcao": "Social Media",
+    "liderImediatoId": "11",
+    "createdAt": "2025-06-12T08:00:00.000Z"
+  },
+  {
+    "id": "62",
+    "nome": "Suzana Arruda Caiado",
     "funcao": "Analista de Suporte",
     "liderImediatoId": "11",
     "createdAt": "2025-06-01T08:00:00.000Z"
   },
   {
-    "id": "62",
-    "nome": "Suzana Arruda Caiado",
-    "funcao": "Analista de Marketing",
-    "liderImediatoId": "11",
-    "createdAt": "2025-06-12T08:00:00.000Z"
-  },
-  {
     "id": "63",
     "nome": "Flávio Bugre Pimenta",
-    "funcao": "Analista de Marketing",
+    "funcao": "Social Media",
     "liderImediatoId": "11",
-    "createdAt": "2025-06-08T08:00:00.000Z"
+    "createdAt": "2025-06-12T08:00:00.000Z"
   },
   {
     "id": "64",
     "nome": "Maitê Bragança Peres",
-    "funcao": "Designer",
+    "funcao": "Social Media",
     "liderImediatoId": "11",
-    "createdAt": "2025-06-12T08:00:00.000Z"
+    "createdAt": "2025-06-11T08:00:00.000Z"
   },
   {
     "id": "65",
     "nome": "César Madureira Brandão",
-    "funcao": "Social Media",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "11",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-14T08:00:00.000Z"
   },
   {
     "id": "66",
     "nome": "Solange Caiçara Granja",
     "funcao": "Analista de Marketing",
     "liderImediatoId": "11",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "67",
     "nome": "Humberto Anhanguera Porto",
-    "funcao": "Social Media",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-14T08:00:00.000Z"
   },
   {
     "id": "68",
     "nome": "Taís Ibiapina Rosa",
-    "funcao": "Social Media",
+    "funcao": "Designer",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-08T08:00:00.000Z"
+    "createdAt": "2025-06-12T08:00:00.000Z"
   },
   {
     "id": "69",
     "nome": "Joaquim Pitangui Sales",
-    "funcao": "Designer",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-07T08:00:00.000Z"
+    "createdAt": "2025-06-04T08:00:00.000Z"
   },
   {
     "id": "70",
     "nome": "Zuleica Paraguaçu Goulart",
-    "funcao": "Analista de Vendas",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-10T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "71",
     "nome": "Nilson Japurá Matta",
-    "funcao": "Analista de Marketing",
+    "funcao": "Social Media",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-05T08:00:00.000Z"
   },
   {
     "id": "72",
     "nome": "Sônia Piraquê Sampaio",
-    "funcao": "Social Media",
+    "funcao": "Analista de Vendas",
     "liderImediatoId": "12",
     "createdAt": "2025-06-04T08:00:00.000Z"
   },
   {
     "id": "73",
     "nome": "Rogério Ubaíra Falcão",
-    "funcao": "Designer",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-04T08:00:00.000Z"
   },
   {
     "id": "74",
     "nome": "Helena Pitanga Noronha",
-    "funcao": "Analista de Suporte",
+    "funcao": "Designer",
     "liderImediatoId": "12",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "75",
     "nome": "Mauro Caeté Miranda",
     "funcao": "Analista de Suporte",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-03T08:00:00.000Z"
+    "createdAt": "2025-06-10T08:00:00.000Z"
   },
   {
     "id": "76",
     "nome": "Cláudia Jurubeba Lins",
-    "funcao": "Analista de Suporte",
+    "funcao": "Analista de Vendas",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "77",
     "nome": "Vitor Grajaú Seixas",
-    "funcao": "Designer",
+    "funcao": "Analista de Vendas",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "78",
     "nome": "Lorena Ipanema Quadros",
-    "funcao": "Analista de Marketing",
+    "funcao": "Analista de Vendas",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-05T08:00:00.000Z"
+    "createdAt": "2025-06-01T08:00:00.000Z"
   },
   {
     "id": "79",
     "nome": "Josué Mamoré Lobato",
-    "funcao": "Analista de Vendas",
+    "funcao": "Analista de Suporte",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-14T08:00:00.000Z"
+    "createdAt": "2025-06-10T08:00:00.000Z"
   },
   {
     "id": "80",
     "nome": "Januária Potengi Gusmão",
-    "funcao": "Social Media",
+    "funcao": "Analista de Vendas",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-05T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "81",
     "nome": "Benício Caravelas Azevedo",
-    "funcao": "Analista de Suporte",
+    "funcao": "Designer",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-12T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "82",
     "nome": "Iara Galvão Leme",
-    "funcao": "Analista de Suporte",
+    "funcao": "Analista de Marketing",
     "liderImediatoId": "13",
-    "createdAt": "2025-06-07T08:00:00.000Z"
+    "createdAt": "2025-06-06T08:00:00.000Z"
   },
   {
     "id": "83",
     "nome": "Tadeu Botelho Ferraz",
     "funcao": "Especialista de Produto",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-04T08:00:00.000Z"
+    "createdAt": "2025-06-14T08:00:00.000Z"
   },
   {
     "id": "84",
     "nome": "Adélia Rebouças Salazar",
     "funcao": "Especialista de Produto",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-02T08:00:00.000Z"
+    "createdAt": "2025-06-01T08:00:00.000Z"
   },
   {
     "id": "85",
     "nome": "Davi Pindorama Siqueira",
-    "funcao": "Assistente Financeiro",
+    "funcao": "Analista Financeiro",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-08T08:00:00.000Z"
+    "createdAt": "2025-06-04T08:00:00.000Z"
   },
   {
     "id": "86",
     "nome": "Isabela Curitiba Sabará",
     "funcao": "Assistente Financeiro",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "87",
     "nome": "Emanuel Tietê Menezes",
     "funcao": "Assistente Financeiro",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-11T08:00:00.000Z"
   },
   {
     "id": "88",
     "nome": "Fabiana Araguaia Capistrano",
     "funcao": "Especialista de Produto",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-06T08:00:00.000Z"
+    "createdAt": "2025-06-13T08:00:00.000Z"
   },
   {
     "id": "89",
     "nome": "Ruy Parima Ourique",
-    "funcao": "Analista Financeiro",
+    "funcao": "Especialista de Produto",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-07T08:00:00.000Z"
+    "createdAt": "2025-06-09T08:00:00.000Z"
   },
   {
     "id": "90",
     "nome": "Hortência Xopotó Perdigão",
-    "funcao": "Analista Financeiro",
+    "funcao": "Assistente Financeiro",
     "liderImediatoId": "14",
-    "createdAt": "2025-06-04T08:00:00.000Z"
+    "createdAt": "2025-06-09T08:00:00.000Z"
   },
   {
     "id": "91",
     "nome": "Saulo Paraupaba Estácio",
-    "funcao": "Especialista de Produto",
+    "funcao": "Analista Financeiro",
     "liderImediatoId": "15",
     "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "92",
     "nome": "Rosana Pitombas Rosa",
-    "funcao": "Especialista de Produto",
+    "funcao": "Assistente Financeiro",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-15T08:00:00.000Z"
   },
   {
     "id": "93",
     "nome": "Natan Tupã Pinheiro",
-    "funcao": "Especialista de Produto",
+    "funcao": "Analista Financeiro",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-09T08:00:00.000Z"
   },
   {
     "id": "94",
     "nome": "Giovana Peruíbe Quadros",
-    "funcao": "Analista Financeiro",
+    "funcao": "Especialista de Produto",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-04T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "95",
     "nome": "Elias Mogi Cruzeiro",
     "funcao": "Analista Financeiro",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-11T08:00:00.000Z"
+    "createdAt": "2025-06-01T08:00:00.000Z"
   },
   {
     "id": "96",
     "nome": "Tereza Jundiaí Valadares",
-    "funcao": "Assistente Financeiro",
+    "funcao": "Especialista de Produto",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-02T08:00:00.000Z"
   },
   {
     "id": "97",
     "nome": "Ícaro Pajeú Maranhão",
-    "funcao": "Assistente Financeiro",
+    "funcao": "Analista Financeiro",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-09T08:00:00.000Z"
+    "createdAt": "2025-06-03T08:00:00.000Z"
   },
   {
     "id": "98",
     "nome": "Mônica Taquari Neves",
-    "funcao": "Especialista de Produto",
+    "funcao": "Assistente Financeiro",
     "liderImediatoId": "15",
-    "createdAt": "2025-06-01T08:00:00.000Z"
+    "createdAt": "2025-06-04T08:00:00.000Z"
   },
   {
     "id": "99",
     "nome": "Tadeu Botelho Ferraz",
-    "funcao": "Desenvolvedor Júnior",
-    "liderImediatoId": "6",
-    "createdAt": "2025-07-07T08:00:00.000Z"
+    "funcao": "Analista de Suprimentos",
+    "liderImediatoId": "10",
+    "createdAt": "2025-07-09T08:00:00.000Z"
   },
   {
     "id": "100",
     "nome": "Adélia Rebouças Salazar",
-    "funcao": "Assistente Administrativo",
+    "funcao": "Coordenador de Qualidade",
     "liderImediatoId": "9",
-    "createdAt": "2025-07-05T08:00:00.000Z"
+    "createdAt": "2025-07-06T08:00:00.000Z"
+  },
+  {
+    "nome": "VAGO",
+    "funcao": "CEO",
+    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "id": "f8d877c9-6d8b-4774-b9e3-d333f0b5d8d1",
+    "createdAt": "2026-05-14T03:14:35.695Z",
+    "status": "vago"
+  },
+  {
+    "nome": "teste",
+    "funcao": "CEO",
+    "liderImediatoId": null,
+    "id": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "createdAt": "2026-05-14T03:19:20.351Z",
+    "status": "ativo"
+  },
+  {
+    "id": "vago_b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "nome": "VAGO",
+    "funcao": "CEO",
+    "liderImediatoId": null,
+    "createdAt": "2026-05-14T03:19:20.351Z",
+    "status": "vago"
   }
 ]

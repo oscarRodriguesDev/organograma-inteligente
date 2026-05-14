@@ -17,5 +17,7 @@
 | 7.1 | `v0.7.1-organograma-fix` | Fix: container React Flow com width/height explícitos para evitar erro #004. | ✅ |
 | 8 | `v0.8-organograma-interativo` | Organograma em árvore expansível: clique para expandir/recolher subordinados. Nós móveis (arrastar), editáveis (duplo clique inline), adicionar subordinado (modal) e excluir com transferência de subordinados. Navegação progressiva (CEO inicial → expansão por níveis). | ✅ |
 
+| 9 | `v0.9-simulacao-impacto` | Modo simulação: demissão, promoção com efeito cascata, impacto automático (positivo/negativo), indicador de alerta, modal de impactos, regras de impacto customizáveis. | ✅ |
+
 ## Próximos checkpoints previstos
-- `v0.9-melhorias-ux` — Animações, filtros, busca, temas
+- `v0.10-melhorias-ux` — Animações, filtros, busca, temas

@@ -1,332 +1,302 @@
 [
   {
-    "id": "7a0903bb-4a9c-4da0-91bb-98b06fdb0d09",
-    "colaboradorId": "41",
-    "titulo": "Otimização de processo de onboarding",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
-    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
-    "valorResultado": 8100,
-    "unidadeMedida": "pontos",
-    "data": "2025-10-22T10:00:00.000Z"
-  },
-  {
-    "id": "61be3f42-8e7b-4f1a-84c2-db54de1ab7a9",
-    "colaboradorId": "91",
-    "titulo": "Análise preditiva de churn",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
-    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
-    "valorResultado": 16900,
-    "unidadeMedida": "%",
-    "data": "2025-11-10T10:00:00.000Z"
-  },
-  {
-    "id": "82e69d13-4502-4cbd-8240-c677b4d500ce",
+    "id": "dd99784f-ace9-4f92-9891-c036a9f923a2",
     "colaboradorId": "59",
-    "titulo": "Workshop de inovação para a equipe",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de r$ 8.000/mês com fornecedores.",
-    "resultado": "Economia de R$ 8.000/mês com fornecedores",
-    "valorResultado": 18600,
-    "unidadeMedida": "pontos",
-    "data": "2025-11-03T10:00:00.000Z"
-  },
-  {
-    "id": "fa071fd4-3256-40cc-b895-dae6e09d421b",
-    "colaboradorId": "71",
-    "titulo": "Melhoria no processo de suporte ao cliente",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
-    "resultado": "Redução de 60% nos erros de digitação",
-    "valorResultado": 8000,
-    "unidadeMedida": "R$ (único)",
-    "data": "2025-09-11T10:00:00.000Z"
-  },
-  {
-    "id": "772ea76a-c7a3-45c3-9838-b70d31b10e6f",
-    "colaboradorId": "8",
-    "titulo": "App interno de comunicação",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
-    "resultado": "Ganho de eficiência de 40% no processo",
-    "valorResultado": 5900,
-    "unidadeMedida": "pontos",
-    "data": "2025-12-20T10:00:00.000Z"
-  },
-  {
-    "id": "a2aadf93-13e8-4ec8-b154-3625aff9ecc3",
-    "colaboradorId": "85",
-    "titulo": "Melhoria no processo de suporte ao cliente",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
-    "resultado": "Ganho de eficiência de 40% no processo",
-    "valorResultado": 6700,
-    "unidadeMedida": "%",
-    "data": "2025-10-06T10:00:00.000Z"
-  },
-  {
-    "id": "68ffd70d-3240-43cf-b02b-b2ca111783f7",
-    "colaboradorId": "16",
-    "titulo": "Campanha de marketing viral",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 45min no tempo médio de atendimento.",
-    "resultado": "Redução de 45min no tempo médio de atendimento",
-    "valorResultado": 17700,
-    "unidadeMedida": "R$ (único)",
-    "data": "2025-12-01T10:00:00.000Z"
-  },
-  {
-    "id": "64faef1c-ecc3-452b-a1c1-9abad1c17586",
-    "colaboradorId": "29",
-    "titulo": "Automatização de testes",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
-    "resultado": "Ganho de eficiência de 40% no processo",
-    "valorResultado": 13600,
-    "unidadeMedida": "%",
-    "data": "2025-10-17T10:00:00.000Z"
-  },
-  {
-    "id": "74c1f5aa-59ea-4ed4-b872-9992938be719",
-    "colaboradorId": "88",
-    "titulo": "Otimização de consultas SQL",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de r$ 8.000/mês com fornecedores.",
-    "resultado": "Economia de R$ 8.000/mês com fornecedores",
-    "valorResultado": 7900,
-    "unidadeMedida": "%",
-    "data": "2025-11-03T10:00:00.000Z"
-  },
-  {
-    "id": "7223df24-d59d-4de3-8009-73a9e3d16154",
-    "colaboradorId": "43",
-    "titulo": "Otimização de processo de onboarding",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
-    "resultado": "Redução de 60% nos erros de digitação",
-    "valorResultado": 19600,
-    "unidadeMedida": "%",
-    "data": "2025-10-28T10:00:00.000Z"
-  },
-  {
-    "id": "40103ef0-94d2-4c3c-bac5-56dfb8848c2b",
-    "colaboradorId": "5",
-    "titulo": "Reward system para equipe de vendas",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
-    "resultado": "Ganho de eficiência de 40% no processo",
-    "valorResultado": 1000,
-    "unidadeMedida": "horas/mês",
-    "data": "2025-10-11T10:00:00.000Z"
-  },
-  {
-    "id": "583912ed-0db9-4c1d-9039-c189763a7fab",
-    "colaboradorId": "73",
-    "titulo": "Gamificação do treinamento",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de r$ 8.000/mês com fornecedores.",
-    "resultado": "Economia de R$ 8.000/mês com fornecedores",
-    "valorResultado": 18800,
-    "unidadeMedida": "%",
-    "data": "2025-12-19T10:00:00.000Z"
-  },
-  {
-    "id": "d0314a71-0670-4240-8ecb-57be72a2f0f1",
-    "colaboradorId": "19",
-    "titulo": "Otimização de processo de onboarding",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
-    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
-    "valorResultado": 1200,
-    "unidadeMedida": "pontos",
-    "data": "2025-12-24T10:00:00.000Z"
-  },
-  {
-    "id": "b9fd419c-a070-4271-9576-52b2a110140c",
-    "colaboradorId": "92",
-    "titulo": "Implementação de kanban na equipe",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
-    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
-    "valorResultado": 5300,
-    "unidadeMedida": "R$/mês",
-    "data": "2025-10-18T10:00:00.000Z"
-  },
-  {
-    "id": "1f24afbb-8c85-4510-a7b5-53444addee1f",
-    "colaboradorId": "66",
     "titulo": "Migração para nuvem",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 15% na satisfação dos colaboradores.",
-    "resultado": "Aumento de 15% na satisfação dos colaboradores",
-    "valorResultado": 18100,
-    "unidadeMedida": "%",
-    "data": "2025-09-23T10:00:00.000Z"
-  },
-  {
-    "id": "12322b64-d976-45ea-bbde-98372949001b",
-    "colaboradorId": "31",
-    "titulo": "Curadoria de conteúdo para redes sociais",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
-    "resultado": "Aumento de 28% nas vendas do trimestre",
-    "valorResultado": 10200,
-    "unidadeMedida": "R$ (único)",
-    "data": "2025-09-27T10:00:00.000Z"
-  },
-  {
-    "id": "a3b7ef8f-1465-47d1-97e7-c21bf1f5313d",
-    "colaboradorId": "46",
-    "titulo": "Workshop de inovação para a equipe",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
-    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
-    "valorResultado": 6900,
-    "unidadeMedida": "R$ (único)",
-    "data": "2025-11-27T10:00:00.000Z"
-  },
-  {
-    "id": "c6fc2b85-154b-4a09-8ab7-ce8bbd0a2f88",
-    "colaboradorId": "35",
-    "titulo": "Otimização de consultas SQL",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
-    "resultado": "Aumento de 28% nas vendas do trimestre",
-    "valorResultado": 2000,
-    "unidadeMedida": "%",
-    "data": "2025-10-25T10:00:00.000Z"
-  },
-  {
-    "id": "d2a1bcfc-48b0-4f85-910d-e99d14ab70e3",
-    "colaboradorId": "73",
-    "titulo": "Otimização de consultas SQL",
     "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 23% na produtividade da equipe.",
     "resultado": "Aumento de 23% na produtividade da equipe",
-    "valorResultado": 1800,
-    "unidadeMedida": "pontos",
-    "data": "2025-09-27T10:00:00.000Z"
-  },
-  {
-    "id": "4c3c2278-aa7e-4380-a168-df081312ffe2",
-    "colaboradorId": "35",
-    "titulo": "Refatoração do sistema legado",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de r$ 8.000/mês com fornecedores.",
-    "resultado": "Economia de R$ 8.000/mês com fornecedores",
-    "valorResultado": 3800,
-    "unidadeMedida": "R$ (único)",
-    "data": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "b9079e3a-ecd1-4185-8878-0558e58515e0",
-    "colaboradorId": "2",
-    "titulo": "Otimização de consultas SQL",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 15% na satisfação dos colaboradores.",
-    "resultado": "Aumento de 15% na satisfação dos colaboradores",
-    "valorResultado": 19500,
-    "unidadeMedida": "horas/mês",
-    "data": "2025-10-13T10:00:00.000Z"
-  },
-  {
-    "id": "4ac9fa4d-5cf8-40c4-8cdd-b1f6fb9810a1",
-    "colaboradorId": "11",
-    "titulo": "Otimização de processo de onboarding",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
-    "resultado": "Redução de 60% nos erros de digitação",
-    "valorResultado": 7200,
-    "unidadeMedida": "pontos",
-    "data": "2025-10-12T10:00:00.000Z"
-  },
-  {
-    "id": "59a2dff2-4c1d-4c8c-b890-4b70d3db1a3e",
-    "colaboradorId": "62",
-    "titulo": "Criação de dashboard de vendas",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
-    "resultado": "Aumento de 28% nas vendas do trimestre",
-    "valorResultado": 15200,
-    "unidadeMedida": "pontos",
-    "data": "2025-10-23T10:00:00.000Z"
-  },
-  {
-    "id": "387f5f33-4c29-49ee-8390-eb7d65e74c53",
-    "colaboradorId": "33",
-    "titulo": "Otimização de consultas SQL",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
-    "resultado": "Aumento de 28% nas vendas do trimestre",
-    "valorResultado": 13500,
-    "unidadeMedida": "R$ (único)",
-    "data": "2025-11-02T10:00:00.000Z"
-  },
-  {
-    "id": "fd644700-da77-43bb-8beb-af13f60abba6",
-    "colaboradorId": "13",
-    "titulo": "Campanha de marketing viral",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de 50h/mês em trabalho manual.",
-    "resultado": "Economia de 50h/mês em trabalho manual",
-    "valorResultado": 14000,
-    "unidadeMedida": "R$/mês",
-    "data": "2025-09-06T10:00:00.000Z"
-  },
-  {
-    "id": "522d5ab5-8fad-43b3-ae78-318dd8d4d5d3",
-    "colaboradorId": "35",
-    "titulo": "Sistema de ponto eletrônico",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de 50h/mês em trabalho manual.",
-    "resultado": "Economia de 50h/mês em trabalho manual",
-    "valorResultado": 14300,
-    "unidadeMedida": "R$/mês",
-    "data": "2025-12-05T10:00:00.000Z"
-  },
-  {
-    "id": "85868da1-9051-449b-8a82-af4c1eb15f2a",
-    "colaboradorId": "52",
-    "titulo": "Chatbot de atendimento",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de r$ 12.000/mês em custos operacionais.",
-    "resultado": "Redução de R$ 12.000/mês em custos operacionais",
-    "valorResultado": 12200,
+    "valorResultado": 4400,
     "unidadeMedida": "%",
     "data": "2025-10-21T10:00:00.000Z"
   },
   {
-    "id": "c3aa3669-4e68-428a-bed6-91a1ae4d3118",
-    "colaboradorId": "90",
-    "titulo": "Otimização de processo de onboarding",
-    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
-    "resultado": "Aumento de 28% nas vendas do trimestre",
-    "valorResultado": 6100,
-    "unidadeMedida": "pontos",
-    "data": "2025-09-17T10:00:00.000Z"
-  },
-  {
-    "id": "996d6ff5-01a1-46cb-8faf-da1db3ebaf9b",
-    "colaboradorId": "10",
-    "titulo": "Campanha de marketing viral",
+    "id": "22db86ed-53d2-4d64-bee5-cb4504491f19",
+    "colaboradorId": "13",
+    "titulo": "Automatização de relatório mensal",
     "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
     "resultado": "Ganho de eficiência de 40% no processo",
-    "valorResultado": 18000,
+    "valorResultado": 13300,
     "unidadeMedida": "%",
-    "data": "2025-11-15T10:00:00.000Z"
+    "data": "2025-10-15T10:00:00.000Z"
   },
   {
-    "id": "a0b1d98e-7269-4718-90fd-308c5722af47",
-    "colaboradorId": "98",
-    "titulo": "Chatbot de atendimento",
+    "id": "7806808a-0281-4593-9d6b-55dfe6c17e0e",
+    "colaboradorId": "62",
+    "titulo": "Implementação de CI/CD",
     "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de 50h/mês em trabalho manual.",
     "resultado": "Economia de 50h/mês em trabalho manual",
-    "valorResultado": 4100,
-    "unidadeMedida": "pontos",
-    "data": "2025-11-23T10:00:00.000Z"
+    "valorResultado": 9800,
+    "unidadeMedida": "%",
+    "data": "2025-11-14T10:00:00.000Z"
   },
   {
-    "id": "f36fe9ab-fe6d-4028-a71c-acd4e20e6a77",
-    "colaboradorId": "99",
+    "id": "9add61fd-148c-409e-a7fb-acfb2e613dce",
+    "colaboradorId": "7",
     "titulo": "App interno de comunicação",
     "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de 50h/mês em trabalho manual.",
     "resultado": "Economia de 50h/mês em trabalho manual",
-    "valorResultado": 4900,
-    "unidadeMedida": "horas/mês",
-    "data": "2025-09-04T10:00:00.000Z"
+    "valorResultado": 10600,
+    "unidadeMedida": "%",
+    "data": "2025-09-18T10:00:00.000Z"
   },
   {
-    "id": "ce53151f-5401-4101-8188-daab53cffea8",
+    "id": "a66c41f0-a80d-48d6-977b-aed8c8643c9f",
+    "colaboradorId": "27",
+    "titulo": "Automatização de testes",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 45min no tempo médio de atendimento.",
+    "resultado": "Redução de 45min no tempo médio de atendimento",
+    "valorResultado": 13200,
+    "unidadeMedida": "%",
+    "data": "2025-11-25T10:00:00.000Z"
+  },
+  {
+    "id": "5f2b37c2-c712-4623-a2a9-b6a5bf96e431",
+    "colaboradorId": "80",
+    "titulo": "App interno de comunicação",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de r$ 8.000/mês com fornecedores.",
+    "resultado": "Economia de R$ 8.000/mês com fornecedores",
+    "valorResultado": 8800,
+    "unidadeMedida": "pontos",
+    "data": "2025-09-06T10:00:00.000Z"
+  },
+  {
+    "id": "aba90c1e-afec-42f3-9ea6-f2d65077b31f",
+    "colaboradorId": "96",
+    "titulo": "Automatização de relatório mensal",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 45min no tempo médio de atendimento.",
+    "resultado": "Redução de 45min no tempo médio de atendimento",
+    "valorResultado": 16700,
+    "unidadeMedida": "pontos",
+    "data": "2025-11-10T10:00:00.000Z"
+  },
+  {
+    "id": "46971d9a-9545-4b92-9a94-ccd159c26566",
     "colaboradorId": "90",
-    "titulo": "Refatoração do sistema legado",
+    "titulo": "Criação de base de conhecimento interna",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
+    "resultado": "Redução de 60% nos erros de digitação",
+    "valorResultado": 9900,
+    "unidadeMedida": "R$ (único)",
+    "data": "2025-10-07T10:00:00.000Z"
+  },
+  {
+    "id": "36386864-0f8c-4e0d-a67d-89b26ed4fb21",
+    "colaboradorId": "88",
+    "titulo": "Automatização de testes",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
+    "resultado": "Redução de 60% nos erros de digitação",
+    "valorResultado": 7900,
+    "unidadeMedida": "horas/mês",
+    "data": "2025-11-10T10:00:00.000Z"
+  },
+  {
+    "id": "9f2e1110-acff-4ba3-a50a-6289e19cd9d4",
+    "colaboradorId": "50",
+    "titulo": "Automatização de relatório mensal",
     "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de r$ 12.000/mês em custos operacionais.",
     "resultado": "Redução de R$ 12.000/mês em custos operacionais",
-    "valorResultado": 17800,
+    "valorResultado": 5800,
     "unidadeMedida": "%",
-    "data": "2025-11-02T10:00:00.000Z"
+    "data": "2025-12-07T10:00:00.000Z"
   },
   {
-    "id": "374dab7d-2337-4c14-82ee-41de5af8a3fc",
-    "colaboradorId": "31",
-    "titulo": "Migração para nuvem",
+    "id": "a9fb1b61-1056-4e1d-b35c-30af0d2df7fa",
+    "colaboradorId": "5",
+    "titulo": "Refatoração do sistema legado",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 23% na produtividade da equipe.",
+    "resultado": "Aumento de 23% na produtividade da equipe",
+    "valorResultado": 9400,
+    "unidadeMedida": "%",
+    "data": "2025-11-07T10:00:00.000Z"
+  },
+  {
+    "id": "a1ce4322-2f96-458d-9128-94ef4541cba6",
+    "colaboradorId": "2",
+    "titulo": "Análise preditiva de churn",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
+    "resultado": "Redução de 60% nos erros de digitação",
+    "valorResultado": 13600,
+    "unidadeMedida": "horas/mês",
+    "data": "2025-12-10T10:00:00.000Z"
+  },
+  {
+    "id": "78a488f3-2ddf-4394-aa51-eedbc75016f6",
+    "colaboradorId": "83",
+    "titulo": "Pesquisa de clima organizacional",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
+    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
+    "valorResultado": 11300,
+    "unidadeMedida": "%",
+    "data": "2025-09-20T10:00:00.000Z"
+  },
+  {
+    "id": "cb0f2c77-9046-4dd8-a6bc-c978ca62d4e1",
+    "colaboradorId": "85",
+    "titulo": "Criação de dashboard de vendas",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de 50h/mês em trabalho manual.",
+    "resultado": "Economia de 50h/mês em trabalho manual",
+    "valorResultado": 12400,
+    "unidadeMedida": "pontos",
+    "data": "2025-10-15T10:00:00.000Z"
+  },
+  {
+    "id": "1c5532a5-0180-4645-80d4-9bafc871d4d7",
+    "colaboradorId": "93",
+    "titulo": "Reward system para equipe de vendas",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
+    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
+    "valorResultado": 19900,
+    "unidadeMedida": "R$ (único)",
+    "data": "2025-09-19T10:00:00.000Z"
+  },
+  {
+    "id": "185e02bb-ac22-4196-bec0-fed7a2bb546c",
+    "colaboradorId": "78",
+    "titulo": "Otimização de consultas SQL",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
+    "resultado": "Ganho de eficiência de 40% no processo",
+    "valorResultado": 18500,
+    "unidadeMedida": "R$ (único)",
+    "data": "2025-09-19T10:00:00.000Z"
+  },
+  {
+    "id": "a2de72c5-2973-44eb-953e-55155ecbdb61",
+    "colaboradorId": "26",
+    "titulo": "Criação de dashboard de vendas",
     "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 15% na satisfação dos colaboradores.",
     "resultado": "Aumento de 15% na satisfação dos colaboradores",
-    "valorResultado": 900,
+    "valorResultado": 8600,
+    "unidadeMedida": "%",
+    "data": "2025-09-07T10:00:00.000Z"
+  },
+  {
+    "id": "0c899692-a977-4679-9749-fea869414a6c",
+    "colaboradorId": "62",
+    "titulo": "App interno de comunicação",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
+    "resultado": "Aumento de 28% nas vendas do trimestre",
+    "valorResultado": 10500,
+    "unidadeMedida": "horas/mês",
+    "data": "2025-11-10T10:00:00.000Z"
+  },
+  {
+    "id": "7a60f2ab-a71d-4f7f-aeee-ebbf754a0617",
+    "colaboradorId": "64",
+    "titulo": "Reward system para equipe de vendas",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 23% na produtividade da equipe.",
+    "resultado": "Aumento de 23% na produtividade da equipe",
+    "valorResultado": 18100,
+    "unidadeMedida": "R$/mês",
+    "data": "2025-11-10T10:00:00.000Z"
+  },
+  {
+    "id": "f115608a-7804-41b3-a581-ec1eb07c5767",
+    "colaboradorId": "83",
+    "titulo": "Automatização de testes",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
+    "resultado": "Aumento de 28% nas vendas do trimestre",
+    "valorResultado": 18600,
     "unidadeMedida": "pontos",
-    "data": "2025-12-04T10:00:00.000Z"
+    "data": "2025-09-24T10:00:00.000Z"
+  },
+  {
+    "id": "0a0021e8-62fe-48af-b964-86fb7af10fd3",
+    "colaboradorId": "53",
+    "titulo": "Pesquisa de clima organizacional",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. economia de 50h/mês em trabalho manual.",
+    "resultado": "Economia de 50h/mês em trabalho manual",
+    "valorResultado": 16500,
+    "unidadeMedida": "%",
+    "data": "2025-10-08T10:00:00.000Z"
+  },
+  {
+    "id": "6f7d1c3f-7edd-4e28-beb3-5b5af77af6a3",
+    "colaboradorId": "56",
+    "titulo": "Otimização de consultas SQL",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. melhoria de 35% no tempo de resposta ao cliente.",
+    "resultado": "Melhoria de 35% no tempo de resposta ao cliente",
+    "valorResultado": 4700,
+    "unidadeMedida": "%",
+    "data": "2025-11-12T10:00:00.000Z"
+  },
+  {
+    "id": "b7eb6685-87dd-42bf-818b-ea7013007e25",
+    "colaboradorId": "4",
+    "titulo": "Implementação de kanban na equipe",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
+    "resultado": "Aumento de 28% nas vendas do trimestre",
+    "valorResultado": 12100,
+    "unidadeMedida": "R$ (único)",
+    "data": "2025-11-19T10:00:00.000Z"
+  },
+  {
+    "id": "fdbaf7cd-0908-4cac-aaa7-4ecbd7fd6b3a",
+    "colaboradorId": "84",
+    "titulo": "Redução de custos com fornecedores",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 45min no tempo médio de atendimento.",
+    "resultado": "Redução de 45min no tempo médio de atendimento",
+    "valorResultado": 11300,
+    "unidadeMedida": "%",
+    "data": "2025-11-05T10:00:00.000Z"
+  },
+  {
+    "id": "60e86dd5-51cd-4dd5-ae5a-7274846ecca3",
+    "colaboradorId": "12",
+    "titulo": "Automatização de testes",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. aumento de 28% nas vendas do trimestre.",
+    "resultado": "Aumento de 28% nas vendas do trimestre",
+    "valorResultado": 9900,
+    "unidadeMedida": "R$ (único)",
+    "data": "2025-12-03T10:00:00.000Z"
+  },
+  {
+    "id": "7d7df28b-e0c8-4c0d-a12b-5a416d8ce5b9",
+    "colaboradorId": "47",
+    "titulo": "Migração para nuvem",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
+    "resultado": "Redução de 60% nos erros de digitação",
+    "valorResultado": 12000,
+    "unidadeMedida": "R$/mês",
+    "data": "2025-12-01T10:00:00.000Z"
+  },
+  {
+    "id": "b46a5da7-8b9d-4a44-b574-acb78ba53b94",
+    "colaboradorId": "22",
+    "titulo": "Sistema de ponto eletrônico",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de r$ 12.000/mês em custos operacionais.",
+    "resultado": "Redução de R$ 12.000/mês em custos operacionais",
+    "valorResultado": 7800,
+    "unidadeMedida": "pontos",
+    "data": "2025-09-02T10:00:00.000Z"
+  },
+  {
+    "id": "705ce344-1ec9-4587-8288-574a370a200a",
+    "colaboradorId": "6",
+    "titulo": "Otimização de consultas SQL",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 45min no tempo médio de atendimento.",
+    "resultado": "Redução de 45min no tempo médio de atendimento",
+    "valorResultado": 7400,
+    "unidadeMedida": "horas/mês",
+    "data": "2025-10-04T10:00:00.000Z"
+  },
+  {
+    "id": "149d36ff-0210-4eb6-b373-bcc45133f278",
+    "colaboradorId": "18",
+    "titulo": "Workshop de inovação para a equipe",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. redução de 60% nos erros de digitação.",
+    "resultado": "Redução de 60% nos erros de digitação",
+    "valorResultado": 12500,
+    "unidadeMedida": "R$/mês",
+    "data": "2025-09-17T10:00:00.000Z"
+  },
+  {
+    "id": "95131e24-15a6-441b-96b9-8a7c00773cda",
+    "colaboradorId": "74",
+    "titulo": "Refatoração do sistema legado",
+    "descricao": "Iniciativa proposta e executada pelo colaborador para melhoria contínua. ganho de eficiência de 40% no processo.",
+    "resultado": "Ganho de eficiência de 40% no processo",
+    "valorResultado": 17700,
+    "unidadeMedida": "horas/mês",
+    "data": "2025-12-23T10:00:00.000Z"
   }
 ]

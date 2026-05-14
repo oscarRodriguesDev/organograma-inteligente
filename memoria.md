@@ -35,6 +35,19 @@ Sistema gerenciador de organogramas de empresas. Permite cadastrar colaboradores
   - Nós são **arrastáveis** livremente no canvas
   - Auto `fitView` ao expandir/recolher
   - Server actions: `atualizarColaboradorAction`, `excluirColaboradorComSubordinados`, `adicionarColaboradorRapido`
+- **Modo Simulação de Impacto (v0.9):**
+  - Toggle "Simular" no topo do organograma ativa modo de simulação
+  - Em modo simulação, botões nos nós mudam para ↓ (simular demissão) e ↑ (simular promoção para cargo vago)
+  - **Demissão:** marca o nó como VAGO (vermelho), subordinados transferidos para o líder do removido
+  - **Promoção:** seleciona candidato entre subordinados do cargo vago, ordenados por score (avaliações + perfil + subordinados)
+  - **Efeito cascata:** promoção gera novo cargo vago que pode ser preenchido
+  - **Impactos automáticos:** sistema detecta impactos positivos/negativos baseado em regras (avaliações, perfil,etc.)
+  - **Indicador de alerta:** botão flutuante colorido (vermelho se há impactos negativos) mostrando contagem
+  - **Modal de impactos:** lista detalhada com todos os impactos, categorizados por tipo
+  - **Impactos manuais:** campo para adicionar observações de impacto manualmente
+  - **Regras de impacto:** página `/regras-impacto` para CRUD de regras que determinam a detecção automática
+  - **Aplicar simulação:** confirma as alterações no JSON; **Descartar:** reverte tudo
+  - Lógica em `src/lib/simulacao.ts`, dados em `src/data/regras-impacto.json`
 
 ## 📂 Estrutura de Diretórios
 ```

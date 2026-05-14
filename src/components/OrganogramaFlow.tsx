@@ -23,12 +23,16 @@ import {
   useEdgesState,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import type { Colaborador } from '@/lib/types'
+import type { Colaborador, Impacto, AcaoSimulacao, Avaliacao, MetricaMensal, RegraImpacto } from '@/lib/types'
 import {
   atualizarColaboradorAction,
   excluirColaboradorComSubordinados,
   adicionarColaboradorRapido,
+  aplicarSimulacaoAction,
 } from '@/lib/actions'
+import { processarAcao, calcularCascataPromocoes, analisarEstadoSimulacao } from '@/lib/simulacao'
+import type { SugestaoCascata, CandidatoSugerido } from '@/lib/simulacao'
+import { getDadosSimulacao, salvarImpactosAction, carregarImpactosAction, limparImpactosAction } from '@/lib/simulacao-actions'
 
 interface NodeData {
   colaborador: Colaborador
@@ -36,12 +40,30 @@ interface NodeData {
   onEditar: (id: string, nome: string, funcao: string) => void
   onExcluir: (id: string) => void
   onAdicionar: (id: string) => void
+  onSimularDemissao?: (id: string) => void
+  onSimularPromocao?: (id: string) => void
+  onContratar?: (id: string) => void
+  onRelocar?: (id: string) => void
   expandido: boolean
   temFilhos: boolean
+  modoSimulacao?: boolean
+  simulacaoVago?: boolean
+  simulacaoPromovido?: boolean
+  sugerido?: boolean
 }
 
 function obterSubordinados(col: Colaborador[], id: string): Colaborador[] {
   return col.filter((c) => c.liderImediatoId === id)
+}
+
+function calcularNivel(colaboradores: Colaborador[], id: string): number {
+  let nivel = 1
+  let atual = colaboradores.find((c) => c.id === id)
+  while (atual && atual.liderImediatoId) {
+    nivel++
+    atual = colaboradores.find((c) => c.id === atual!.liderImediatoId)
+  }
+  return nivel
 }
 
 function getVisible(
@@ -161,8 +183,16 @@ function OrganogramaNode({
     onEditar: (id: string, nome: string, funcao: string) => void
     onExcluir: (id: string) => void
     onAdicionar: (id: string) => void
+    onSimularDemissao?: (id: string) => void
+    onSimularPromocao?: (id: string) => void
+    onContratar?: (id: string) => void
+    onRelocar?: (id: string) => void
     expandido: boolean
     temFilhos: boolean
+    modoSimulacao?: boolean
+    simulacaoVago?: boolean
+    simulacaoPromovido?: boolean
+    sugerido?: boolean
   }
 }) {
   const {
@@ -171,8 +201,16 @@ function OrganogramaNode({
     onEditar,
     onExcluir,
     onAdicionar,
+    onSimularDemissao,
+    onSimularPromocao,
+    onContratar,
+    onRelocar,
     expandido,
     temFilhos,
+    modoSimulacao,
+    simulacaoVago,
+    simulacaoPromovido,
+    sugerido,
   } = data
   const [editando, setEditando] = useState(false)
   const [nome, setNome] = useState(colaborador.nome)
@@ -209,16 +247,6 @@ function OrganogramaNode({
     [handleSalvar]
   )
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (!editando) {
-        e.stopPropagation()
-        onToggle(colaborador.id)
-      }
-    },
-    [editando, colaborador.id, onToggle]
-  )
-
   if (editando) {
     return (
       <div className="rounded-lg border-2 border-blue-500 bg-blue-50 px-4 py-3 shadow-sm min-w-[200px]">
@@ -251,9 +279,20 @@ function OrganogramaNode({
     )
   }
 
+  const ehVago = colaborador.status === 'vago'
+  const bordaCor = ehVago
+    ? 'border-red-500 bg-red-50'
+    : simulacaoPromovido
+    ? 'border-emerald-500 bg-emerald-50'
+    : sugerido
+    ? 'border-emerald-400 bg-emerald-50/80 animate-pulse shadow-lg shadow-emerald-200/50'
+    : modoSimulacao
+    ? 'border-amber-400 bg-amber-50/50'
+    : 'border-zinc-200 bg-white'
+
   return (
     <div
-      className="group relative rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm min-w-[160px] hover:shadow-md transition-shadow"
+      className={`group relative rounded-lg border px-4 py-3 shadow-sm min-w-[160px] hover:shadow-md transition-shadow ${bordaCor}`}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
@@ -263,10 +302,26 @@ function OrganogramaNode({
         className="!border-zinc-300"
       />
 
+      {/* Status badges */}
+      {ehVago && (
+        <div className="absolute -top-2.5 left-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-semibold shadow-sm">
+          VAGO
+        </div>
+      )}
+      {simulacaoPromovido && (
+        <div className="absolute -top-2.5 left-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-semibold shadow-sm">
+          PROMOVIDO
+        </div>
+      )}
+      {sugerido && !ehVago && (
+        <div className="absolute -top-2.5 right-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-400 text-white text-[10px] font-semibold shadow-sm animate-pulse">
+          ↑ SUGERIDO
+        </div>
+      )}
+
       {/* Expand/collapse area */}
       <div
         className="flex items-center gap-2 cursor-pointer"
-        onClick={handleClick}
         onDoubleClick={handleDoubleClick}
       >
         {temFilhos && (
@@ -280,32 +335,86 @@ function OrganogramaNode({
         )}
         {!temFilhos && <span className="w-3 shrink-0" />}
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-zinc-900 truncate">
-            {colaborador.nome}
-          </div>
-          <div className="text-xs text-zinc-500 truncate">
-            {colaborador.funcao}
-          </div>
+          {ehVago ? (
+            <>
+              <div className="text-sm font-bold text-red-600 uppercase tracking-wider">VAGO</div>
+              <div className="text-xs text-red-400 truncate">{colaborador.funcao}</div>
+            </>
+          ) : (
+            <>
+              <div className={`text-sm font-semibold truncate ${simulacaoPromovido ? 'text-emerald-700' : 'text-zinc-900'}`}>
+                {colaborador.nome}
+              </div>
+              <div className={`text-xs truncate ${simulacaoPromovido ? 'text-emerald-600' : 'text-zinc-500'}`}>
+                {colaborador.funcao}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {/* Hover actions */}
       {hover && (
         <div className="absolute -top-3 right-2 z-20 flex gap-1">
-          <button
-            onClick={(e) => { e.stopPropagation(); onAdicionar(colaborador.id) }}
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-xs hover:bg-emerald-600 shadow-sm"
-            title="Adicionar subordinado"
-          >
-            +
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onExcluir(colaborador.id) }}
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 shadow-sm"
-            title="Excluir"
-          >
-            ×
-          </button>
+          {modoSimulacao && ehVago ? (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSimularPromocao?.(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-xs hover:bg-amber-600 shadow-sm"
+                title="Preencher cargo vago"
+              >
+                ↑
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onContratar?.(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-xs hover:bg-emerald-600 shadow-sm"
+                title="Contratar nova pessoa"
+              >
+                +
+              </button>
+            </>
+          ) : modoSimulacao ? (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSimularDemissao?.(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 shadow-sm"
+                title="Simular demissão"
+              >
+                ↓
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onSimularPromocao?.(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-xs hover:bg-amber-600 shadow-sm"
+                title="Promover colaborador"
+              >
+                ↑
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onRelocar?.(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-violet-500 text-white text-xs hover:bg-violet-600 shadow-sm"
+                title="Relocar (mudar líder)"
+              >
+                ⟷
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); onAdicionar(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-xs hover:bg-emerald-600 shadow-sm"
+                title="Adicionar subordinado"
+              >
+                +
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onExcluir(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 shadow-sm"
+                title="Excluir"
+              >
+                ×
+              </button>
+            </>
+          )}
         </div>
       )}
 
@@ -374,12 +483,89 @@ export default function OrganogramaFlow({
   const [novoNome, setNovoNome] = useState('')
   const [novaFuncao, setNovaFuncao] = useState('')
 
+  // Simulação
+  const [modoSimulacao, setModoSimulacao] = useState(false)
+  const [simulando, setSimulando] = useState<Colaborador[] | null>(null)
+  const [estadoOriginal, setEstadoOriginal] = useState<Colaborador[] | null>(null)
+  const [acoesSimulacao, setAcoesSimulacao] = useState<AcaoSimulacao[]>([])
+  const [impactosSimulacao, setImpactosSimulacao] = useState<Impacto[]>([])
+  const [dadosSimulacao, setDadosSimulacao] = useState<{ avaliacoes: Avaliacao[]; metricas: MetricaMensal[]; regras: RegraImpacto[] } | null>(null)
+  const [mostrarImpactos, setMostrarImpactos] = useState(false)
+  const [sugestoesCascata, setSugestoesCascata] = useState<SugestaoCascata[]>([])
+  const [preencherVaga, setPreencherVaga] = useState<{
+    cargoVagoId: string
+    cargoVagoFuncao: string
+    candidatos: CandidatoSugerido[]
+  } | null>(null)
+  const [promocaoModal, setPromocaoModal] = useState<{
+    colaboradorId: string
+    nome: string
+    funcaoAtual: string
+    novoLiderId: string | null
+    novoCargo: string
+  } | null>(null)
+  const [contratarModal, setContratarModal] = useState<{
+    cargoVagoId: string
+    cargoVagoFuncao: string
+    nome: string
+    funcao: string
+  } | null>(null)
+  const [impactoManual, setImpactoManual] = useState('')
+  const [buscaCandidato, setBuscaCandidato] = useState('')
+  const [subordinadosModal, setSubordinadosModal] = useState<{
+    colaborador: Colaborador
+    subordinados: CandidatoSugerido[]
+  } | null>(null)
+  const [relocarModal, setRelocarModal] = useState<{
+    colaboradorId: string
+    nome: string
+    funcaoAtual: string
+    liderAtualId: string | null
+  } | null>(null)
+
+  useEffect(() => {
+    if (modoSimulacao) {
+      setEstadoOriginal(colaboradoresState)
+      if (!dadosSimulacao) {
+        getDadosSimulacao().then(setDadosSimulacao)
+        carregarImpactosAction().then((saved) => {
+          if (saved.length > 0) setImpactosSimulacao(saved)
+        })
+      }
+    }
+  }, [modoSimulacao, dadosSimulacao])
+
+  function resetarSimulacao() {
+    // Mantém simulando, acoes, impactos para VAGO ficar visível fora do modo simulação
+    setPromocaoModal(null)
+    setPreencherVaga(null)
+    setContratarModal(null)
+    setSugestoesCascata([])
+    if (!modoSimulacao) {
+      setDadosSimulacao(null)
+      limparImpactosAction()
+    }
+  }
+
+  function limparSimulacaoCompleta() {
+    setSimulando(null)
+    setAcoesSimulacao([])
+    setImpactosSimulacao([])
+    resetarSimulacao()
+  }
+
+  useEffect(() => {
+    if (!modoSimulacao) resetarSimulacao()
+  }, [modoSimulacao])
+
   // Populate initial expandidos so the CEO root is visible (roots have no parent)
   // When expandidos is empty, only roots are shown. That's correct: only CEO initially.
 
+  const dadosVisiveis = simulando ?? colaboradoresState
+
   const visiveis = useMemo(
-    () => getVisible(colaboradoresState, expandidos),
-    [colaboradoresState, expandidos]
+    () => getVisible(dadosVisiveis, expandidos),
+    [dadosVisiveis, expandidos]
   )
 
   const layout = useMemo(() => layoutArvore(visiveis), [visiveis])
@@ -396,8 +582,8 @@ export default function OrganogramaFlow({
   // ---------- Callbacks ----------
 
   const handleToggle = useCallback((id: string) => {
-    setExpandidos((prev) => toggleExpanded(prev, id, colaboradoresState))
-  }, [colaboradoresState])
+    setExpandidos((prev) => toggleExpanded(prev, id, dadosVisiveis))
+  }, [dadosVisiveis])
 
   const handleEditar = useCallback(
     async (id: string, nome: string, funcao: string) => {
@@ -456,6 +642,342 @@ export default function OrganogramaFlow({
     setNovaFuncao('')
   }, [])
 
+  // ---------- Simulação callbacks ----------
+
+  const handleSimularDemissao = useCallback((id: string) => {
+    if (!dadosSimulacao || !estadoOriginal) return
+
+    const base = simulando ?? colaboradoresState
+
+    const acao: AcaoSimulacao = {
+      tipo: 'demissao',
+      colaboradorId: id,
+      descricao: `Demissão simulada`,
+    }
+
+    const resultado = processarAcao(
+      base,
+      acao,
+      null,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+
+    // Calcular cascata de promoções sugeridas
+    const cascata = calcularCascataPromocoes(
+      resultado.colaboradores,
+      id,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas
+    )
+
+    setSimulando(resultado.colaboradores)
+    setAcoesSimulacao((prev) => [...prev, acao])
+
+    // Recalcular todos os impactos com base no estado atual
+    const novosImpactos = analisarEstadoSimulacao(
+      estadoOriginal,
+      resultado.colaboradores,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+    setImpactosSimulacao(novosImpactos)
+    setSugestoesCascata(cascata)
+  }, [simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+  const handleContratar = useCallback((id: string) => {
+    const base = simulando ?? colaboradoresState
+    const col = base.find((c) => c.id === id)
+    if (!col) return
+    setContratarModal({
+      cargoVagoId: id,
+      cargoVagoFuncao: col.funcao,
+      nome: '',
+      funcao: col.funcao,
+    })
+  }, [simulando, colaboradoresState])
+
+  const handleRelocar = useCallback((id: string) => {
+    const base = simulando ?? colaboradoresState
+    const col = base.find((c) => c.id === id)
+    if (!col) return
+    setRelocarModal({
+      colaboradorId: id,
+      nome: col.nome,
+      funcaoAtual: col.funcao,
+      liderAtualId: col.liderImediatoId,
+    })
+  }, [simulando, colaboradoresState])
+
+  const handleConfirmarRelocar = useCallback((novoLiderId: string | null) => {
+    if (!relocarModal || !dadosSimulacao || !estadoOriginal) return
+
+    const base = simulando ?? colaboradoresState
+
+    const acao: AcaoSimulacao = {
+      tipo: 'realocacao',
+      colaboradorId: relocarModal.colaboradorId,
+      descricao: `Relocar ${relocarModal.nome} para novo líder`,
+      novoLiderId: novoLiderId,
+    }
+
+    const resultado = processarAcao(
+      base,
+      acao,
+      null,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+
+    setSimulando(resultado.colaboradores)
+    setAcoesSimulacao((prev) => [...prev, acao])
+
+    const novosImpactos = analisarEstadoSimulacao(
+      estadoOriginal,
+      resultado.colaboradores,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+    setImpactosSimulacao(novosImpactos)
+
+    setRelocarModal(null)
+  }, [relocarModal, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+  const handleSimularPromocao = useCallback((id: string) => {
+    const base = simulando ?? colaboradoresState
+    const col = base.find((c) => c.id === id)
+    if (!col) return
+
+    if (col.status === 'vago') {
+      // ↑ em nó vago → preencher vaga com qualquer colaborador ativo
+      if (!dadosSimulacao) return
+      const candidatos = base
+        .filter((c) => c.id !== id && c.status !== 'vago')
+        .map((c) => {
+          const avaliacoesCol = dadosSimulacao.avaliacoes.filter((a) => a.avaliadoId === c.id)
+          const notas = avaliacoesCol.flatMap((a) => a.criterios.map((cr) => cr.nota))
+          const media = notas.length > 0 ? notas.reduce((s, n) => s + n, 0) / notas.length : 0
+          const metricasCol = dadosSimulacao.metricas.filter((m) => m.colaboradorId === c.id)
+          const ultimaMeta = metricasCol.length > 0
+            ? metricasCol.reduce((a, b) => (a.ano > b.ano || (a.ano === b.ano && a.mes > b.mes) ? a : b))
+            : null
+          const perfil = ultimaMeta
+            ? (ultimaMeta.faltasInjustificadas > 2 || ultimaMeta.horasAtraso > 4 ? 'Ruim' : 'Bom')
+            : 'desconhecido'
+          const score = (media * 2) + (perfil === 'Bom' ? 1.5 : perfil === 'Ruim' ? -1 : 0)
+          return { colaborador: c, mediaAvaliacoes: media, perfil, score }
+        })
+        .sort((a, b) => b.score - a.score)
+      setPreencherVaga({
+        cargoVagoId: id,
+        cargoVagoFuncao: col.funcao,
+        candidatos,
+      })
+    } else {
+      // ↑ em nó normal → promoção direta
+      setPromocaoModal({
+        colaboradorId: id,
+        nome: col.nome,
+        funcaoAtual: col.funcao,
+        novoLiderId: col.liderImediatoId,
+        novoCargo: col.funcao,
+      })
+    }
+  }, [simulando, colaboradoresState, dadosSimulacao])
+
+  const handleConfirmarPreencherVaga = useCallback((candidatoId: string) => {
+    if (!preencherVaga || !dadosSimulacao || !estadoOriginal) return
+
+    const base = simulando ?? colaboradoresState
+
+    const acao: AcaoSimulacao = {
+      tipo: 'promocao',
+      colaboradorId: preencherVaga.cargoVagoId,
+      descricao: `Preencher vaga de ${preencherVaga.cargoVagoFuncao}`,
+    }
+
+    const resultado = processarAcao(
+      base,
+      acao,
+      candidatoId,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+
+    setSimulando(resultado.colaboradores)
+    setAcoesSimulacao((prev) => [...prev, acao])
+
+    // Recalcular todos os impactos com base no estado atual
+    const novosImpactos = analisarEstadoSimulacao(
+      estadoOriginal,
+      resultado.colaboradores,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+    setImpactosSimulacao(novosImpactos)
+
+    // Calcular cascata para o VAGO criado na posição antiga do promovido
+    const vagoId = `vago_${candidatoId}`
+    const cascata = resultado.colaboradores.some((c) => c.id === vagoId)
+      ? calcularCascataPromocoes(
+          resultado.colaboradores,
+          vagoId,
+          dadosSimulacao.avaliacoes,
+          dadosSimulacao.metricas
+        )
+      : []
+    setSugestoesCascata(cascata)
+
+    // Expandir o nó do promovido e o VAGO cascata
+    setExpandidos((prev) => {
+      const next = new Set(prev)
+      next.add(candidatoId)
+      if (resultado.colaboradores.some((c) => c.id === vagoId)) {
+        next.add(vagoId)
+      }
+      return next
+    })
+
+    setPreencherVaga(null)
+  }, [preencherVaga, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+  const handleConfirmarContratar = useCallback(() => {
+    if (!contratarModal || !contratarModal.nome.trim() || !contratarModal.funcao.trim()) return
+
+    const base = simulando ?? colaboradoresState
+    const vago = base.find((c) => c.id === contratarModal.cargoVagoId)
+    if (!vago) return
+
+    const novoId = `contratado_${Date.now()}`
+    const novoColaborador: Colaborador = {
+      id: novoId,
+      nome: contratarModal.nome.trim(),
+      funcao: contratarModal.funcao.trim(),
+      liderImediatoId: vago.liderImediatoId,
+      createdAt: new Date().toISOString(),
+      status: 'ativo',
+    }
+
+    const novosColaboradores = base
+      .filter((c) => c.id !== contratarModal.cargoVagoId)
+      .concat(novoColaborador)
+
+    // Subordinados do vago passam a responder ao novo contratado
+    for (const c of novosColaboradores) {
+      if (c.liderImediatoId === contratarModal.cargoVagoId) {
+        c.liderImediatoId = novoId
+      }
+    }
+
+    // Se o cargo vago era o topo (CEO), transfere todos os órfãos para o novo contratado
+    if (vago.liderImediatoId === null) {
+      for (const c of novosColaboradores) {
+        if (c.liderImediatoId === null && c.id !== novoId && c.status !== 'vago') {
+          c.liderImediatoId = novoId
+        }
+      }
+    }
+
+    const acao: AcaoSimulacao = {
+      tipo: 'promocao',
+      colaboradorId: contratarModal.cargoVagoId,
+      descricao: `Contratação de ${contratarModal.nome.trim()} para ${contratarModal.funcao.trim()}`,
+    }
+
+    setSimulando(novosColaboradores)
+    setAcoesSimulacao((prev) => [...prev, acao])
+
+    // Recalcular impactos
+    if (estadoOriginal && dadosSimulacao) {
+      const novosImpactos = analisarEstadoSimulacao(
+        estadoOriginal,
+        novosColaboradores,
+        dadosSimulacao.avaliacoes,
+        dadosSimulacao.metricas,
+        dadosSimulacao.regras
+      )
+      setImpactosSimulacao(novosImpactos)
+    }
+
+    setContratarModal(null)
+    setSugestoesCascata([])
+  }, [contratarModal, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+  const handleConfirmarPromocaoDireta = useCallback(() => {
+    if (!promocaoModal || !dadosSimulacao || !estadoOriginal) return
+    if (promocaoModal.novoLiderId === undefined) return
+
+    const base = simulando ?? colaboradoresState
+
+    const acao: AcaoSimulacao = {
+      tipo: 'promocao',
+      colaboradorId: promocaoModal.colaboradorId,
+      descricao: `Promoção de ${promocaoModal.nome}`,
+      novoLiderId: promocaoModal.novoLiderId,
+      novoCargo: promocaoModal.novoCargo,
+    }
+
+    const resultado = processarAcao(
+      base,
+      acao,
+      null,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+
+    setSimulando(resultado.colaboradores)
+    setAcoesSimulacao((prev) => [...prev, acao])
+
+    // Recalcular todos os impactos com base no estado atual
+    const novosImpactos = analisarEstadoSimulacao(
+      estadoOriginal,
+      resultado.colaboradores,
+      dadosSimulacao.avaliacoes,
+      dadosSimulacao.metricas,
+      dadosSimulacao.regras
+    )
+    setImpactosSimulacao(novosImpactos)
+
+    // Expandir nó VAGO criado no lugar do promovido
+    setExpandidos((prev) => {
+      const next = new Set(prev)
+      const vagoId = `vago_${promocaoModal.colaboradorId}`
+      if (resultado.colaboradores.some((c) => c.id === vagoId)) {
+        next.add(vagoId)
+      }
+      return next
+    })
+
+    setPromocaoModal(null)
+  }, [promocaoModal, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+  const handleAdicionarImpactoManual = useCallback(() => {
+    if (!impactoManual.trim()) return
+    setImpactosSimulacao((prev) => [...prev, {
+      id: `manual_${Date.now()}`,
+      tipo: 'neutro',
+      titulo: 'Observação',
+      descricao: impactoManual.trim(),
+    }])
+    setImpactoManual('')
+  }, [impactoManual])
+
+  const handleAplicarSimulacao = useCallback(async () => {
+    if (!simulando) return
+    await salvarImpactosAction(impactosSimulacao)
+    await aplicarSimulacaoAction(simulando)
+    setColaboradoresState(simulando)
+    setModoSimulacao(false)
+    resetarSimulacao()
+  }, [simulando, impactosSimulacao])
+
   const handleConfirmarAdicao = useCallback(async () => {
     if (!adicionandoEm || !novoNome.trim() || !novaFuncao.trim()) return
 
@@ -481,56 +1003,189 @@ export default function OrganogramaFlow({
   const onNodeClick = useCallback(
     (_e: React.MouseEvent, node: Node) => {
       const d = node.data as unknown as NodeData
-      if (d.colaborador) handleToggle(d.colaborador.id)
+      if (!d.colaborador) return
+
+      const col = dadosVisiveis.find((c) => c.id === d.colaborador.id)
+      if (!col || col.status === 'vago') {
+        handleToggle(col?.id ?? d.colaborador.id)
+        return
+      }
+
+      const nivel = calcularNivel(dadosVisiveis, col.id)
+      const subordinados = obterSubordinados(dadosVisiveis, col.id)
+
+      // No 4º nível ou mais, se tiver subordinados, abre modal de promoção
+      if (nivel >= 4 && subordinados.length > 0 && dadosSimulacao) {
+        const candidatos = subordinados
+          .filter((s) => s.status !== 'vago')
+          .map((s) => {
+            const notas = dadosSimulacao.avaliacoes
+              .filter((a) => a.avaliadoId === s.id)
+              .flatMap((a) => a.criterios.map((cr) => cr.nota))
+            const media = notas.length > 0 ? notas.reduce((sum, n) => sum + n, 0) / notas.length : 0
+            const metricasCol = dadosSimulacao.metricas.filter((m) => m.colaboradorId === s.id)
+            const ultimaMeta = metricasCol.length > 0
+              ? metricasCol.reduce((a, b) => (a.ano > b.ano || (a.ano === b.ano && a.mes > b.mes) ? a : b))
+              : null
+            const perfil = ultimaMeta
+              ? (ultimaMeta.faltasInjustificadas > 2 || ultimaMeta.horasAtraso > 4 ? 'Ruim' : 'Bom')
+              : 'desconhecido'
+            const score = (media * 2) + (perfil === 'Bom' ? 1.5 : perfil === 'Ruim' ? -1 : 0) + (obterSubordinados(dadosVisiveis, s.id).length * 0.5)
+            return { colaborador: s, mediaAvaliacoes: media, perfil, score }
+          })
+          .sort((a, b) => b.score - a.score)
+        setSubordinadosModal({ colaborador: col, subordinados: candidatos })
+      } else {
+        handleToggle(col.id)
+      }
     },
-    [handleToggle]
+    [handleToggle, dadosVisiveis, dadosSimulacao]
   )
+
+  const idsPromovidos = new Set(
+    acoesSimulacao.filter((a) => a.tipo === 'promocao' && a.novoCargo).map((a) => a.colaboradorId)
+  )
+  const idsSugeridos = new Set(sugestoesCascata.map((s) => s.sugeridoId))
 
   // Decorate nodes with callbacks and metadata
   const nodesDecorados = useMemo(
     () =>
       nodes.map((n) => {
         const d = n.data as unknown as NodeData
+        const col = colaboradoresState.find((c) => c.id === n.id)
+        const simCol = simulando?.find((c) => c.id === n.id)
+        const colData = simCol ?? col ?? d.colaborador
+        const vago = colData.status === 'vago'
+        const promovido = idsPromovidos.has(n.id)
+        const sugerido = idsSugeridos.has(n.id)
         return {
           ...n,
           data: {
             ...d,
+            colaborador: colData,
             onToggle: handleToggle,
             onEditar: handleEditar,
             onExcluir: handleExcluir,
             onAdicionar: handleAdicionar,
+            onSimularDemissao: handleSimularDemissao,
+            onSimularPromocao: handleSimularPromocao,
+            onContratar: handleContratar,
+            onRelocar: handleRelocar,
             expandido: expandidos.has(n.id),
-            temFilhos: obterSubordinados(colaboradoresState, n.id).length > 0,
+            temFilhos: obterSubordinados(dadosVisiveis, n.id).length > 0,
+            modoSimulacao,
+            simulacaoVago: vago,
+            simulacaoPromovido: promovido,
+            sugerido,
           },
         }
       }),
-    [nodes, handleToggle, handleEditar, handleExcluir, handleAdicionar, expandidos, colaboradoresState]
+    [nodes, handleToggle, handleEditar, handleExcluir, handleAdicionar, handleSimularDemissao, handleSimularPromocao, handleContratar, handleRelocar, expandidos, dadosVisiveis, colaboradoresState, simulando, modoSimulacao, idsPromovidos, idsSugeridos]
   )
 
   const lidereAdicionar = adicionandoEm
     ? colaboradoresState.find((c) => c.id === adicionandoEm)
     : null
 
+  const totalImpactos = impactosSimulacao.length
+  const impactosPositivos = impactosSimulacao.filter((i) => i.tipo === 'positivo').length
+  const impactosNegativos = impactosSimulacao.filter((i) => i.tipo === 'negativo').length
+  const alertaCor = impactosNegativos > 0 ? 'bg-red-500' : impactosPositivos > 0 ? 'bg-amber-500' : 'bg-zinc-400'
+
   return (
     <div
       style={{ width: '100%', height: 'calc(100vh - 57px)' }}
       className="relative"
     >
-      {/* Instructions */}
-      <div className="absolute top-4 left-4 z-10 flex gap-3 text-xs text-zinc-400 pointer-events-none">
-        <span>Clique no nó para expandir/recolher</span>
-        <span>•</span>
-        <span>Duplo clique para editar</span>
-        <span>•</span>
-        <span>Passe o mouse para ações</span>
-        <span>•</span>
-        <span>Arraste para mover</span>
+      {/* Top bar */}
+      <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 text-xs text-zinc-400">
+          {modoSimulacao ? (
+            <>
+              <span className="text-amber-600 font-semibold">🔮 MODO SIMULAÇÃO</span>
+              <span>•</span>
+              <span>↓ demitir</span>
+              <span>•</span>
+              <span>↑ promover para cargo vago</span>
+              <span>•</span>
+              <span>Nenhum dado é salvo até aplicar</span>
+            </>
+          ) : (
+            <>
+              <span>Clique no nó para expandir/recolher</span>
+              <span>•</span>
+              <span>Duplo clique para editar</span>
+              <span>•</span>
+              <span>Passe o mouse para ações</span>
+              <span>•</span>
+              <span>Arraste para mover</span>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Mode toggle */}
+          <button
+            onClick={() => setModoSimulacao((v) => !v)}
+            className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
+              modoSimulacao
+                ? 'bg-amber-100 border-amber-400 text-amber-700 hover:bg-amber-200'
+                : 'bg-white border-zinc-300 text-zinc-600 hover:bg-zinc-50'
+            }`}
+          >
+            {modoSimulacao ? '🔮 Sair da Simulação' : '🔮 Simular'}
+          </button>
+
+          {/* Count */}
+          <div className="text-xs text-zinc-400 bg-white/80 px-2 py-1 rounded border border-zinc-200">
+            {visiveis.length} de {dadosVisiveis.length}
+          </div>
+        </div>
       </div>
 
-      {/* Count */}
-      <div className="absolute top-4 right-4 z-10 text-xs text-zinc-400 bg-white/80 px-2 py-1 rounded">
-        {visiveis.length} de {colaboradoresState.length} colaboradores visíveis
-      </div>
+      {/* Simulation action bar */}
+      {modoSimulacao && (
+        <div className="absolute top-14 left-4 right-4 z-10 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            {acoesSimulacao.length > 0 && (
+              <>
+                <span className="text-xs text-zinc-500">
+                  {acoesSimulacao.length} aç{'ões'} simuladas
+                </span>
+                <button
+                  onClick={handleAplicarSimulacao}
+                  className="px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                >
+                  ✓ Aplicar Simulação
+                </button>
+                <button
+                  onClick={limparSimulacaoCompleta}
+                  className="px-3 py-1 text-xs rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
+                >
+                  ✗ Descartar
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Impact indicator */}
+          {totalImpactos > 0 && (
+            <button
+              onClick={() => setMostrarImpactos(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs text-white rounded-lg shadow-sm transition-colors ${alertaCor} hover:opacity-90`}
+            >
+              <span className="font-semibold">{totalImpactos}</span>
+              <span>impacto{totalImpactos !== 1 ? 's' : ''}</span>
+              {impactosNegativos > 0 && (
+                <span className="text-white/80">({impactosNegativos} negativo{impactosNegativos !== 1 ? 's' : ''})</span>
+              )}
+              {impactosPositivos > 0 && impactosNegativos === 0 && (
+                <span className="text-white/80">({impactosPositivos} positivo{impactosPositivos !== 1 ? 's' : ''})</span>
+              )}
+            </button>
+          )}
+        </div>
+      )}
 
       <ReactFlowProvider>
         <FlowInner
@@ -588,6 +1243,540 @@ export default function OrganogramaFlow({
                 disabled={!novoNome.trim() || !novaFuncao.trim()}
               >
                 Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Impactos */}
+      {mostrarImpactos && (
+        <div
+          className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center"
+          onClick={() => setMostrarImpactos(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl p-6 w-[600px] max-h-[80vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                🔮 Impactos da Simulação
+              </h3>
+              <span className="text-xs text-zinc-400 bg-zinc-100 px-2 py-1 rounded-full">
+                {totalImpactos} impacto{totalImpactos !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <div className="flex gap-2 mb-3">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                {impactosPositivos} positivo{impactosPositivos !== 1 ? 's' : ''}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                {impactosNegativos} negativo{impactosNegativos !== 1 ? 's' : ''}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600">
+                {totalImpactos - impactosPositivos - impactosNegativos} neutro{totalImpactos - impactosPositivos - impactosNegativos !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-2 mb-4">
+              {impactosSimulacao.length === 0 && (
+                <p className="text-sm text-zinc-400 text-center py-8">
+                  Nenhum impacto detectado ainda. Realize ações no organograma.
+                </p>
+              )}
+              {impactosSimulacao.map((imp) => (
+                <div
+                  key={imp.id}
+                  className={`p-3 rounded-lg border text-sm ${
+                    imp.tipo === 'positivo'
+                      ? 'bg-emerald-50 border-emerald-200'
+                      : imp.tipo === 'negativo'
+                      ? 'bg-red-50 border-red-200'
+                      : 'bg-zinc-50 border-zinc-200'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-semibold uppercase ${
+                          imp.tipo === 'positivo' ? 'text-emerald-600' : imp.tipo === 'negativo' ? 'text-red-600' : 'text-zinc-500'
+                        }`}>
+                          {imp.tipo}
+                        </span>
+                        <span className="font-medium text-zinc-800">{imp.titulo}</span>
+                      </div>
+                      <p className="text-xs text-zinc-600 mt-1">{imp.descricao}</p>
+                      {imp.colaboradorNome && (
+                        <span className="text-xs text-zinc-400 mt-1 block">
+                          Colaborador: {imp.colaboradorNome}
+                        </span>
+                      )}
+                    </div>
+                    <span className={`text-lg ${
+                      imp.tipo === 'positivo' ? 'text-emerald-500' : imp.tipo === 'negativo' ? 'text-red-500' : 'text-zinc-400'
+                    }`}>
+                      {imp.tipo === 'positivo' ? '✅' : imp.tipo === 'negativo' ? '⚠️' : '➡️'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Adicionar impacto manual */}
+            <div className="border-t border-zinc-200 pt-3">
+              <label className="text-xs text-zinc-500 mb-1 block">
+                Adicionar observação de impacto manual:
+              </label>
+              <div className="flex gap-2">
+                <input
+                  className="flex-1 border border-zinc-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+                  placeholder="Descreva o impacto manual..."
+                  value={impactoManual}
+                  onChange={(e) => setImpactoManual(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAdicionarImpactoManual()}
+                />
+                <button
+                  onClick={handleAdicionarImpactoManual}
+                  className="px-3 py-2 text-sm rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                  disabled={!impactoManual.trim()}
+                >
+                  Adicionar
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setMostrarImpactos(false)}
+                className="px-4 py-2 text-sm rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Preencher Vaga */}
+      {preencherVaga && (
+        <div
+          className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center"
+          onClick={() => setPreencherVaga(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl p-6 w-[500px] max-h-[70vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                ↑ Preencher vaga: {preencherVaga.cargoVagoFuncao}
+              </h3>
+              <button
+                onClick={() => { setPreencherVaga(null); setBuscaCandidato('') }}
+                className="text-zinc-400 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="relative mb-3">
+              <input
+                type="text"
+                placeholder="Buscar por nome..."
+                value={buscaCandidato}
+                onChange={(e) => setBuscaCandidato(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+                autoFocus
+              />
+              {buscaCandidato && (
+                <button
+                  onClick={() => setBuscaCandidato('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <p className="text-sm text-zinc-500 mb-3">
+              Selecione quem deve ocupar este cargo:
+            </p>
+
+            <div className="flex-1 overflow-y-auto space-y-2">
+              {(() => {
+                const filtrados = buscaCandidato
+                  ? preencherVaga.candidatos.filter((c) =>
+                      c.colaborador.nome.toLowerCase().includes(buscaCandidato.toLowerCase())
+                    )
+                  : preencherVaga.candidatos
+                if (filtrados.length === 0) {
+                  return (
+                    <p className="text-sm text-zinc-400 text-center py-8">
+                      {buscaCandidato ? 'Nenhum candidato encontrado.' : 'Nenhum candidato disponível.'}
+                    </p>
+                  )
+                }
+                return filtrados.map((cand) => (
+                <div
+                  key={cand.colaborador.id}
+                  className="p-3 rounded-lg border border-zinc-200 hover:border-amber-300 hover:bg-amber-50/50 transition-colors cursor-pointer"
+                  onClick={() => handleConfirmarPreencherVaga(cand.colaborador.id)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-medium text-zinc-800">{cand.colaborador.nome}</span>
+                      <span className="text-xs text-zinc-500 ml-2">{cand.colaborador.funcao}</span>
+                    </div>
+                    <span className="text-xs font-semibold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                      Score: {cand.score.toFixed(1)}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 mt-1 text-xs text-zinc-500">
+                    <span>Avaliação: {cand.mediaAvaliacoes.toFixed(1)}</span>
+                    <span>Perfil: {cand.perfil}</span>
+                  </div>
+                </div>
+              ))})()}
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => { setPreencherVaga(null); setBuscaCandidato('') }}
+                className="px-4 py-2 text-sm rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Subordinados (4º nível+) */}
+      {subordinadosModal && (
+        <div
+          className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center"
+          onClick={() => { setSubordinadosModal(null); setBuscaCandidato('') }}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl p-6 w-[500px] max-h-[70vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                Subordinados de {subordinadosModal.colaborador.nome}
+              </h3>
+              <button
+                onClick={() => { setSubordinadosModal(null); setBuscaCandidato('') }}
+                className="text-zinc-400 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-sm text-zinc-500 mb-3">
+              {subordinadosModal.subordinados.length} subordinado(s) — clique para promover via simulação:
+            </p>
+
+            <div className="relative mb-3">
+              <input
+                type="text"
+                placeholder="Buscar por nome..."
+                value={buscaCandidato}
+                onChange={(e) => setBuscaCandidato(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+                autoFocus
+              />
+              {buscaCandidato && (
+                <button
+                  onClick={() => setBuscaCandidato('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-2">
+              {(() => {
+                const filtrados = buscaCandidato
+                  ? subordinadosModal.subordinados.filter((s) =>
+                      s.colaborador.nome.toLowerCase().includes(buscaCandidato.toLowerCase())
+                    )
+                  : subordinadosModal.subordinados
+                if (filtrados.length === 0) {
+                  return (
+                    <p className="text-sm text-zinc-400 text-center py-8">
+                      {buscaCandidato ? 'Nenhum subordinado encontrado.' : 'Nenhum subordinado abaixo deste nível.'}
+                    </p>
+                  )
+                }
+                return filtrados.map((s) => (
+                  <div
+                    key={s.colaborador.id}
+                    className="p-3 rounded-lg border border-zinc-200 hover:border-emerald-300 hover:bg-emerald-50/50 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setSubordinadosModal(null)
+                      setBuscaCandidato('')
+                      // Abre o modal de preencher vaga (promoção via simulação)
+                      handleSimularPromocao(s.colaborador.id)
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="font-medium text-zinc-800">{s.colaborador.nome}</span>
+                        <span className="text-xs text-zinc-500 ml-2">{s.colaborador.funcao}</span>
+                      </div>
+                      <span className="text-xs font-semibold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                        Score: {s.score.toFixed(1)}
+                      </span>
+                    </div>
+                    <div className="flex gap-3 mt-1 text-xs text-zinc-500">
+                      <span>Avaliação: {s.mediaAvaliacoes.toFixed(1)}</span>
+                      <span>Perfil: {s.perfil}</span>
+                    </div>
+                  </div>
+                ))
+              })()}
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => { setSubordinadosModal(null); setBuscaCandidato('') }}
+                className="px-4 py-2 text-sm rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Relocar */}
+      {relocarModal && (
+        <div
+          className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center"
+          onClick={() => setRelocarModal(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl p-6 w-[480px] max-h-[70vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                ⟷ Relocar: {relocarModal.nome}
+              </h3>
+              <button
+                onClick={() => setRelocarModal(null)}
+                className="text-zinc-400 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-sm text-zinc-500 mb-1">
+              {relocarModal.funcaoAtual} — atualmente responde a{' '}
+              <strong>{(() => {
+                if (!relocarModal.liderAtualId) return 'ninguém (CEO)'
+                const base = simulando ?? colaboradoresState
+                const lider = base.find((c) => c.id === relocarModal.liderAtualId)
+                return lider?.nome ?? 'desconhecido'
+              })()}</strong>
+            </p>
+
+            <p className="text-sm text-zinc-500 mb-4">
+              Escolha para quem {relocarModal.nome} deve passar a responder:
+            </p>
+
+            <div className="flex-1 overflow-y-auto space-y-1 mb-4">
+              <div
+                className="p-3 rounded-lg border-2 border-dashed border-zinc-300 hover:border-violet-400 hover:bg-violet-50/50 transition-colors cursor-pointer"
+                onClick={() => handleConfirmarRelocar(null)}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">👑</span>
+                  <div>
+                    <div className="font-medium text-zinc-800">Nenhum (CEO — topo da hierarquia)</div>
+                    <div className="text-xs text-zinc-500">{relocarModal.nome} vira raiz do organograma</div>
+                  </div>
+                </div>
+              </div>
+
+              {(() => {
+                const base = simulando ?? colaboradoresState
+                const possiveis = base.filter(
+                  (c) => c.id !== relocarModal.colaboradorId && c.status !== 'vago' && c.liderImediatoId !== relocarModal.colaboradorId
+                )
+                return possiveis.map((l) => {
+                  const subCount = obterSubordinados(base, l.id).length
+                  return (
+                    <div
+                      key={l.id}
+                      className={`p-3 rounded-lg border transition-colors cursor-pointer ${
+                        l.id === relocarModal.liderAtualId
+                          ? 'border-amber-300 bg-amber-50'
+                          : 'border-zinc-200 hover:border-violet-300 hover:bg-violet-50/50'
+                      }`}
+                      onClick={() => handleConfirmarRelocar(l.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-medium text-zinc-800">{l.nome}</span>
+                          <span className="text-xs text-zinc-500 ml-2">{l.funcao}</span>
+                        </div>
+                        {l.id === relocarModal.liderAtualId && (
+                          <span className="text-xs font-semibold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                            ATUAL
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-zinc-500 mt-1">
+                        {subCount > 0 ? `${subCount} subordinado(s)` : 'sem subordinados'}
+                      </div>
+                    </div>
+                  )
+                })
+              })()}
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setRelocarModal(null)}
+                className="px-4 py-2 text-sm rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Contratar */}
+      {contratarModal && (
+        <div
+          className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center"
+          onClick={() => setContratarModal(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl p-6 w-[480px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                + Contratar: {contratarModal.cargoVagoFuncao}
+              </h3>
+              <button
+                onClick={() => setContratarModal(null)}
+                className="text-zinc-400 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-sm text-zinc-500 mb-4">
+              Preencha os dados da nova pessoa para ocupar este cargo.
+            </p>
+
+            <label className="text-xs text-zinc-500 mb-1 block">Nome</label>
+            <input
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-emerald-500"
+              placeholder="Nome do novo colaborador"
+              value={contratarModal.nome}
+              onChange={(e) => setContratarModal((prev) => prev ? { ...prev, nome: e.target.value } : null)}
+              autoFocus
+            />
+
+            <label className="text-xs text-zinc-500 mb-1 block">Função / Cargo</label>
+            <input
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-4 text-sm outline-none focus:border-emerald-500"
+              placeholder="Ex: Diretor de Tecnologia"
+              value={contratarModal.funcao}
+              onChange={(e) => setContratarModal((prev) => prev ? { ...prev, funcao: e.target.value } : null)}
+            />
+
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => setContratarModal(null)}
+                className="px-4 py-2 text-sm rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmarContratar}
+                className="px-4 py-2 text-sm rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                disabled={!contratarModal.nome.trim() || !contratarModal.funcao.trim()}
+              >
+                + Contratar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Promoção Direta */}
+      {promocaoModal && (
+        <div
+          className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center"
+          onClick={() => setPromocaoModal(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl p-6 w-[480px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                ↑ Promover: {promocaoModal.nome}
+              </h3>
+              <button
+                onClick={() => setPromocaoModal(null)}
+                className="text-zinc-400 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-sm text-zinc-500 mb-4">
+              Escolha para quem {promocaoModal.nome} vai responder e qual cargo vai assumir.
+            </p>
+
+            <label className="text-xs text-zinc-500 mb-1 block">Novo Líder</label>
+            <select
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-amber-500"
+              value={promocaoModal.novoLiderId ?? ''}
+              onChange={(e) => setPromocaoModal((prev) => prev ? { ...prev, novoLiderId: e.target.value || null } : null)}
+            >
+              <option value="">Nenhum (CEO)</option>
+              {(simulando ?? colaboradoresState)
+                .filter((c) => c.id !== promocaoModal.colaboradorId)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome} — {c.funcao}
+                  </option>
+                ))}
+            </select>
+
+            <label className="text-xs text-zinc-500 mb-1 block">Novo Cargo</label>
+            <input
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-4 text-sm outline-none focus:border-amber-500"
+              placeholder="Ex: Diretor de Tecnologia"
+              value={promocaoModal.novoCargo}
+              onChange={(e) => setPromocaoModal((prev) => prev ? { ...prev, novoCargo: e.target.value } : null)}
+            />
+
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => { setPreencherVaga(null); setBuscaCandidato('') }}
+                className="px-4 py-2 text-sm rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmarPromocaoDireta}
+                className="px-4 py-2 text-sm rounded-lg bg-amber-600 text-white hover:bg-amber-700 transition-colors disabled:opacity-50"
+                disabled={promocaoModal.novoLiderId === undefined || !promocaoModal.novoCargo.trim()}
+              >
+                ↑ Promover
               </button>
             </div>
           </div>

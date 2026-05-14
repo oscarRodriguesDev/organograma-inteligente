@@ -1,0 +1,50 @@
+[
+  {
+    "id": "default_time_sem_lider",
+    "nome": "Time sem líder",
+    "descricao": "Colaboradores que perderam seu líder direto e precisam de nova liderança",
+    "tipo": "negativo",
+    "condicao": { "tipo": "time_sem_lider" },
+    "ativa": true
+  },
+  {
+    "id": "default_promocao_avaliacao_alta",
+    "nome": "Promoção de alto desempenho",
+    "descricao": "Colaborador promovido com excelentes avaliações de desempenho",
+    "tipo": "positivo",
+    "condicao": { "tipo": "promocao_avaliacao_alta" },
+    "ativa": true
+  },
+  {
+    "id": "default_perda_lider_experiente",
+    "nome": "Perda de liderança experiente",
+    "descricao": "Saída de um colaborador com boas avaliações que liderava uma equipe",
+    "tipo": "negativo",
+    "condicao": { "tipo": "perda_lider_experiente" },
+    "ativa": true
+  },
+  {
+    "id": "default_promocao_sem_destaque",
+    "nome": "Promoção sem destaque",
+    "descricao": "Colaborador promovido sem histórico de avaliações de destaque",
+    "tipo": "neutro",
+    "condicao": { "tipo": "promocao_sem_destaque" },
+    "ativa": true
+  },
+  {
+    "id": "default_lider_perfil_ruim",
+    "nome": "Líder com perfil inadequado",
+    "descricao": "Colaborador promovido a liderança mas com perfil Ruim nas métricas",
+    "tipo": "negativo",
+    "condicao": { "tipo": "lider_perfil_ruim" },
+    "ativa": true
+  },
+  {
+    "id": "default_time_ganha_lider_forte",
+    "nome": "Time ganha líder forte",
+    "descricao": "Colaborador passa a responder a um líder com excelente avaliação",
+    "tipo": "positivo",
+    "condicao": { "tipo": "time_ganha_lider_forte" },
+    "ativa": true
+  }
+]

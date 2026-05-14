@@ -1,4 +1,4 @@
-import { Colaborador, Avaliacao, Iniciativa, MetricaMensal } from './types'
+import { Colaborador, Avaliacao, Iniciativa, MetricaMensal, RegraImpacto, Impacto } from './types'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -201,4 +201,83 @@ export function removerMetrica(id: string): boolean {
 
 export function listarMetricasPorColaborador(colaboradorId: string): MetricaMensal[] {
   return lerMetricas().filter((m) => m.colaboradorId === colaboradorId)
+}
+
+// ---------- Regras de Impacto ----------
+
+const REGRAS_FILE = path.join(process.cwd(), 'src', 'data', 'regras-impacto.json')
+
+function lerRegras(): RegraImpacto[] {
+  try {
+    const raw = fs.readFileSync(REGRAS_FILE, 'utf-8')
+    return JSON.parse(raw) as RegraImpacto[]
+  } catch {
+    return []
+  }
+}
+
+function escreverRegras(data: RegraImpacto[]): void {
+  fs.writeFileSync(REGRAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
+}
+
+export function listarRegrasImpacto(): RegraImpacto[] {
+  return lerRegras()
+}
+
+export function criarRegraImpacto(dados: Omit<RegraImpacto, 'id'>): RegraImpacto {
+  const data = lerRegras()
+  const regra: RegraImpacto = {
+    ...dados,
+    id: crypto.randomUUID(),
+  }
+  data.push(regra)
+  escreverRegras(data)
+  return regra
+}
+
+export function atualizarRegraImpacto(id: string, dados: Partial<Omit<RegraImpacto, 'id'>>): RegraImpacto | undefined {
+  const data = lerRegras()
+  const idx = data.findIndex((r) => r.id === id)
+  if (idx === -1) return undefined
+  data[idx] = { ...data[idx], ...dados }
+  escreverRegras(data)
+  return data[idx]
+}
+
+export function removerRegraImpacto(id: string): boolean {
+  const data = lerRegras()
+  const idx = data.findIndex((r) => r.id === id)
+  if (idx === -1) return false
+  data.splice(idx, 1)
+  escreverRegras(data)
+  return true
+}
+
+// ---------- Histórico de Impactos ----------
+
+const IMPACTOS_FILE = path.join(process.cwd(), 'src', 'data', 'impactos.json')
+
+function lerImpactosSalvos(): Impacto[] {
+  try {
+    const raw = fs.readFileSync(IMPACTOS_FILE, 'utf-8')
+    return JSON.parse(raw) as Impacto[]
+  } catch {
+    return []
+  }
+}
+
+function escreverImpactosSalvos(data: Impacto[]): void {
+  fs.writeFileSync(IMPACTOS_FILE, JSON.stringify(data, null, 2), 'utf-8')
+}
+
+export function salvarImpactosSimulacao(impactos: Impacto[]): void {
+  escreverImpactosSalvos(impactos)
+}
+
+export function carregarImpactosSimulacao(): Impacto[] {
+  return lerImpactosSalvos()
+}
+
+export function limparImpactosSimulacao(): void {
+  escreverImpactosSalvos([])
 }
