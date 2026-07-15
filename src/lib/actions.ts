@@ -11,6 +11,8 @@ import {
   criarAvaliacao,
   criarIniciativa,
   criarMetrica,
+  listarCargos,
+  garantirCargo,
 } from './db'
 import { CRITERIOS_AVALIACAO } from './types'
 import type { Colaborador } from './types'
@@ -22,8 +24,11 @@ export async function cadastrarColaborador(formData: FormData) {
 
   if (!nome || !funcao) return
 
+  // Garante que o cargo existe na lista global
+  await garantirCargo(funcao)
   await criarColaborador({ nome, funcao, liderImediatoId: liderImediatoId || null })
   revalidatePath('/colaboradores')
+  revalidatePath('/organograma')
   redirect('/colaboradores')
 }
 
@@ -135,4 +140,16 @@ export async function cadastrarMetrica(formData: FormData) {
   await criarMetrica({ colaboradorId, mes, ano, diasTrabalhados, faltasInjustificadas, horasAtraso, observacao })
   revalidatePath('/metricas')
   redirect('/metricas')
+}
+
+export async function listarCargosAction() {
+  return listarCargos()
+}
+
+export async function adicionarCargoAction(formData: FormData) {
+  const nome = formData.get('nome')?.toString().trim()
+  if (!nome) return
+  await garantirCargo(nome)
+  revalidatePath('/colaboradores/novo')
+  revalidatePath('/organograma')
 }

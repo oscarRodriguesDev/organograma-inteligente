@@ -6,6 +6,7 @@ import type {
   MetricaMensal,
   RegraImpacto,
   Impacto,
+  Cargo,
 } from './types'
 
 // ─── Helpers de conversão ────────────────────────────────────
@@ -344,4 +345,24 @@ export async function carregarImpactosSimulacao(): Promise<Impacto[]> {
 
 export async function limparImpactosSimulacao(): Promise<void> {
   await prisma.impacto.deleteMany()
+}
+
+// ─── Cargos ─────────────────────────────────────────────────
+
+export async function listarCargos(): Promise<Cargo[]> {
+  return prisma.cargo.findMany({ orderBy: { nome: 'asc' } })
+}
+
+export async function criarCargo(nome: string): Promise<Cargo> {
+  return prisma.cargo.upsert({
+    where: { nome },
+    update: {},
+    create: { nome },
+  })
+}
+
+/** Garante que um cargo existe na lista. Retorna o nome. */
+export async function garantirCargo(nome: string): Promise<string> {
+  await criarCargo(nome)
+  return nome
 }

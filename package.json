@@ -9,6 +9,7 @@
     "seed": "npx tsx prisma/seed.ts",
     "migrate": "npx tsx scripts/migrate-json-to-prisma.ts",
     "reset": "npx tsx scripts/zerar-dados.ts",
+    "cargos": "npx tsx scripts/popular-cargos.ts",
     "lint": "eslint"
   },
   "dependencies": {

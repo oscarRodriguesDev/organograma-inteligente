@@ -72,6 +72,11 @@ model RegraImpacto {
   ativa     Boolean @default(true)
 }
 
+model Cargo {
+  id   String @id @default(cuid())
+  nome String @unique
+}
+
 model Impacto {
   id              String  @id @default(cuid())
   tipo            String

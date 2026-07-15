@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { cadastrarColaborador, listarPossiveisLideres } from '@/lib/actions'
+import SelectCargo from '@/components/SelectCargo'
 
 export default async function NovoColaborador() {
   const possiveisLideres = await listarPossiveisLideres()
@@ -9,12 +10,12 @@ export default async function NovoColaborador() {
       <div className="max-w-lg mx-auto">
         <Link
           href="/colaboradores"
-          className="text-sm text-zinc-500 hover:text-zinc-800"
+          className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200"
         >
           ← Voltar
         </Link>
 
-        <h1 className="mt-4 mb-8 text-2xl font-bold">Novo Colaborador</h1>
+        <h1 className="mt-4 mb-8 text-2xl font-bold text-foreground">Novo Colaborador</h1>
 
         <form action={cadastrarColaborador} className="space-y-5">
           <div>
@@ -26,22 +27,19 @@ export default async function NovoColaborador() {
               name="nome"
               type="text"
               required
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
               placeholder="Nome completo"
             />
           </div>
 
           <div>
             <label htmlFor="funcao" className="mb-1 block text-sm font-medium">
-              Função
+              Função (Cargo)
             </label>
-            <input
-              id="funcao"
+            <SelectCargo
               name="funcao"
-              type="text"
               required
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
-              placeholder="Ex: Analista de TI"
+              placeholder="Selecione o cargo"
             />
           </div>
 
@@ -52,7 +50,7 @@ export default async function NovoColaborador() {
             <select
               id="liderImediatoId"
               name="liderImediatoId"
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
             >
               <option value="">Nenhum (é líder máximo)</option>
               {possiveisLideres.map((lider) => (
@@ -65,7 +63,7 @@ export default async function NovoColaborador() {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            className="w-full rounded-lg bg-black dark:bg-white px-4 py-2 text-sm font-medium text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200"
           >
             Cadastrar
           </button>

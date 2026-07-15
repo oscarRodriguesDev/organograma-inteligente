@@ -101,3 +101,8 @@ export interface RegraCondicao {
   tipo: 'time_sem_lider' | 'promocao_avaliacao_alta' | 'perda_lider_experiente' | 'promocao_sem_destaque' | 'lider_perfil_ruim' | 'subordinado_realocado' | 'time_ganha_lider_forte'
   parametros?: Record<string, string | number>
 }
+
+export interface Cargo {
+  id: string
+  nome: string
+}
