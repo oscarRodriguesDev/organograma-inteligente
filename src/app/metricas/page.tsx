@@ -8,9 +8,11 @@ const MESES = [
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ]
 
-export default function ListaMetricas() {
-  const metricas = listarMetricas()
-  const colaboradores = listarColaboradores()
+export default async function ListaMetricas() {
+  const [metricas, colaboradores] = await Promise.all([
+    listarMetricas(),
+    listarColaboradores(),
+  ])
 
   function nomeColaborador(id: string) {
     return colaboradores.find((c) => c.id === id)?.nome || 'Desconhecido'

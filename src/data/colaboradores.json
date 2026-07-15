@@ -3,42 +3,42 @@
     "id": "3",
     "nome": "Fernando Oliveira",
     "funcao": "Diretor de Operações (COO)",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "liderImediatoId": null,
     "createdAt": "2025-01-15T08:00:00.000Z"
   },
   {
     "id": "4",
     "nome": "Juliana Costa",
     "funcao": "Diretora Comercial (CMO)",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "liderImediatoId": null,
     "createdAt": "2025-01-15T08:00:00.000Z"
   },
   {
     "id": "5",
     "nome": "Marcos Pereira",
     "funcao": "Diretor Financeiro (CFO)",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "liderImediatoId": null,
     "createdAt": "2025-01-15T08:00:00.000Z"
   },
   {
     "id": "6",
     "nome": "Thiago Monteiro Castro",
     "funcao": "Gerente de Engenharia",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "liderImediatoId": null,
     "createdAt": "2025-03-01T08:00:00.000Z"
   },
   {
     "id": "7",
     "nome": "Camila Rocha Azevedo",
     "funcao": "Gerente de Dados",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "liderImediatoId": null,
     "createdAt": "2025-03-01T08:00:00.000Z"
   },
   {
     "id": "8",
     "nome": "Rafael Martins Carvalho",
     "funcao": "Gerente de Infraestrutura",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
+    "liderImediatoId": null,
     "createdAt": "2025-03-01T08:00:00.000Z"
   },
   {
@@ -129,8 +129,9 @@
     "id": "21",
     "nome": "André Cavalcanti Rezende",
     "funcao": "Analista de TI",
-    "liderImediatoId": "6",
-    "createdAt": "2025-06-10T08:00:00.000Z"
+    "liderImediatoId": "7",
+    "createdAt": "2025-06-10T08:00:00.000Z",
+    "status": "ativo"
   },
   {
     "id": "22",
@@ -686,27 +687,10 @@
     "createdAt": "2025-07-06T08:00:00.000Z"
   },
   {
-    "nome": "VAGO",
-    "funcao": "CEO",
-    "liderImediatoId": "b51682c6-517d-4df7-a56e-f6545ea582cb",
-    "id": "f8d877c9-6d8b-4774-b9e3-d333f0b5d8d1",
-    "createdAt": "2026-05-14T03:14:35.695Z",
-    "status": "vago"
-  },
-  {
-    "nome": "teste",
+    "nome": "OScar",
     "funcao": "CEO",
     "liderImediatoId": null,
-    "id": "b51682c6-517d-4df7-a56e-f6545ea582cb",
-    "createdAt": "2026-05-14T03:19:20.351Z",
-    "status": "ativo"
-  },
-  {
-    "id": "vago_b51682c6-517d-4df7-a56e-f6545ea582cb",
-    "nome": "VAGO",
-    "funcao": "CEO",
-    "liderImediatoId": null,
-    "createdAt": "2026-05-14T03:19:20.351Z",
-    "status": "vago"
+    "id": "056d45ad-48ff-4dd7-8f87-1906b23c0d27",
+    "createdAt": "2026-07-15T00:53:13.278Z"
   }
 ]

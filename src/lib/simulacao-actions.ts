@@ -24,7 +24,7 @@ export async function criarRegraImpactoAction(
   tipo: TipoImpacto,
   condicao: RegraCondicao
 ) {
-  const regra = criarRegraImpacto({ nome, descricao, tipo, condicao, ativa: true })
+  const regra = await criarRegraImpacto({ nome, descricao, tipo, condicao, ativa: true })
   revalidatePath('/regras-impacto')
   return regra
 }
@@ -33,25 +33,27 @@ export async function atualizarRegraImpactoAction(
   id: string,
   dados: Partial<Omit<RegraImpacto, 'id'>>
 ) {
-  const regra = atualizarRegraImpacto(id, dados)
+  const regra = await atualizarRegraImpacto(id, dados)
   revalidatePath('/regras-impacto')
   return regra
 }
 
 export async function removerRegraImpactoAction(id: string) {
-  removerRegraImpacto(id)
+  await removerRegraImpacto(id)
   revalidatePath('/regras-impacto')
 }
 
 export async function getDadosSimulacao() {
-  const avaliacoes = listarAvaliacoes()
-  const metricas = listarMetricas()
-  const regras = listarRegrasImpacto()
+  const [avaliacoes, metricas, regras] = await Promise.all([
+    listarAvaliacoes(),
+    listarMetricas(),
+    listarRegrasImpacto(),
+  ])
   return { avaliacoes, metricas, regras }
 }
 
 export async function salvarImpactosAction(impactos: Impacto[]) {
-  salvarImpactosSimulacao(impactos)
+  await salvarImpactosSimulacao(impactos)
 }
 
 export async function carregarImpactosAction(): Promise<Impacto[]> {
@@ -59,5 +61,5 @@ export async function carregarImpactosAction(): Promise<Impacto[]> {
 }
 
 export async function limparImpactosAction() {
-  limparImpactosSimulacao()
+  await limparImpactosSimulacao()
 }

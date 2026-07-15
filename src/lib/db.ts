@@ -1,283 +1,347 @@
-import { Colaborador, Avaliacao, Iniciativa, MetricaMensal, RegraImpacto, Impacto } from './types'
-import fs from 'node:fs'
-import path from 'node:path'
+import { prisma } from './prisma'
+import type {
+  Colaborador,
+  Avaliacao,
+  Iniciativa,
+  MetricaMensal,
+  RegraImpacto,
+  Impacto,
+} from './types'
 
-const COLABORADORES_FILE = path.join(process.cwd(), 'src', 'data', 'colaboradores.json')
-const AVALIACOES_FILE = path.join(process.cwd(), 'src', 'data', 'avaliacoes.json')
-const INICIATIVAS_FILE = path.join(process.cwd(), 'src', 'data', 'iniciativas.json')
-const METRICAS_FILE = path.join(process.cwd(), 'src', 'data', 'metricas.json')
+// ─── Helpers de conversão ────────────────────────────────────
 
-function lerColaboradores(): Colaborador[] {
-  try {
-    const raw = fs.readFileSync(COLABORADORES_FILE, 'utf-8')
-    return JSON.parse(raw) as Colaborador[]
-  } catch {
-    return []
+function colPrismaParaModelo(p: any): Colaborador {
+  return {
+    id: p.id,
+    nome: p.nome,
+    funcao: p.funcao,
+    liderImediatoId: p.liderImediatoId,
+    createdAt: p.createdAt.toISOString(),
+    status: p.status as 'ativo' | 'vago',
   }
 }
 
-function escreverColaboradores(data: Colaborador[]): void {
-  fs.writeFileSync(COLABORADORES_FILE, JSON.stringify(data, null, 2), 'utf-8')
-}
-
-function lerAvaliacoes(): Avaliacao[] {
-  try {
-    const raw = fs.readFileSync(AVALIACOES_FILE, 'utf-8')
-    return JSON.parse(raw) as Avaliacao[]
-  } catch {
-    return []
+function avPrismaParaModelo(a: any): Avaliacao {
+  return {
+    id: a.id,
+    avaliadorId: a.avaliadorId,
+    avaliadoId: a.avaliadoId,
+    data: a.data.toISOString(),
+    criterios: JSON.parse(a.criterios),
+    comentarioGeral: a.comentarioGeral,
   }
 }
 
-function escreverAvaliacoes(data: Avaliacao[]): void {
-  fs.writeFileSync(AVALIACOES_FILE, JSON.stringify(data, null, 2), 'utf-8')
-}
-
-function lerIniciativas(): Iniciativa[] {
-  try {
-    const raw = fs.readFileSync(INICIATIVAS_FILE, 'utf-8')
-    return JSON.parse(raw) as Iniciativa[]
-  } catch {
-    return []
+function metricaPrismaParaModelo(m: any): MetricaMensal {
+  return {
+    id: m.id,
+    colaboradorId: m.colaboradorId,
+    mes: m.mes,
+    ano: m.ano,
+    diasTrabalhados: m.diasTrabalhados,
+    faltasInjustificadas: m.faltasInjustificadas,
+    horasAtraso: m.horasAtraso,
+    observacao: m.observacao,
+    data: m.data.toISOString(),
   }
 }
 
-function escreverIniciativas(data: Iniciativa[]): void {
-  fs.writeFileSync(INICIATIVAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
-}
-
-function lerMetricas(): MetricaMensal[] {
-  try {
-    const raw = fs.readFileSync(METRICAS_FILE, 'utf-8')
-    return JSON.parse(raw) as MetricaMensal[]
-  } catch {
-    return []
+function iniciativaPrismaParaModelo(i: any): Iniciativa {
+  return {
+    id: i.id,
+    colaboradorId: i.colaboradorId,
+    titulo: i.titulo,
+    descricao: i.descricao,
+    resultado: i.resultado,
+    valorResultado: i.valorResultado,
+    unidadeMedida: i.unidadeMedida,
+    data: i.data.toISOString(),
   }
 }
 
-function escreverMetricas(data: MetricaMensal[]): void {
-  fs.writeFileSync(METRICAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
+function regraPrismaParaModelo(r: any): RegraImpacto {
+  return {
+    id: r.id,
+    nome: r.nome,
+    descricao: r.descricao,
+    tipo: r.tipo as 'positivo' | 'negativo' | 'neutro',
+    condicao: JSON.parse(r.condicao),
+    ativa: r.ativa,
+  }
 }
 
-export function listarColaboradores(): Colaborador[] {
-  return lerColaboradores()
+// ─── Colaboradores ───────────────────────────────────────────
+
+export async function listarColaboradores(): Promise<Colaborador[]> {
+  const data = await prisma.colaborador.findMany({ orderBy: { nome: 'asc' } })
+  return data.map(colPrismaParaModelo)
 }
 
-export function buscarColaborador(id: string): Colaborador | undefined {
-  return lerColaboradores().find((c) => c.id === id)
+export async function buscarColaborador(id: string): Promise<Colaborador | undefined> {
+  const data = await prisma.colaborador.findUnique({ where: { id } })
+  return data ? colPrismaParaModelo(data) : undefined
 }
 
-export function criarColaborador(
+export async function criarColaborador(
   dados: Omit<Colaborador, 'id' | 'createdAt'>
-): Colaborador {
-  const data = lerColaboradores()
-  const colaborador: Colaborador = {
-    ...dados,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-  }
-  data.push(colaborador)
-  escreverColaboradores(data)
-  return colaborador
+): Promise<Colaborador> {
+  const data = await prisma.colaborador.create({
+    data: {
+      nome: dados.nome,
+      funcao: dados.funcao,
+      liderImediatoId: dados.liderImediatoId,
+      status: (dados as any).status || 'ativo',
+    },
+  })
+  return colPrismaParaModelo(data)
 }
 
-export function atualizarColaborador(
+export async function atualizarColaborador(
   id: string,
   dados: Partial<Omit<Colaborador, 'id' | 'createdAt'>>
-): Colaborador | undefined {
-  const data = lerColaboradores()
-  const idx = data.findIndex((c) => c.id === id)
-  if (idx === -1) return undefined
-  data[idx] = { ...data[idx], ...dados }
-  escreverColaboradores(data)
-  return data[idx]
+): Promise<Colaborador | undefined> {
+  const updateData: any = {}
+  if (dados.nome !== undefined) updateData.nome = dados.nome
+  if (dados.funcao !== undefined) updateData.funcao = dados.funcao
+  if (dados.liderImediatoId !== undefined) updateData.liderImediatoId = dados.liderImediatoId
+  if (dados.status !== undefined) updateData.status = dados.status
+
+  try {
+    const data = await prisma.colaborador.update({
+      where: { id },
+      data: updateData,
+    })
+    return colPrismaParaModelo(data)
+  } catch {
+    return undefined
+  }
 }
 
-export function removerColaborador(id: string): boolean {
-  const data = lerColaboradores()
-  const idx = data.findIndex((c) => c.id === id)
-  if (idx === -1) return false
-  data.splice(idx, 1)
-  escreverColaboradores(data)
-  return true
+export async function removerColaborador(id: string): Promise<boolean> {
+  try {
+    await prisma.colaborador.delete({ where: { id } })
+    return true
+  } catch {
+    return false
+  }
 }
 
-export function listarAvaliacoes(): Avaliacao[] {
-  return lerAvaliacoes()
+// ─── Avaliações ──────────────────────────────────────────────
+
+export async function listarAvaliacoes(): Promise<Avaliacao[]> {
+  const data = await prisma.avaliacao.findMany({ orderBy: { data: 'desc' } })
+  return data.map(avPrismaParaModelo)
 }
 
-export function buscarAvaliacao(id: string): Avaliacao | undefined {
-  return lerAvaliacoes().find((a) => a.id === id)
+export async function buscarAvaliacao(id: string): Promise<Avaliacao | undefined> {
+  const data = await prisma.avaliacao.findUnique({ where: { id } })
+  return data ? avPrismaParaModelo(data) : undefined
 }
 
-export function criarAvaliacao(
+export async function criarAvaliacao(
   dados: Omit<Avaliacao, 'id' | 'data'>
-): Avaliacao {
-  const data = lerAvaliacoes()
-  const avaliacao: Avaliacao = {
-    ...dados,
-    id: crypto.randomUUID(),
-    data: new Date().toISOString(),
+): Promise<Avaliacao> {
+  const data = await prisma.avaliacao.create({
+    data: {
+      avaliadorId: dados.avaliadorId,
+      avaliadoId: dados.avaliadoId,
+      criterios: JSON.stringify(dados.criterios),
+      comentarioGeral: dados.comentarioGeral,
+    },
+  })
+  return avPrismaParaModelo(data)
+}
+
+export async function removerAvaliacao(id: string): Promise<boolean> {
+  try {
+    await prisma.avaliacao.delete({ where: { id } })
+    return true
+  } catch {
+    return false
   }
-  data.push(avaliacao)
-  escreverAvaliacoes(data)
-  return avaliacao
 }
 
-export function removerAvaliacao(id: string): boolean {
-  const data = lerAvaliacoes()
-  const idx = data.findIndex((a) => a.id === id)
-  if (idx === -1) return false
-  data.splice(idx, 1)
-  escreverAvaliacoes(data)
-  return true
+export async function listarAvaliacoesPorAvaliador(avaliadorId: string): Promise<Avaliacao[]> {
+  const data = await prisma.avaliacao.findMany({
+    where: { avaliadorId },
+    orderBy: { data: 'desc' },
+  })
+  return data.map(avPrismaParaModelo)
 }
 
-export function listarAvaliacoesPorAvaliador(avaliadorId: string): Avaliacao[] {
-  return lerAvaliacoes().filter((a) => a.avaliadorId === avaliadorId)
+export async function listarAvaliacoesPorAvaliado(avaliadoId: string): Promise<Avaliacao[]> {
+  const data = await prisma.avaliacao.findMany({
+    where: { avaliadoId },
+    orderBy: { data: 'desc' },
+  })
+  return data.map(avPrismaParaModelo)
 }
 
-export function listarAvaliacoesPorAvaliado(avaliadoId: string): Avaliacao[] {
-  return lerAvaliacoes().filter((a) => a.avaliadoId === avaliadoId)
+// ─── Iniciativas ─────────────────────────────────────────────
+
+export async function listarIniciativas(): Promise<Iniciativa[]> {
+  const data = await prisma.iniciativa.findMany({ orderBy: { data: 'desc' } })
+  return data.map(iniciativaPrismaParaModelo)
 }
 
-export function listarIniciativas(): Iniciativa[] {
-  return lerIniciativas()
-}
-
-export function criarIniciativa(
+export async function criarIniciativa(
   dados: Omit<Iniciativa, 'id' | 'data'>
-): Iniciativa {
-  const data = lerIniciativas()
-  const iniciativa: Iniciativa = {
-    ...dados,
-    id: crypto.randomUUID(),
-    data: new Date().toISOString(),
+): Promise<Iniciativa> {
+  const data = await prisma.iniciativa.create({
+    data: {
+      colaboradorId: dados.colaboradorId,
+      titulo: dados.titulo,
+      descricao: dados.descricao,
+      resultado: dados.resultado,
+      valorResultado: dados.valorResultado,
+      unidadeMedida: dados.unidadeMedida,
+    },
+  })
+  return iniciativaPrismaParaModelo(data)
+}
+
+export async function removerIniciativa(id: string): Promise<boolean> {
+  try {
+    await prisma.iniciativa.delete({ where: { id } })
+    return true
+  } catch {
+    return false
   }
-  data.push(iniciativa)
-  escreverIniciativas(data)
-  return iniciativa
 }
 
-export function removerIniciativa(id: string): boolean {
-  const data = lerIniciativas()
-  const idx = data.findIndex((i) => i.id === id)
-  if (idx === -1) return false
-  data.splice(idx, 1)
-  escreverIniciativas(data)
-  return true
+export async function listarIniciativasPorColaborador(colaboradorId: string): Promise<Iniciativa[]> {
+  const data = await prisma.iniciativa.findMany({
+    where: { colaboradorId },
+    orderBy: { data: 'desc' },
+  })
+  return data.map(iniciativaPrismaParaModelo)
 }
 
-export function listarIniciativasPorColaborador(colaboradorId: string): Iniciativa[] {
-  return lerIniciativas().filter((i) => i.colaboradorId === colaboradorId)
+// ─── Métricas ────────────────────────────────────────────────
+
+export async function listarMetricas(): Promise<MetricaMensal[]> {
+  const data = await prisma.metricaMensal.findMany({ orderBy: [{ ano: 'desc' }, { mes: 'desc' }] })
+  return data.map(metricaPrismaParaModelo)
 }
 
-export function listarMetricas(): MetricaMensal[] {
-  return lerMetricas()
-}
-
-export function criarMetrica(
+export async function criarMetrica(
   dados: Omit<MetricaMensal, 'id' | 'data'>
-): MetricaMensal {
-  const data = lerMetricas()
-  const metrica: MetricaMensal = {
-    ...dados,
-    id: crypto.randomUUID(),
-    data: new Date().toISOString(),
-  }
-  data.push(metrica)
-  escreverMetricas(data)
-  return metrica
+): Promise<MetricaMensal> {
+  const data = await prisma.metricaMensal.create({
+    data: {
+      colaboradorId: dados.colaboradorId,
+      mes: dados.mes,
+      ano: dados.ano,
+      diasTrabalhados: dados.diasTrabalhados,
+      faltasInjustificadas: dados.faltasInjustificadas,
+      horasAtraso: dados.horasAtraso,
+      observacao: dados.observacao,
+    },
+  })
+  return metricaPrismaParaModelo(data)
 }
 
-export function removerMetrica(id: string): boolean {
-  const data = lerMetricas()
-  const idx = data.findIndex((m) => m.id === id)
-  if (idx === -1) return false
-  data.splice(idx, 1)
-  escreverMetricas(data)
-  return true
-}
-
-export function listarMetricasPorColaborador(colaboradorId: string): MetricaMensal[] {
-  return lerMetricas().filter((m) => m.colaboradorId === colaboradorId)
-}
-
-// ---------- Regras de Impacto ----------
-
-const REGRAS_FILE = path.join(process.cwd(), 'src', 'data', 'regras-impacto.json')
-
-function lerRegras(): RegraImpacto[] {
+export async function removerMetrica(id: string): Promise<boolean> {
   try {
-    const raw = fs.readFileSync(REGRAS_FILE, 'utf-8')
-    return JSON.parse(raw) as RegraImpacto[]
+    await prisma.metricaMensal.delete({ where: { id } })
+    return true
   } catch {
-    return []
+    return false
   }
 }
 
-function escreverRegras(data: RegraImpacto[]): void {
-  fs.writeFileSync(REGRAS_FILE, JSON.stringify(data, null, 2), 'utf-8')
+export async function listarMetricasPorColaborador(colaboradorId: string): Promise<MetricaMensal[]> {
+  const data = await prisma.metricaMensal.findMany({
+    where: { colaboradorId },
+    orderBy: [{ ano: 'desc' }, { mes: 'desc' }],
+  })
+  return data.map(metricaPrismaParaModelo)
 }
 
-export function listarRegrasImpacto(): RegraImpacto[] {
-  return lerRegras()
+// ─── Regras de Impacto ───────────────────────────────────────
+
+export async function listarRegrasImpacto(): Promise<RegraImpacto[]> {
+  const data = await prisma.regraImpacto.findMany()
+  return data.map(regraPrismaParaModelo)
 }
 
-export function criarRegraImpacto(dados: Omit<RegraImpacto, 'id'>): RegraImpacto {
-  const data = lerRegras()
-  const regra: RegraImpacto = {
-    ...dados,
-    id: crypto.randomUUID(),
-  }
-  data.push(regra)
-  escreverRegras(data)
-  return regra
+export async function criarRegraImpacto(
+  dados: Omit<RegraImpacto, 'id'>
+): Promise<RegraImpacto> {
+  const data = await prisma.regraImpacto.create({
+    data: {
+      nome: dados.nome,
+      descricao: dados.descricao,
+      tipo: dados.tipo,
+      condicao: JSON.stringify(dados.condicao),
+      ativa: dados.ativa,
+    },
+  })
+  return regraPrismaParaModelo(data)
 }
 
-export function atualizarRegraImpacto(id: string, dados: Partial<Omit<RegraImpacto, 'id'>>): RegraImpacto | undefined {
-  const data = lerRegras()
-  const idx = data.findIndex((r) => r.id === id)
-  if (idx === -1) return undefined
-  data[idx] = { ...data[idx], ...dados }
-  escreverRegras(data)
-  return data[idx]
-}
+export async function atualizarRegraImpacto(
+  id: string,
+  dados: Partial<Omit<RegraImpacto, 'id'>>
+): Promise<RegraImpacto | undefined> {
+  const updateData: any = {}
+  if (dados.nome !== undefined) updateData.nome = dados.nome
+  if (dados.descricao !== undefined) updateData.descricao = dados.descricao
+  if (dados.tipo !== undefined) updateData.tipo = dados.tipo
+  if (dados.condicao !== undefined) updateData.condicao = JSON.stringify(dados.condicao)
+  if (dados.ativa !== undefined) updateData.ativa = dados.ativa
 
-export function removerRegraImpacto(id: string): boolean {
-  const data = lerRegras()
-  const idx = data.findIndex((r) => r.id === id)
-  if (idx === -1) return false
-  data.splice(idx, 1)
-  escreverRegras(data)
-  return true
-}
-
-// ---------- Histórico de Impactos ----------
-
-const IMPACTOS_FILE = path.join(process.cwd(), 'src', 'data', 'impactos.json')
-
-function lerImpactosSalvos(): Impacto[] {
   try {
-    const raw = fs.readFileSync(IMPACTOS_FILE, 'utf-8')
-    return JSON.parse(raw) as Impacto[]
+    const data = await prisma.regraImpacto.update({
+      where: { id },
+      data: updateData,
+    })
+    return regraPrismaParaModelo(data)
   } catch {
-    return []
+    return undefined
   }
 }
 
-function escreverImpactosSalvos(data: Impacto[]): void {
-  fs.writeFileSync(IMPACTOS_FILE, JSON.stringify(data, null, 2), 'utf-8')
+export async function removerRegraImpacto(id: string): Promise<boolean> {
+  try {
+    await prisma.regraImpacto.delete({ where: { id } })
+    return true
+  } catch {
+    return false
+  }
 }
 
-export function salvarImpactosSimulacao(impactos: Impacto[]): void {
-  escreverImpactosSalvos(impactos)
+// ─── Histórico de Impactos ──────────────────────────────────
+
+export async function salvarImpactosSimulacao(impactos: Impacto[]): Promise<void> {
+  await prisma.impacto.deleteMany()
+  if (impactos.length === 0) return
+  await prisma.impacto.createMany({
+    data: impactos.map((i) => ({
+      id: i.id,
+      tipo: i.tipo,
+      titulo: i.titulo,
+      descricao: i.descricao,
+      colaboradorId: i.colaboradorId ?? null,
+      colaboradorNome: i.colaboradorNome ?? null,
+      regraId: i.regraId ?? null,
+    })),
+  })
 }
 
-export function carregarImpactosSimulacao(): Impacto[] {
-  return lerImpactosSalvos()
+export async function carregarImpactosSimulacao(): Promise<Impacto[]> {
+  const data = await prisma.impacto.findMany()
+  return data.map((i) => ({
+    id: i.id,
+    tipo: i.tipo as 'positivo' | 'negativo' | 'neutro',
+    titulo: i.titulo,
+    descricao: i.descricao,
+    colaboradorId: i.colaboradorId ?? undefined,
+    colaboradorNome: i.colaboradorNome ?? undefined,
+    regraId: i.regraId ?? undefined,
+  }))
 }
 
-export function limparImpactosSimulacao(): void {
-  escreverImpactosSalvos([])
+export async function limparImpactosSimulacao(): Promise<void> {
+  await prisma.impacto.deleteMany()
 }

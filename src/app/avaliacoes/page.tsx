@@ -3,9 +3,11 @@ import { listarAvaliacoes } from '@/lib/db'
 import { listarColaboradores } from '@/lib/db'
 import { excluirAvaliacaoAction } from './actions'
 
-export default function ListaAvaliacoes() {
-  const avaliacoes = listarAvaliacoes()
-  const colaboradores = listarColaboradores()
+export default async function ListaAvaliacoes() {
+  const [avaliacoes, colaboradores] = await Promise.all([
+    listarAvaliacoes(),
+    listarColaboradores(),
+  ])
 
   function nomeColaborador(id: string) {
     return colaboradores.find((c) => c.id === id)?.nome || 'Desconhecido'

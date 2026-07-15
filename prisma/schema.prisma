@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Colaborador {
+  id              String   @id @default(cuid())
+  nome            String
+  funcao          String
+  liderImediatoId String?
+  createdAt       DateTime @default(now())
+  status          String   @default("ativo")
+
+  lider        Colaborador?  @relation("LiderSubordinados", fields: [liderImediatoId], references: [id])
+  subordinados Colaborador[] @relation("LiderSubordinados")
+
+  avaliacoesRecebidas Avaliacao[]     @relation("Avaliado")
+  avaliacoesFeitas    Avaliacao[]     @relation("Avaliador")
+  metricas            MetricaMensal[]
+  iniciativas         Iniciativa[]
+}
+
+model Avaliacao {
+  id              String   @id @default(cuid())
+  avaliadorId     String
+  avaliadoId      String
+  data            DateTime @default(now())
+  criterios       String
+  comentarioGeral String   @default("")
+
+  avaliador Colaborador @relation("Avaliador", fields: [avaliadorId], references: [id])
+  avaliado  Colaborador @relation("Avaliado", fields: [avaliadoId], references: [id])
+}
+
+model MetricaMensal {
+  id                  String   @id @default(cuid())
+  colaboradorId       String
+  mes                 Int
+  ano                 Int
+  diasTrabalhados     Int
+  faltasInjustificadas Int
+  horasAtraso         Int
+  observacao          String   @default("")
+  data                DateTime @default(now())
+
+  colaborador Colaborador @relation(fields: [colaboradorId], references: [id])
+}
+
+model Iniciativa {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  titulo         String
+  descricao      String   @default("")
+  resultado      String   @default("")
+  valorResultado Float
+  unidadeMedida  String   @default("")
+  data           DateTime @default(now())
+
+  colaborador Colaborador @relation(fields: [colaboradorId], references: [id])
+}
+
+model RegraImpacto {
+  id        String  @id @default(cuid())
+  nome      String
+  descricao String  @default("")
+  tipo      String
+  condicao  String
+  ativa     Boolean @default(true)
+}
+
+model Impacto {
+  id              String  @id @default(cuid())
+  tipo            String
+  titulo          String
+  descricao       String  @default("")
+  colaboradorId   String?
+  colaboradorNome String?
+  regraId         String?
+}

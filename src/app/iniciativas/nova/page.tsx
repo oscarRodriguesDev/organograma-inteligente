@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { cadastrarIniciativa } from '@/lib/actions'
 import { listarColaboradores } from '@/lib/db'
 
-export default function NovaIniciativa() {
-  const colaboradores = listarColaboradores()
+export default async function NovaIniciativa() {
+  const colaboradores = await listarColaboradores()
 
   return (
     <div className="flex-1 p-8">

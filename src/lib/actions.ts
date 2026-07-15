@@ -2,8 +2,6 @@
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import fs from 'node:fs'
-import path from 'node:path'
 import {
   atualizarColaborador,
   buscarColaborador,
@@ -24,28 +22,28 @@ export async function cadastrarColaborador(formData: FormData) {
 
   if (!nome || !funcao) return
 
-  criarColaborador({ nome, funcao, liderImediatoId: liderImediatoId || null })
+  await criarColaborador({ nome, funcao, liderImediatoId: liderImediatoId || null })
   revalidatePath('/colaboradores')
   redirect('/colaboradores')
 }
 
 export async function excluirColaborador(id: string) {
-  removerColaborador(id)
+  await removerColaborador(id)
   revalidatePath('/colaboradores')
 }
 
 export async function excluirColaboradorComSubordinados(id: string) {
-  const colaborador = buscarColaborador(id)
+  const colaborador = await buscarColaborador(id)
   if (!colaborador) return
 
-  const todos = listarColaboradores()
+  const todos = await listarColaboradores()
   const subordinados = todos.filter((c) => c.liderImediatoId === id)
 
   for (const sub of subordinados) {
-    atualizarColaborador(sub.id, { liderImediatoId: colaborador.liderImediatoId })
+    await atualizarColaborador(sub.id, { liderImediatoId: colaborador.liderImediatoId })
   }
 
-  removerColaborador(id)
+  await removerColaborador(id)
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
 }
@@ -55,24 +53,31 @@ export async function adicionarColaboradorRapido(
   funcao: string,
   liderImediatoId: string | null
 ) {
-  const col = criarColaborador({ nome, funcao, liderImediatoId })
+  const col = await criarColaborador({ nome, funcao, liderImediatoId })
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
   return col
 }
 
 export async function atualizarColaboradorAction(id: string, nome: string, funcao: string) {
-  atualizarColaborador(id, { nome, funcao })
+  await atualizarColaborador(id, { nome, funcao })
   revalidatePath('/organograma')
 }
 
 export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
-  const filePath = path.join(process.cwd(), 'src', 'data', 'colaboradores.json')
-  fs.writeFileSync(filePath, JSON.stringify(colaboradores, null, 2), 'utf-8')
+  // Persiste via Prisma — atualiza todos os registros
+  const ids = colaboradores.map((c) => c.id)
+  for (const col of colaboradores) {
+    await atualizarColaborador(col.id, {
+      nome: col.nome,
+      funcao: col.funcao,
+      liderImediatoId: col.liderImediatoId,
+      status: col.status,
+    })
+  }
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
 }
-
 
 export async function listarPossiveisLideres() {
   return listarColaboradores()
@@ -90,7 +95,7 @@ export async function criarAvaliacaoAction(formData: FormData) {
     nota: Number(formData.get(`nota_${criterio}`)) || 1,
   }))
 
-  criarAvaliacao({ avaliadorId, avaliadoId, criterios, comentarioGeral })
+  await criarAvaliacao({ avaliadorId, avaliadoId, criterios, comentarioGeral })
   revalidatePath('/avaliacoes')
   redirect('/avaliacoes')
 }
@@ -105,7 +110,7 @@ export async function cadastrarIniciativa(formData: FormData) {
 
   if (!colaboradorId || !titulo) return
 
-  criarIniciativa({
+  await criarIniciativa({
     colaboradorId, titulo,
     descricao: descricao || '',
     resultado: resultado || '',
@@ -127,7 +132,7 @@ export async function cadastrarMetrica(formData: FormData) {
 
   if (!colaboradorId || !mes || !ano) return
 
-  criarMetrica({ colaboradorId, mes, ano, diasTrabalhados, faltasInjustificadas, horasAtraso, observacao })
+  await criarMetrica({ colaboradorId, mes, ano, diasTrabalhados, faltasInjustificadas, horasAtraso, observacao })
   revalidatePath('/metricas')
   redirect('/metricas')
 }

@@ -7,8 +7,8 @@ const MESES = [
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ]
 
-export default function NovaMetrica() {
-  const colaboradores = listarColaboradores()
+export default async function NovaMetrica() {
+  const colaboradores = await listarColaboradores()
   const agora = new Date()
   const mesAtual = agora.getMonth() + 1
   const anoAtual = agora.getFullYear()

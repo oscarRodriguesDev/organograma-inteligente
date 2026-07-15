@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { criarAvaliacaoAction, listarPossiveisLideres } from '@/lib/actions'
+import { criarAvaliacaoAction } from '@/lib/actions'
 import { listarColaboradores } from '@/lib/db'
 import { CRITERIOS_AVALIACAO, type CriterioNota } from '@/lib/types'
 
 export default async function NovaAvaliacao() {
-  const colaboradores = listarColaboradores()
+  const colaboradores = await listarColaboradores()
 
   return (
     <div className="flex-1 p-8">

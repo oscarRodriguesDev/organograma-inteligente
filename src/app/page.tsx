@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { listarColaboradores } from '@/lib/db'
 
-export default function Home() {
-  const colaboradores = listarColaboradores()
+export default async function Home() {
+  const colaboradores = await listarColaboradores()
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">

@@ -4,9 +4,11 @@ import { listarColaboradores } from '@/lib/db'
 
 import { excluirIniciativaAction } from './actions'
 
-export default function ListaIniciativas() {
-  const iniciativas = listarIniciativas()
-  const colaboradores = listarColaboradores()
+export default async function ListaIniciativas() {
+  const [iniciativas, colaboradores] = await Promise.all([
+    listarIniciativas(),
+    listarColaboradores(),
+  ])
 
   function nomeColaborador(id: string) {
     return colaboradores.find((c) => c.id === id)?.nome || 'Desconhecido'

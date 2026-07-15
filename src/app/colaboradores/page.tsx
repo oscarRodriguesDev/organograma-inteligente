@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { listarColaboradores } from '@/lib/db'
 import { excluirColaborador } from '@/lib/actions'
 
-export default function ListaColaboradores() {
-  const colaboradores = listarColaboradores()
+export default async function ListaColaboradores() {
+  const colaboradores = await listarColaboradores()
 
   return (
     <div className="flex-1 p-8">
