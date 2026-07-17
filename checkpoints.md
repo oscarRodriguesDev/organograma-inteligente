@@ -25,6 +25,14 @@
 
 | 11 | `v0.11-ia-fase1` | Integração de IA generativa via NVIDIA API (Fase 1): sugestão inteligente de candidatos, geração de feedback em avaliações, redação assistida de iniciativas, análise de sentimento em comentários. Infraestrutura: src/lib/ai/, tabela AILog, feature flags, fallbacks determinísticos. | ✅ |
 | 12 | `v0.12-novas-ferramentas-rh` | Fit Cultural, Teste DISC, Pesquisa de Sentimento, Registro de Conversas, navegação, correção `prisma.aILog` → `prisma.impacto` | ✅ |
+| 12.1 | `v0.12.1-db-complementos-seed` | Funções db complementares (obterRespostasFitCultural, calcularScoreFitCultural, recalcularResultadoDISC, calcularScoreSentimento, calcularScoreConversas, calcularEAtualizarScore, obterScore, listarScores) + filtros opcionais + script seed-testes.ts | ✅ |
+
+| 12.2 | `v0.12.2-ajustes-paginas` | Ajuste redirect DISC → `/teste-disc/resultados`; correção emojis pesquisa sentimento (😍😊😐😟😡) | ✅ |
+
+## Checkpoints Futuros
+- `v0.14-multi-tenant` — Schema Empresa, auth email+senha, RBAC, seed admin ✅ (17/07/2026 — build passou)
 
 ## Próximos checkpoints previstos
-- `v0.13-melhorias-ux` — Animações, filtros, busca, temas
+- `v0.14.1-csv-import` — Importação de colaboradores via CSV
+- `v0.14.2-convite-testes` — Fluxo de convite para responder testes
+- `v0.15-admin-tenant` — Gestão de empresas, cadastro de tenants

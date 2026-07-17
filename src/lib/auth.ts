@@ -1,13 +1,21 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
+import { prisma } from './prisma'
+import type { UsuarioSessao } from './types'
+import { Papel } from './types'
+import bcrypt from 'bcryptjs'
 
-const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET ?? 'fallback-secret')
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? 'fallback-secret-change-me')
 const COOKIE_NAME = 'session'
 const SESSION_DURATION = 60 * 60 * 24 // 24h
 
 export interface SessionPayload {
-  username: string
+  colaboradorId: string
+  empresaId: string
+  empresaNome: string
   nome: string
+  email: string
+  papel: Papel
 }
 
 export async function criarToken(payload: SessionPayload): Promise<string> {
@@ -34,18 +42,39 @@ export async function getSession(): Promise<SessionPayload | null> {
   return verificarToken(token)
 }
 
-export function validarCredenciais(
-  username: string,
-  password: string
-): SessionPayload | null {
-  if (
-    username === process.env.AUTH_USERNAME &&
-    password === process.env.AUTH_PASSWORD
-  ) {
-    return {
-      username,
-      nome: username.charAt(0).toUpperCase() + username.slice(1).replace('.', ' '),
-    }
+export async function autenticarPorEmailSenha(
+  email: string,
+  senha: string
+): Promise<SessionPayload | null> {
+  // Busca colaborador pelo email (qualquer empresa)
+  const colaborador = await prisma.colaborador.findFirst({
+    where: { email },
+    include: { empresa: true },
+  })
+
+  if (!colaborador || !colaborador.senhaHash) return null
+
+  const senhaValida = await bcrypt.compare(senha, colaborador.senhaHash)
+  if (!senhaValida) return null
+
+  if (!colaborador.empresa.ativa) return null
+  if (colaborador.status !== 'ativo') return null
+
+  return {
+    colaboradorId: colaborador.id,
+    empresaId: colaborador.empresaId,
+    empresaNome: colaborador.empresa.nome,
+    nome: colaborador.nome,
+    email: colaborador.email!,
+    papel: colaborador.papel as Papel,
   }
-  return null
+}
+
+export function validarPermissao(
+  session: SessionPayload | null,
+  papeisPermitidos: Papel[]
+): boolean {
+  if (!session) return false
+  if (session.papel === Papel.ADMIN_PLATAFORMA) return true // admin passa em tudo
+  return papeisPermitidos.includes(session.papel)
 }

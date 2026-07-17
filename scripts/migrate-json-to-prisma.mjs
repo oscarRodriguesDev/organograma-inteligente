@@ -50,6 +50,7 @@ async function migrate() {
           id: c.id,
           nome: c.nome,
           funcao: c.funcao,
+          empresaId: 'empresa_default',
           liderImediatoId: c.liderImediatoId,
           createdAt: new Date(c.createdAt),
           status: c.status || 'ativo',
@@ -153,14 +154,15 @@ async function migrate() {
         condicao: JSON.stringify(r.condicao),
         ativa: r.ativa ?? true,
       },
-      create: {
-        id: r.id,
-        nome: r.nome,
-        descricao: r.descricao || '',
-        tipo: r.tipo,
-        condicao: JSON.stringify(r.condicao),
-        ativa: r.ativa ?? true,
-      },
+        create: {
+          id: r.id,
+          nome: r.nome,
+          descricao: r.descricao || '',
+          tipo: r.tipo,
+          condicao: JSON.stringify(r.condicao),
+          ativa: r.ativa ?? true,
+          empresaId: 'empresa_default',
+        },
     })
   }
   console.log(`  ✓ ${regras.length} regras de impacto`)

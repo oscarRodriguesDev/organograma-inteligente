@@ -12,6 +12,7 @@ import {
   carregarImpactosSimulacao,
   limparImpactosSimulacao,
 } from './db'
+import { prisma } from './prisma'
 import type { RegraImpacto, TipoImpacto, RegraCondicao, Impacto } from './types'
 
 export async function listarRegrasImpactoAction() {
@@ -44,12 +45,32 @@ export async function removerRegraImpactoAction(id: string) {
 }
 
 export async function getDadosSimulacao() {
-  const [avaliacoes, metricas, regras] = await Promise.all([
+  const [avaliacoes, metricas, regras, scoresPrisma] = await Promise.all([
     listarAvaliacoes(),
     listarMetricas(),
     listarRegrasImpacto(),
+    prisma.scoreColaborador.findMany(),
   ])
-  return { avaliacoes, metricas, regras }
+
+  // Converte scores para Record<string, ScoreColaborador>
+  const scores: Record<string, any> = {}
+  for (const s of scoresPrisma) {
+    scores[s.colaboradorId] = {
+      id: s.id,
+      colaboradorId: s.colaboradorId,
+      scoreGeral: s.scoreGeral,
+      scoreFitCultural: s.scoreFitCultural,
+      scoreDISC: s.scoreDISC,
+      scoreSentimento: s.scoreSentimento,
+      scoreConversas: s.scoreConversas,
+      scoreAvaliacoes: s.scoreAvaliacoes,
+      scoreMetricas: s.scoreMetricas,
+      scoreIniciativas: s.scoreIniciativas,
+      ultimaAtualizacao: s.ultimaAtualizacao.toISOString(),
+    }
+  }
+
+  return { avaliacoes, metricas, regras, scores }
 }
 
 export async function salvarImpactosAction(impactos: Impacto[]) {

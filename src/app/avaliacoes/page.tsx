@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { listarAvaliacoes } from '@/lib/db'
 import { listarColaboradores } from '@/lib/db'
 import { excluirAvaliacaoAction } from './actions'
+import AnaliseSentimentoBadge from '@/components/AnaliseSentimentoBadge'
 
 export default async function ListaAvaliacoes() {
   const [avaliacoes, colaboradores] = await Promise.all([
@@ -49,6 +50,11 @@ export default async function ListaAvaliacoes() {
                         <span className="font-medium text-zinc-800">{nomeColaborador(av.avaliadorId)}</span>
                         {' avaliou '}
                         <span className="font-medium text-zinc-800">{nomeColaborador(av.avaliadoId)}</span>
+                        {' '}
+                        <AnaliseSentimentoBadge
+                          colaboradorId={av.avaliadoId}
+                          colaboradorNome={nomeColaborador(av.avaliadoId)}
+                        />
                       </p>
                       <p className="text-xs text-zinc-400 mt-0.5">
                         {new Date(av.data).toLocaleDateString('pt-BR')}

@@ -73,15 +73,25 @@ async function seed() {
   await prisma.metricaMensal.deleteMany()
   await prisma.avaliacao.deleteMany()
   await prisma.colaborador.deleteMany()
+  await prisma.fitCulturalPergunta.deleteMany()
+  await prisma.perguntaDISC.deleteMany()
+  await prisma.cargo.deleteMany()
+
+  // ── Empresa Default (tenant) ──
+  await prisma.empresa.upsert({
+    where: { slug: 'empresa-default' },
+    update: {},
+    create: { id: 'empresa_default', nome: 'Empresa Default', slug: 'empresa-default' },
+  })
 
   // ── Estrutura hierárquica ──
-  const cols: { id: string; nome: string; funcao: string; liderImediatoId: string | null; createdAt: Date }[] = []
+  const cols: { id: string; nome: string; funcao: string; liderImediatoId: string | null; empresaId: string; createdAt: Date }[] = []
   let idCounter = 0
   const newId = () => (++idCounter).toString()
 
   // CEO
   const ceoId = newId()
-  cols.push({ id: ceoId, nome: 'Carlos Almeida', funcao: 'Chief Executive Officer (CEO)', liderImediatoId: null, createdAt: new Date('2025-01-15T08:00:00.000Z') })
+  cols.push({ id: ceoId, nome: 'Carlos Almeida', funcao: 'Chief Executive Officer (CEO)', liderImediatoId: null, empresaId: 'empresa_default', createdAt: new Date('2025-01-15T08:00:00.000Z') })
 
   // Diretores
   const diretores = [
@@ -94,7 +104,7 @@ async function seed() {
   for (const d of diretores) {
     const id = newId()
     diretoresIds.push(id)
-    cols.push({ id, nome: d.nome, funcao: d.funcao, liderImediatoId: ceoId, createdAt: new Date('2025-01-15T08:00:00.000Z') })
+    cols.push({ id, nome: d.nome, funcao: d.funcao, liderImediatoId: ceoId, empresaId: 'empresa_default', createdAt: new Date('2025-01-15T08:00:00.000Z') })
   }
 
   // Gerentes
@@ -114,7 +124,7 @@ async function seed() {
   for (const g of gerentes) {
     const id = newId()
     gerentesIds.push(id)
-    cols.push({ id, nome: g.nome, funcao: g.funcao, liderImediatoId: diretoresIds[g.dirIdx], createdAt: new Date('2025-03-01T08:00:00.000Z') })
+    cols.push({ id, nome: g.nome, funcao: g.funcao, liderImediatoId: diretoresIds[g.dirIdx], empresaId: 'empresa_default', createdAt: new Date('2025-03-01T08:00:00.000Z') })
   }
 
   // Analistas
@@ -132,6 +142,7 @@ async function seed() {
         id, nome: nomesDisponiveis[nomeIdx++],
         funcao: pick(areaCargos),
         liderImediatoId: gerentesIds[g],
+        empresaId: 'empresa_default',
         createdAt: new Date(`2025-06-${String(rand(1, 15)).padStart(2, '0')}T08:00:00.000Z`),
       })
     }
@@ -209,7 +220,7 @@ async function seed() {
     { nome: 'Líder com perfil inadequado', descricao: 'Impacto negativo quando um líder tem perfil Ruim.', tipo: 'negativo', condicao: JSON.stringify({ tipo: 'lider_perfil_ruim' }), ativa: true },
     { nome: 'Time ganha líder forte', descricao: 'Impacto positivo quando um time ganha um líder de alta performance.', tipo: 'positivo', condicao: JSON.stringify({ tipo: 'time_ganha_lider_forte' }), ativa: true },
   ]
-  await prisma.regraImpacto.createMany({ data: regras })
+  await prisma.regraImpacto.createMany({ data: regras.map(r => ({ ...r, empresaId: 'empresa_default' })) })
   console.log(`  ✓ ${regras.length} regras de impacto`)
 
   await prisma.$disconnect()

@@ -14,8 +14,10 @@ import {
   listarCargos,
   garantirCargo,
 } from './db'
-import { CRITERIOS_AVALIACAO } from './types'
+import { prisma } from './prisma'
+import { CRITERIOS_AVALIACAO, Papel } from './types'
 import type { Colaborador } from './types'
+import { getSession } from './auth'
 
 export async function cadastrarColaborador(formData: FormData) {
   const nome = formData.get('nome')?.toString().trim()
@@ -24,9 +26,12 @@ export async function cadastrarColaborador(formData: FormData) {
 
   if (!nome || !funcao) return
 
+  const session = await getSession()
+  const empresaId = session?.empresaId ?? 'empresa_default'
+
   // Garante que o cargo existe na lista global
   await garantirCargo(funcao)
-  await criarColaborador({ nome, funcao, liderImediatoId: liderImediatoId || null })
+  await criarColaborador({ nome, funcao, empresaId, papel: Papel.COLABORADOR, liderImediatoId: liderImediatoId || null })
   revalidatePath('/colaboradores')
   revalidatePath('/organograma')
   redirect('/colaboradores')
@@ -48,7 +53,9 @@ export async function excluirColaboradorComSubordinados(id: string) {
     await atualizarColaborador(sub.id, { liderImediatoId: colaborador.liderImediatoId })
   }
 
-  await removerColaborador(id)
+  const removido = await removerColaborador(id)
+  if (!removido) throw new Error(`Não foi possível excluir o colaborador ${id}`)
+
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
 }
@@ -58,28 +65,137 @@ export async function adicionarColaboradorRapido(
   funcao: string,
   liderImediatoId: string | null
 ) {
-  const col = await criarColaborador({ nome, funcao, liderImediatoId })
+  // Valida se o líder ainda existe no banco (evita FK error)
+  if (liderImediatoId) {
+    const lider = await buscarColaborador(liderImediatoId)
+    if (!lider) {
+      throw new Error(`O líder informado (${liderImediatoId}) não existe mais. Atualize a página e tente novamente.`)
+    }
+  }
+
+  const session = await getSession()
+  const empresaId = session?.empresaId ?? 'empresa_default'
+
+  const col = await criarColaborador({ nome, funcao, empresaId, papel: Papel.COLABORADOR, liderImediatoId })
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
   return col
 }
 
 export async function atualizarColaboradorAction(id: string, nome: string, funcao: string) {
+  await garantirCargo(funcao)
   await atualizarColaborador(id, { nome, funcao })
   revalidatePath('/organograma')
 }
 
 export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
-  // Persiste via Prisma — atualiza todos os registros
-  const ids = colaboradores.map((c) => c.id)
+  const idsSimulacao = new Set(colaboradores.map((c) => c.id))
+
+  const session = await getSession()
+  const empresaId = session?.empresaId ?? 'empresa_default'
+  const papel = session?.papel ?? Papel.COLABORADOR
+
+  // Consulta IDs que existem no BD antes da simulação
+  const existentes = await prisma.colaborador.findMany({
+    select: { id: true },
+  })
+  const idsExistentes = new Set(existentes.map((c) => c.id))
+
+  // 1. Garantir cargos
   for (const col of colaboradores) {
-    await atualizarColaborador(col.id, {
-      nome: col.nome,
-      funcao: col.funcao,
-      liderImediatoId: col.liderImediatoId,
-      status: col.status,
-    })
+    if (col.funcao) await garantirCargo(col.funcao)
   }
+
+  // 2. Criar/atualizar cada colaborador da simulação
+  for (const col of colaboradores) {
+    const isVagoSimulacao = col.id.startsWith('vago_')
+    const isContratadoSimulacao = col.id.startsWith('contratado_')
+
+    if (isVagoSimulacao) {
+      // VAGO criado pela simulação (promoção criou vaga na posição antiga)
+      // Só persiste se ainda estiver vago e tiver subordinados (vaga real)
+      if (col.status === 'vago') {
+        try {
+          await prisma.colaborador.create({
+            data: {
+              id: col.id,
+              nome: col.nome,
+              funcao: col.funcao,
+              empresaId,
+              papel: Papel.COLABORADOR,
+              liderImediatoId: col.liderImediatoId,
+              status: 'vago',
+            },
+          })
+        } catch {
+          // Já existe ou deu erro — ignora
+        }
+      }
+    } else if (isContratadoSimulacao) {
+      // Novo contratado via simulação
+      try {
+        await prisma.colaborador.create({
+          data: {
+            id: col.id,
+            nome: col.nome,
+            funcao: col.funcao,
+            empresaId,
+            papel: Papel.COLABORADOR,
+            liderImediatoId: col.liderImediatoId,
+            status: col.status || 'ativo',
+          },
+        })
+      } catch {
+        // Já existe — atualiza
+        await atualizarColaborador(col.id, {
+          nome: col.nome,
+          funcao: col.funcao,
+          liderImediatoId: col.liderImediatoId,
+          status: col.status,
+        })
+      }
+    } else if (idsExistentes.has(col.id)) {
+      // Colaborador real existente → atualiza
+      await atualizarColaborador(col.id, {
+        nome: col.nome,
+        funcao: col.funcao,
+        liderImediatoId: col.liderImediatoId,
+        status: col.status,
+      })
+    } else {
+      // Colaborador real que não existe (caso raro)
+      try {
+        await prisma.colaborador.create({
+          data: {
+            id: col.id,
+            nome: col.nome,
+            funcao: col.funcao,
+            empresaId,
+            papel: Papel.COLABORADOR,
+            liderImediatoId: col.liderImediatoId,
+            status: col.status || 'ativo',
+          },
+        })
+      } catch {
+        // Ignora erro
+      }
+    }
+  }
+
+  // 3. Remover colaboradores que existiam no BD mas sumiram da simulação
+  //    (ex: cargo demitido que foi preenchido por promoção → VAGO original some)
+  for (const id of idsExistentes) {
+    if (!idsSimulacao.has(id)) {
+      await removerColaborador(id)
+    }
+  }
+
+  revalidatePath('/organograma')
+  revalidatePath('/colaboradores')
+}
+
+export async function relocarColaboradorAction(id: string, novoLiderId: string | null) {
+  await atualizarColaborador(id, { liderImediatoId: novoLiderId })
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
 }

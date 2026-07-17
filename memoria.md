@@ -140,6 +140,32 @@ src/app/api/ai/
 ### 5. Navegação
 - Links adicionados no header para Fit Cultural, Teste DISC, Sentimento, Conversas
 
+### 6. Funções de acesso a dados complementares (`src/lib/db.ts`)
+Novas funções adicionadas:
+- **Fit Cultural:** `obterRespostasFitCultural`, `calcularScoreFitCultural`
+- **DISC:** `responderDISC` agora retorna `ResultadoDISC`, `recalcularResultadoDISC`
+- **Pesquisa Sentimento:** filtro opcional `colaboradorId` em `listarPesquisasSentimento`, `calcularScoreSentimento`
+- **Conversas:** filtro opcional `colaboradorId` em `listarConversas`, `calcularScoreConversas`
+- **Score Consolidado:** `calcularEAtualizarScore` (média ponderada dos 7 sub-scores), `obterScore`, `listarScores`
+
+### 7. Script de seed de perguntas (`scripts/seed-testes.ts`)
+- Popula 10 perguntas de Fit Cultural (2 por dimensão: valores, comportamento, comunicacao, lideranca, inovacao)
+- Popula 16 perguntas de DISC (4 por dimensão: D, I, S, C)
+- Idempotente: limpa e recria
+- Executar: `npx tsx scripts/seed-testes.ts`
+
 ### Correções
 - `prisma.aILog` → `prisma.impacto` (modelo renomeado no schema)
 - `salvarImpactosSimulacao`/`carregarImpactosSimulacao` adaptados para usar `casoUso: 'simulacao'` com dados serializados em JSON
+
+### 8. Integração Scores ↔ Simulação
+- `getDadosSimulacao` agora carrega também `scores` (tabela `ScoreColaborador`)
+- `analisarEstadoSimulacao` recebe parâmetro opcional `scores` e gera impactos qualificados:
+  - **Score fit baixo** → negativo (desalinhamento cultural)
+  - **Score sentimento baixo** → negativo (insatisfação)
+  - **Score geral baixo + promoção** → negativo (Princípio de Peter)
+  - **Score geral alto + promoção** → positivo (alto potencial)
+  - **Score geral alto + demissão** → negativo (perda de talento)
+  - **Score cultural alto** → positivo
+  - **Conversas regulares** → positivo (engajamento)
+- IA considera scores ao sugerir candidatos (Fase 1)

@@ -1,39 +1,43 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
 import { registrarConversa } from '@/lib/db'
-
-export async function excluirConversaAction(id: string) {
-  await prisma.conversa.delete({ where: { id } })
-  revalidatePath('/conversas')
-}
+import { revalidatePath } from 'next/cache'
 
 export async function registrarConversaAction(formData: FormData) {
-  const colaboradorId = formData.get('colaboradorId')?.toString()
-  const tipo = formData.get('tipo')?.toString()
-  const titulo = formData.get('titulo')?.toString().trim()
-  const assunto = formData.get('assunto')?.toString().trim() || ''
-  const resumo = formData.get('resumo')?.toString().trim() || ''
-  const pontosPositivos = formData.get('pontosPositivos')?.toString().trim() || ''
-  const pontosMelhoria = formData.get('pontosMelhoria')?.toString().trim() || ''
-  const observacoes = formData.get('observacoes')?.toString().trim() || ''
-  const realizadaEm = formData.get('realizadaEm')?.toString()
+  const colaboradorId = formData.get('colaboradorId') as string
+  const tipoRaw = formData.get('tipo') as string
+  const titulo = formData.get('titulo') as string
 
-  if (!colaboradorId || !tipo || !titulo || !realizadaEm) return
+  if (!colaboradorId || !tipoRaw || !titulo) {
+    throw new Error('Campos obrigatórios: colaborador, tipo, título')
+  }
+
+  const tiposValidos = ['1:1', 'feedback', 'avaliacao', 'alinhamento', 'desligamento', 'outro'] as const
+  const tipo = tiposValidos.includes(tipoRaw as any) ? (tipoRaw as typeof tiposValidos[number]) : 'outro'
 
   await registrarConversa({
     colaboradorId,
-    tipo: tipo as '1:1' | 'feedback' | 'avaliacao' | 'alinhamento' | 'desligamento' | 'outro',
+    tipo,
     titulo,
-    assunto,
-    resumo,
-    pontosPositivos,
-    pontosMelhoria,
-    observacoes,
-    realizadaEm,
+    assunto: (formData.get('assunto') as string) || '',
+    resumo: (formData.get('resumo') as string) || '',
+    observacoes: (formData.get('observacoes') as string) || '',
+    pontosPositivos: (formData.get('pontosPositivos') as string) || '',
+    pontosMelhoria: (formData.get('pontosMelhoria') as string) || '',
+    realizadaEm: (formData.get('realizadaEm') as string) || new Date().toISOString(),
   })
+
+  revalidatePath('/conversas')
+  redirect('/conversas')
+}
+
+export async function excluirConversaAction(formData: FormData) {
+  const id = formData.get('id') as string
+  if (!id) throw new Error('ID é obrigatório')
+
+  const { prisma } = await import('@/lib/prisma')
+  await prisma.conversa.delete({ where: { id } })
 
   revalidatePath('/conversas')
   redirect('/conversas')

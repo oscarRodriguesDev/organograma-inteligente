@@ -16,14 +16,18 @@ import type {
   Conversa,
   ScoreColaborador,
 } from './types'
+import { Papel } from './types'
 
 // ─── Helpers de conversão ────────────────────────────────────
 
 function colPrismaParaModelo(p: any): Colaborador {
   return {
     id: p.id,
+    empresaId: p.empresaId,
     nome: p.nome,
     funcao: p.funcao,
+    papel: p.papel as Papel,
+    email: p.email ?? undefined,
     liderImediatoId: p.liderImediatoId,
     createdAt: p.createdAt.toISOString(),
     status: p.status as 'ativo' | 'vago',
@@ -96,8 +100,11 @@ export async function criarColaborador(
 ): Promise<Colaborador> {
   const data = await prisma.colaborador.create({
     data: {
+      empresaId: dados.empresaId,
       nome: dados.nome,
       funcao: dados.funcao,
+      papel: dados.papel ?? Papel.COLABORADOR,
+      email: dados.email ?? null,
       liderImediatoId: dados.liderImediatoId,
       status: (dados as any).status || 'ativo',
     },
@@ -275,14 +282,17 @@ export async function listarMetricasPorColaborador(colaboradorId: string): Promi
 
 // ─── Regras de Impacto ───────────────────────────────────────
 
-export async function listarRegrasImpacto(): Promise<RegraImpacto[]> {
-  const data = await prisma.regraImpacto.findMany()
+export async function listarRegrasImpacto(empresaId?: string): Promise<RegraImpacto[]> {
+  const where: any = {}
+  if (empresaId) where.empresaId = empresaId
+  const data = await prisma.regraImpacto.findMany({ where })
   return data.map(regraPrismaParaModelo)
 }
 
 export async function criarRegraImpacto(
   dados: Omit<RegraImpacto, 'id'>
 ): Promise<RegraImpacto> {
+  const empresaId = 'empresa_default'
   const data = await prisma.regraImpacto.create({
     data: {
       nome: dados.nome,
@@ -290,6 +300,7 @@ export async function criarRegraImpacto(
       tipo: dados.tipo,
       condicao: JSON.stringify(dados.condicao),
       ativa: dados.ativa,
+      empresaId,
     },
   })
   return regraPrismaParaModelo(data)
@@ -387,10 +398,12 @@ export async function listarCargos(): Promise<Cargo[]> {
 }
 
 export async function criarCargo(nome: string): Promise<Cargo> {
+  // empresaId default para operações que não têm contexto de tenant
+  const empresaId = 'empresa_default'
   return prisma.cargo.upsert({
-    where: { nome },
+    where: { empresaId_nome: { empresaId, nome } },
     update: {},
-    create: { nome },
+    create: { nome, empresaId },
   })
 }
 

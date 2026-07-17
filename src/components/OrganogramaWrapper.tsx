@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import type { Colaborador } from '@/lib/types'
 
@@ -12,5 +13,22 @@ export default function OrganogramaWrapper({
 }: {
   colaboradores: Colaborador[]
 }) {
-  return <OrganogramaFlow colaboradores={colaboradores} />
+  const [aiFeatures, setAiFeatures] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    fetch('/api/ai/features')
+      .then((r) => r.json())
+      .then((data) => setAiFeatures(data))
+      .catch(() => {
+        // Se falhar, assume tudo false
+        setAiFeatures({})
+      })
+  }, [])
+
+  return (
+    <OrganogramaFlow
+      colaboradores={colaboradores}
+      aiSugestaoCandidatos={!!aiFeatures['ai-sugestao-candidatos']}
+    />
+  )
 }

@@ -15,23 +15,23 @@ export default async function LoginPage({
 
         {erro && (
           <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            Usuário ou senha inválidos.
+            Email ou senha inválidos.
           </div>
         )}
 
         <form action={loginAction} className="space-y-4">
           <div>
-            <label htmlFor="username" className="mb-1 block text-sm font-medium">
-              Usuário
+            <label htmlFor="email" className="mb-1 block text-sm font-medium">
+              Email
             </label>
             <input
-              id="username"
-              name="username"
-              type="text"
+              id="email"
+              name="email"
+              type="email"
               required
               autoFocus
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
-              placeholder="Seu usuário"
+              placeholder="seu@email.com"
             />
           </div>
 

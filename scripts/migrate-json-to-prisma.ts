@@ -88,6 +88,7 @@ async function migrate() {
             id: c.id,
             nome: c.nome,
             funcao: c.funcao,
+            empresaId: 'empresa_default',
             liderImediatoId: c.liderImediatoId && colIds.has(c.liderImediatoId) ? c.liderImediatoId : null,
             createdAt: new Date(c.createdAt || Date.now()),
             status: c.status || 'ativo',
@@ -225,6 +226,7 @@ async function migrate() {
           tipo: r.tipo,
           condicao: JSON.stringify(r.condicao),
           ativa: r.ativa ?? true,
+          empresaId: 'empresa_default',
         },
       })
       regCount++

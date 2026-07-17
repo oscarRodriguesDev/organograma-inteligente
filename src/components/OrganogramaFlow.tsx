@@ -24,15 +24,18 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import type { Colaborador, Impacto, AcaoSimulacao, Avaliacao, MetricaMensal, RegraImpacto } from '@/lib/types'
+import { Papel } from '@/lib/types'
 import {
   atualizarColaboradorAction,
   excluirColaboradorComSubordinados,
   adicionarColaboradorRapido,
   aplicarSimulacaoAction,
+  relocarColaboradorAction,
 } from '@/lib/actions'
-import { processarAcao, calcularCascataPromocoes, analisarEstadoSimulacao } from '@/lib/simulacao'
+import { processarAcao, calcularCascataPromocoes, analisarEstadoSimulacao, obterDescendentes, obterSubordinados } from '@/lib/simulacao'
 import type { SugestaoCascata, CandidatoSugerido } from '@/lib/simulacao'
 import { getDadosSimulacao, salvarImpactosAction, carregarImpactosAction, limparImpactosAction } from '@/lib/simulacao-actions'
+import SelectCargo from './SelectCargo'
 
 interface NodeData {
   colaborador: Colaborador
@@ -50,10 +53,6 @@ interface NodeData {
   simulacaoVago?: boolean
   simulacaoPromovido?: boolean
   sugerido?: boolean
-}
-
-function obterSubordinados(col: Colaborador[], id: string): Colaborador[] {
-  return col.filter((c) => c.liderImediatoId === id)
 }
 
 function calcularNivel(colaboradores: Colaborador[], id: string): number {
@@ -263,12 +262,12 @@ function OrganogramaNode({
           onKeyDown={handleKeyDown}
           onBlur={handleSalvar}
         />
-        <input
-          className="w-full text-xs text-zinc-500 bg-white border border-zinc-300 rounded px-1 outline-none"
+        <SelectCargo
           value={funcao}
-          onChange={(e) => setFuncao(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onChange={(val) => setFuncao(val)}
           onBlur={handleSalvar}
+          placeholder="Cargo"
+          className="text-xs !px-1 !py-0 !border-zinc-300"
         />
         <Handle
           type="source"
@@ -407,6 +406,13 @@ function OrganogramaNode({
                 +
               </button>
               <button
+                onClick={(e) => { e.stopPropagation(); onRelocar?.(colaborador.id) }}
+                className="flex items-center justify-center w-5 h-5 rounded-full bg-violet-500 text-white text-xs hover:bg-violet-600 shadow-sm"
+                title="Relocar (mudar líder)"
+              >
+                ⟷
+              </button>
+              <button
                 onClick={(e) => { e.stopPropagation(); onExcluir(colaborador.id) }}
                 className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 shadow-sm"
                 title="Excluir"
@@ -433,7 +439,7 @@ const nodeTypes = { colaborador: OrganogramaNode }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FlowInner(props: any) {
-  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick } = props
+  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick, onEdgeClick } = props
   const reactFlow = useReactFlow()
 
   useEffect(() => {
@@ -449,6 +455,8 @@ function FlowInner(props: any) {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onNodeClick={onNodeClick}
+      onEdgeClick={onEdgeClick}
+      edgesReconnectable={false}
       nodeTypes={nodeTypes}
       attributionPosition="bottom-left"
       minZoom={0.2}
@@ -474,14 +482,17 @@ function FlowInner(props: any) {
 
 export default function OrganogramaFlow({
   colaboradores,
+  aiSugestaoCandidatos = false,
 }: {
   colaboradores: Colaborador[]
+  aiSugestaoCandidatos?: boolean
 }) {
   const [colaboradoresState, setColaboradoresState] = useState(colaboradores)
   const [expandidos, setExpandidos] = useState<Set<string>>(new Set())
   const [adicionandoEm, setAdicionandoEm] = useState<string | null>(null)
   const [novoNome, setNovoNome] = useState('')
   const [novaFuncao, setNovaFuncao] = useState('')
+  const [transferirSubordinados, setTransferirSubordinados] = useState(false)
 
   // Simulação
   const [modoSimulacao, setModoSimulacao] = useState(false)
@@ -489,7 +500,7 @@ export default function OrganogramaFlow({
   const [estadoOriginal, setEstadoOriginal] = useState<Colaborador[] | null>(null)
   const [acoesSimulacao, setAcoesSimulacao] = useState<AcaoSimulacao[]>([])
   const [impactosSimulacao, setImpactosSimulacao] = useState<Impacto[]>([])
-  const [dadosSimulacao, setDadosSimulacao] = useState<{ avaliacoes: Avaliacao[]; metricas: MetricaMensal[]; regras: RegraImpacto[] } | null>(null)
+  const [dadosSimulacao, setDadosSimulacao] = useState<{ avaliacoes: Avaliacao[]; metricas: MetricaMensal[]; regras: RegraImpacto[]; scores?: Record<string, any> } | null>(null)
   const [mostrarImpactos, setMostrarImpactos] = useState(false)
   const [sugestoesCascata, setSugestoesCascata] = useState<SugestaoCascata[]>([])
   const [preencherVaga, setPreencherVaga] = useState<{
@@ -616,22 +627,27 @@ export default function OrganogramaFlow({
       const msg = `Excluir "${col.nome}"?\nSubordinados serão transferidos para o líder imediato.`
       if (!window.confirm(msg)) return
 
-      await excluirColaboradorComSubordinados(id)
+      try {
+        await excluirColaboradorComSubordinados(id)
 
-      setColaboradoresState((prev) => {
-        const filtered = prev.filter((c) => c.id !== id)
-        return filtered.map((c) =>
-          c.liderImediatoId === id
-            ? { ...c, liderImediatoId: col.liderImediatoId }
-            : c
-        )
-      })
+        setColaboradoresState((prev) => {
+          const filtered = prev.filter((c) => c.id !== id)
+          return filtered.map((c) =>
+            c.liderImediatoId === id
+              ? { ...c, liderImediatoId: col.liderImediatoId }
+              : c
+          )
+        })
 
-      setExpandidos((prev) => {
-        const next = new Set(prev)
-        next.delete(id)
-        return next
-      })
+        setExpandidos((prev) => {
+          const next = new Set(prev)
+          next.delete(id)
+          return next
+        })
+      } catch (err) {
+        console.error('Erro ao excluir:', err)
+        alert(err instanceof Error ? err.message : 'Erro ao excluir colaborador. Tente novamente.')
+      }
     },
     [colaboradoresState]
   )
@@ -681,11 +697,12 @@ export default function OrganogramaFlow({
       resultado.colaboradores,
       dadosSimulacao.avaliacoes,
       dadosSimulacao.metricas,
-      dadosSimulacao.regras
-    )
-    setImpactosSimulacao(novosImpactos)
-    setSugestoesCascata(cascata)
-  }, [simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+        dadosSimulacao.regras,
+        dadosSimulacao.scores
+      )
+      setImpactosSimulacao(novosImpactos)
+      setSugestoesCascata(cascata)
+    }, [simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
 
   const handleContratar = useCallback((id: string) => {
     const base = simulando ?? colaboradoresState
@@ -711,74 +728,73 @@ export default function OrganogramaFlow({
     })
   }, [simulando, colaboradoresState])
 
-  const handleConfirmarRelocar = useCallback((novoLiderId: string | null) => {
-    if (!relocarModal || !dadosSimulacao || !estadoOriginal) return
+  const handleConfirmarRelocar = useCallback(async (novoLiderId: string | null) => {
+    if (!relocarModal) return
 
-    const base = simulando ?? colaboradoresState
+    if (modoSimulacao) {
+      if (!dadosSimulacao || !estadoOriginal) return
 
-    const acao: AcaoSimulacao = {
-      tipo: 'realocacao',
-      colaboradorId: relocarModal.colaboradorId,
-      descricao: `Relocar ${relocarModal.nome} para novo líder`,
-      novoLiderId: novoLiderId,
+      const base = simulando ?? colaboradoresState
+
+      const acao: AcaoSimulacao = {
+        tipo: 'realocacao',
+        colaboradorId: relocarModal.colaboradorId,
+        descricao: `Relocar ${relocarModal.nome} para novo líder`,
+        novoLiderId: novoLiderId,
+      }
+
+      const resultado = processarAcao(
+        base,
+        acao,
+        null,
+        dadosSimulacao.avaliacoes,
+        dadosSimulacao.metricas,
+        dadosSimulacao.regras
+      )
+
+      setSimulando(resultado.colaboradores)
+      setAcoesSimulacao((prev) => [...prev, acao])
+
+      const novosImpactos = analisarEstadoSimulacao(
+        estadoOriginal,
+        resultado.colaboradores,
+        dadosSimulacao.avaliacoes,
+        dadosSimulacao.metricas,
+        dadosSimulacao.regras,
+        dadosSimulacao.scores
+      )
+      setImpactosSimulacao(novosImpactos) 
+    } else {
+      // Modo normal: persiste no banco imediatamente
+      await relocarColaboradorAction(relocarModal.colaboradorId, novoLiderId)
+      setColaboradoresState((prev) =>
+        prev.map((c) =>
+          c.id === relocarModal.colaboradorId
+            ? { ...c, liderImediatoId: novoLiderId }
+            : c
+        )
+      )
     }
 
-    const resultado = processarAcao(
-      base,
-      acao,
-      null,
-      dadosSimulacao.avaliacoes,
-      dadosSimulacao.metricas,
-      dadosSimulacao.regras
-    )
-
-    setSimulando(resultado.colaboradores)
-    setAcoesSimulacao((prev) => [...prev, acao])
-
-    const novosImpactos = analisarEstadoSimulacao(
-      estadoOriginal,
-      resultado.colaboradores,
-      dadosSimulacao.avaliacoes,
-      dadosSimulacao.metricas,
-      dadosSimulacao.regras
-    )
-    setImpactosSimulacao(novosImpactos)
-
     setRelocarModal(null)
-  }, [relocarModal, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+  }, [relocarModal, modoSimulacao, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
 
   const handleSimularPromocao = useCallback((id: string) => {
     const base = simulando ?? colaboradoresState
     const col = base.find((c) => c.id === id)
     if (!col) return
 
-    if (col.status === 'vago') {
-      // ↑ em nó vago → preencher vaga com qualquer colaborador ativo
-      if (!dadosSimulacao) return
-      const candidatos = base
-        .filter((c) => c.id !== id && c.status !== 'vago')
-        .map((c) => {
-          const avaliacoesCol = dadosSimulacao.avaliacoes.filter((a) => a.avaliadoId === c.id)
-          const notas = avaliacoesCol.flatMap((a) => a.criterios.map((cr) => cr.nota))
-          const media = notas.length > 0 ? notas.reduce((s, n) => s + n, 0) / notas.length : 0
-          const metricasCol = dadosSimulacao.metricas.filter((m) => m.colaboradorId === c.id)
-          const ultimaMeta = metricasCol.length > 0
-            ? metricasCol.reduce((a, b) => (a.ano > b.ano || (a.ano === b.ano && a.mes > b.mes) ? a : b))
-            : null
-          const perfil = ultimaMeta
-            ? (ultimaMeta.faltasInjustificadas > 2 || ultimaMeta.horasAtraso > 4 ? 'Ruim' : 'Bom')
-            : 'desconhecido'
-          const score = (media * 2) + (perfil === 'Bom' ? 1.5 : perfil === 'Ruim' ? -1 : 0)
-          return { colaborador: c, mediaAvaliacoes: media, perfil, score }
-        })
-        .sort((a, b) => b.score - a.score)
-      setPreencherVaga({
-        cargoVagoId: id,
-        cargoVagoFuncao: col.funcao,
-        candidatos,
-      })
-    } else {
-      // ↑ em nó normal → promoção direta
+    // Se o líder imediato do colaborador é um VAGO, redireciona para o VAGO
+    const targetId = (col.status !== 'vago' && col.liderImediatoId)
+      ? (() => {
+          const leader = base.find((c) => c.id === col.liderImediatoId)
+          return leader?.status === 'vago' ? leader.id : null
+        })()
+      : null
+
+    const vagoId = targetId ?? (col.status === 'vago' ? id : null)
+    if (!vagoId) {
+      // ↑ em nó normal (líder não é VAGO) → promoção direta
       setPromocaoModal({
         colaboradorId: id,
         nome: col.nome,
@@ -786,8 +802,79 @@ export default function OrganogramaFlow({
         novoLiderId: col.liderImediatoId,
         novoCargo: col.funcao,
       })
+      return
     }
-  }, [simulando, colaboradoresState, dadosSimulacao])
+
+    // ↑ em nó vago (ou redirecionado para VAGO) → preencher vaga com descendentes
+    if (!dadosSimulacao) return
+    const vagoCol = base.find((c) => c.id === vagoId)
+    if (!vagoCol) return
+
+    // Se IA estiver habilitada, tenta usar sugestão inteligente
+    if (aiSugestaoCandidatos) {
+      fetch('/api/ai/sugerir-candidatos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cargoVago: vagoCol.funcao, liderVagoId: vagoId }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.candidatos && data.candidatos.length > 0) {
+            const candidatosIA = data.candidatos.map((c: any) => ({
+              colaborador: base.find((b: any) => b.id === c.id) ?? { id: c.id, nome: c.nome, funcao: c.funcao },
+              mediaAvaliacoes: c.mediaAvaliacoes,
+              perfil: c.perfil,
+              score: c.scoreIA ?? c.score,
+            }))
+            setPreencherVaga({
+              cargoVagoId: vagoId,
+              cargoVagoFuncao: vagoCol.funcao,
+              candidatos: candidatosIA,
+            })
+            return
+          }
+          // Se IA retornou vazio, cai no fallback
+          calcularCandidatosFallback(base, vagoId, vagoCol, dadosSimulacao)
+        })
+        .catch(() => {
+          calcularCandidatosFallback(base, vagoId, vagoCol, dadosSimulacao)
+        })
+    } else {
+      calcularCandidatosFallback(base, vagoId, vagoCol, dadosSimulacao)
+    }
+  }, [simulando, colaboradoresState, dadosSimulacao, aiSugestaoCandidatos])
+
+  function calcularCandidatosFallback(
+    base: Colaborador[],
+    vagoId: string,
+    vagoCol: Colaborador,
+    dados: { avaliacoes: Avaliacao[]; metricas: MetricaMensal[] }
+  ) {
+    const descendentes = obterDescendentes(base, vagoId).filter((c) => c.status !== 'vago')
+    const candidatos = descendentes.length > 0
+      ? descendentes
+          .map((c) => {
+            const avaliacoesCol = dados.avaliacoes.filter((a) => a.avaliadoId === c.id)
+            const notas = avaliacoesCol.flatMap((a) => a.criterios.map((cr) => cr.nota))
+            const media = notas.length > 0 ? notas.reduce((s, n) => s + n, 0) / notas.length : 0
+            const metricasCol = dados.metricas.filter((m) => m.colaboradorId === c.id)
+            const ultimaMeta = metricasCol.length > 0
+              ? metricasCol.reduce((a, b) => (a.ano > b.ano || (a.ano === b.ano && a.mes > b.mes) ? a : b))
+              : null
+            const perfil = ultimaMeta
+              ? (ultimaMeta.faltasInjustificadas > 2 || ultimaMeta.horasAtraso > 4 ? 'Ruim' : 'Bom')
+              : 'desconhecido'
+            const score = (media * 2) + (perfil === 'Bom' ? 1.5 : perfil === 'Ruim' ? -1 : 0) + (obterSubordinados(base, c.id).length * 0.5)
+            return { colaborador: c, mediaAvaliacoes: media, perfil, score }
+          })
+          .sort((a, b) => b.score - a.score)
+      : []
+    setPreencherVaga({
+      cargoVagoId: vagoId,
+      cargoVagoFuncao: vagoCol.funcao,
+      candidatos,
+    })
+  }
 
   const handleConfirmarPreencherVaga = useCallback((candidatoId: string) => {
     if (!preencherVaga || !dadosSimulacao || !estadoOriginal) return
@@ -857,8 +944,10 @@ export default function OrganogramaFlow({
     const novoId = `contratado_${Date.now()}`
     const novoColaborador: Colaborador = {
       id: novoId,
+      empresaId: vago.empresaId,
       nome: contratarModal.nome.trim(),
       funcao: contratarModal.funcao.trim(),
+      papel: Papel.COLABORADOR,
       liderImediatoId: vago.liderImediatoId,
       createdAt: new Date().toISOString(),
       status: 'ativo',
@@ -900,9 +989,10 @@ export default function OrganogramaFlow({
         novosColaboradores,
         dadosSimulacao.avaliacoes,
         dadosSimulacao.metricas,
-        dadosSimulacao.regras
+        dadosSimulacao.regras,
+        dadosSimulacao.scores
       )
-      setImpactosSimulacao(novosImpactos)
+      setImpactosSimulacao(novosImpactos) 
     }
 
     setContratarModal(null)
@@ -958,6 +1048,22 @@ export default function OrganogramaFlow({
     setPromocaoModal(null)
   }, [promocaoModal, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
 
+  // ─── Clique na edge → abre relocar para o subordinado ───
+
+  const handleEdgeClick = useCallback((_event: React.MouseEvent, edge: Edge) => {
+    const base = simulando ?? colaboradoresState
+    const targetNode = base.find((c) => c.id === edge.target)
+    if (!targetNode || targetNode.status === 'vago') return
+
+    // Abre o modal de relocar para o nó alvo (subordinado)
+    setRelocarModal({
+      colaboradorId: targetNode.id,
+      nome: targetNode.nome,
+      funcaoAtual: targetNode.funcao,
+      liderAtualId: targetNode.liderImediatoId,
+    })
+  }, [simulando, colaboradoresState])
+
   const handleAdicionarImpactoManual = useCallback(() => {
     if (!impactoManual.trim()) return
     setImpactosSimulacao((prev) => [...prev, {
@@ -974,6 +1080,7 @@ export default function OrganogramaFlow({
     await salvarImpactosAction(impactosSimulacao)
     await aplicarSimulacaoAction(simulando)
     setColaboradoresState(simulando)
+    setSimulando(null)    // ← CRÍTICO: limpa para dadosVisiveis usar colaboradoresState
     setModoSimulacao(false)
     resetarSimulacao()
   }, [simulando, impactosSimulacao])
@@ -981,24 +1088,45 @@ export default function OrganogramaFlow({
   const handleConfirmarAdicao = useCallback(async () => {
     if (!adicionandoEm || !novoNome.trim() || !novaFuncao.trim()) return
 
-    const criado = await adicionarColaboradorRapido(
-      novoNome.trim(),
-      novaFuncao.trim(),
-      adicionandoEm
-    )
+    try {
+      const criado = await adicionarColaboradorRapido(
+        novoNome.trim(),
+        novaFuncao.trim(),
+        adicionandoEm
+      )
 
-    setColaboradoresState((prev) => [...prev, criado])
+      // Se marcou "Transferir subordinados", move todos os subordinados diretos do líder para o novo gestor
+      if (transferirSubordinados) {
+        const subordinadosAtuais = obterSubordinados(colaboradoresState, adicionandoEm)
+        for (const sub of subordinadosAtuais) {
+          await relocarColaboradorAction(sub.id, criado.id)
+        }
+        setColaboradoresState((prev) =>
+          prev.map((c) =>
+            c.liderImediatoId === adicionandoEm
+              ? { ...c, liderImediatoId: criado.id }
+              : c
+          )
+        )
+      }
 
-    setExpandidos((prev) => {
-      const next = new Set(prev)
-      next.add(adicionandoEm)
-      return next
-    })
+      setColaboradoresState((prev) => [...prev, criado])
 
-    setAdicionandoEm(null)
-    setNovoNome('')
-    setNovaFuncao('')
-  }, [adicionandoEm, novoNome, novaFuncao])
+      setExpandidos((prev) => {
+        const next = new Set(prev)
+        next.add(adicionandoEm)
+        return next
+      })
+
+      setAdicionandoEm(null)
+      setNovoNome('')
+      setNovaFuncao('')
+      setTransferirSubordinados(false)
+    } catch (err) {
+      console.error('Erro ao adicionar colaborador:', err)
+      alert(err instanceof Error ? err.message : 'Erro ao adicionar colaborador. Tente atualizar a página.')
+    }
+  }, [adicionandoEm, novoNome, novaFuncao, transferirSubordinados, colaboradoresState])
 
   const onNodeClick = useCallback(
     (_e: React.MouseEvent, node: Node) => {
@@ -1106,7 +1234,11 @@ export default function OrganogramaFlow({
               <span>•</span>
               <span>↓ demitir</span>
               <span>•</span>
-              <span>↑ promover para cargo vago</span>
+              <span>↑ promover</span>
+              <span>•</span>
+              <span>⟷ religar</span>
+              <span>•</span>
+              <span>clique na conexão para religar</span>
               <span>•</span>
               <span>Nenhum dado é salvo até aplicar</span>
             </>
@@ -1118,7 +1250,9 @@ export default function OrganogramaFlow({
               <span>•</span>
               <span>Passe o mouse para ações</span>
               <span>•</span>
-              <span>Arraste para mover</span>
+              <span>Arraste nó para mover</span>
+              <span>•</span>
+              <span>Clique na conexão para religar</span>
             </>
           )}
         </div>
@@ -1194,6 +1328,7 @@ export default function OrganogramaFlow({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          onEdgeClick={handleEdgeClick}
         />
       </ReactFlowProvider>
 
@@ -1224,12 +1359,23 @@ export default function OrganogramaFlow({
               autoFocus
             />
             <input
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-4 text-sm outline-none focus:border-blue-500"
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
               placeholder="Função / Cargo"
               value={novaFuncao}
               onChange={(e) => setNovaFuncao(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleConfirmarAdicao()}
             />
+            {lidereAdicionar && obterSubordinados(colaboradoresState, adicionandoEm).length > 0 && (
+              <label className="flex items-center gap-2 mb-4 text-xs text-zinc-600 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={transferirSubordinados}
+                  onChange={(e) => setTransferirSubordinados(e.target.checked)}
+                  className="rounded border-zinc-300 text-violet-600 focus:ring-violet-400"
+                />
+                Transferir {obterSubordinados(colaboradoresState, adicionandoEm).length} subordinado(s) atual(is) para {novoNome.trim() || "o novo gestor"}
+              </label>
+            )}
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setAdicionandoEm(null)}
@@ -1688,11 +1834,10 @@ export default function OrganogramaFlow({
             />
 
             <label className="text-xs text-zinc-500 mb-1 block">Função / Cargo</label>
-            <input
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-4 text-sm outline-none focus:border-emerald-500"
-              placeholder="Ex: Diretor de Tecnologia"
+            <SelectCargo
               value={contratarModal.funcao}
-              onChange={(e) => setContratarModal((prev) => prev ? { ...prev, funcao: e.target.value } : null)}
+              onChange={(val) => setContratarModal((prev) => prev ? { ...prev, funcao: val } : null)}
+              placeholder="Ex: Diretor de Tecnologia"
             />
 
             <div className="flex gap-2 justify-end">
@@ -1757,16 +1902,15 @@ export default function OrganogramaFlow({
             </select>
 
             <label className="text-xs text-zinc-500 mb-1 block">Novo Cargo</label>
-            <input
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-4 text-sm outline-none focus:border-amber-500"
-              placeholder="Ex: Diretor de Tecnologia"
+            <SelectCargo
               value={promocaoModal.novoCargo}
-              onChange={(e) => setPromocaoModal((prev) => prev ? { ...prev, novoCargo: e.target.value } : null)}
+              onChange={(val) => setPromocaoModal((prev) => prev ? { ...prev, novoCargo: val } : null)}
+              placeholder="Ex: Diretor de Tecnologia"
             />
 
             <div className="flex gap-2 justify-end">
               <button
-                onClick={() => { setPreencherVaga(null); setBuscaCandidato('') }}
+                onClick={() => { setPromocaoModal(null); setBuscaCandidato('') }}
                 className="px-4 py-2 text-sm rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors"
               >
                 Cancelar

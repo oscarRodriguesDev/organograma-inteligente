@@ -7,21 +7,59 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Enum de Papéis ───────────────────────────────
+enum Papel {
+  ADMIN_PLATAFORMA
+  CEO
+  GESTOR
+  RH
+  COLABORADOR
+}
+
+// ─── Empresa (Tenant) ─────────────────────────────
+model Empresa {
+  id        String   @id @default(cuid())
+  nome      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  ativa     Boolean  @default(true)
+
+  colaboradores      Colaborador[]
+  cargos             Cargo[]
+  regrasImpacto      RegraImpacto[]
+  fitCulturalPerguntas FitCulturalPergunta[]
+  perguntasDISC      PerguntaDISC[]
+}
+
 model Colaborador {
   id              String   @id @default(cuid())
+  empresaId       String
   nome            String
   funcao          String
+  email           String?  // email para login (nullable para migração)
+  senhaHash       String?  // hash da senha
+  papel           Papel    @default(COLABORADOR)
   liderImediatoId String?
   createdAt       DateTime @default(now())
   status          String   @default("ativo")
 
+  empresa      Empresa       @relation(fields: [empresaId], references: [id])
   lider        Colaborador?  @relation("LiderSubordinados", fields: [liderImediatoId], references: [id])
   subordinados Colaborador[] @relation("LiderSubordinados")
 
-  avaliacoesRecebidas Avaliacao[]     @relation("Avaliado")
-  avaliacoesFeitas    Avaliacao[]     @relation("Avaliador")
-  metricas            MetricaMensal[]
-  iniciativas         Iniciativa[]
+  avaliacoesRecebidas  Avaliacao[]           @relation("Avaliado")
+  avaliacoesFeitas     Avaliacao[]           @relation("Avaliador")
+  metricas             MetricaMensal[]
+  iniciativas          Iniciativa[]
+  fitCulturalRespostas FitCulturalResposta[]
+  respostasDISC        RespostaDISC[]
+  resultadoDISC        ResultadoDISC?
+  pesquisasSentimento  PesquisaSentimento[]
+  conversas            Conversa[]            @relation("ConversaColaborador")
+  conversasCriadas     Conversa[]            @relation("CriadorConversa")
+  scores               ScoreColaborador?
+
+  @@unique([empresaId, email])
 }
 
 model Avaliacao {
@@ -65,24 +103,144 @@ model Iniciativa {
 
 model RegraImpacto {
   id        String  @id @default(cuid())
+  empresaId String
   nome      String
   descricao String  @default("")
   tipo      String
   condicao  String
   ativa     Boolean @default(true)
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
 }
 
 model Cargo {
-  id   String @id @default(cuid())
-  nome String @unique
+  id        String @id @default(cuid())
+  empresaId String
+  nome      String
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+  @@unique([empresaId, nome])
+}
+
+// ─── Teste Fit Cultural ────────────────────────────────
+model FitCulturalPergunta {
+  id          String   @id @default(cuid())
+  empresaId   String
+  pergunta    String
+  dimensao    String   // 'valores' | 'comportamento' | 'comunicacao' | 'lideranca' | 'inovacao'
+  peso        Int      @default(1)
+  ativa       Boolean  @default(true)
+  ordem       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  empresa  Empresa              @relation(fields: [empresaId], references: [id])
+  respostas FitCulturalResposta[]
+}
+
+model FitCulturalResposta {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  perguntaId     String
+  nota           Int      // 1-5
+  respondidoEm   DateTime @default(now())
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  pergunta       FitCulturalPergunta @relation(fields: [perguntaId], references: [id])
+}
+
+// ─── Teste DISC ─────────────────────────────────────────
+model PerguntaDISC {
+  id          String   @id @default(cuid())
+  empresaId   String
+  pergunta    String
+  dimensao    String   // 'D' (Dominância) | 'I' (Influência) | 'S' (Estabilidade) | 'C' (Conformidade)
+  peso        Int      @default(1)
+  ativa       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  empresa  Empresa        @relation(fields: [empresaId], references: [id])
+  respostas RespostaDISC[]
+}
+
+model RespostaDISC {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  perguntaId     String
+  nota           Int      // 1-5
+  respondidoEm   DateTime @default(now())
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  pergunta       PerguntaDISC @relation(fields: [perguntaId], references: [id])
+}
+
+model ResultadoDISC {
+  id             String   @id @default(cuid())
+  colaboradorId  String   @unique
+  perfil         String   // ex: "D", "I", "S", "C", "DI", "ISC", etc.
+  pontuacaoD     Int      @default(0)
+  pontuacaoI     Int      @default(0)
+  pontuacaoS     Int      @default(0)
+  pontuacaoC     Int      @default(0)
+  data           DateTime @default(now())
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+}
+
+// ─── Pesquisa de Sentimento ────────────────────────────
+model PesquisaSentimento {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  sentimento     String   // 'muito_positivo' | 'positivo' | 'neutro' | 'negativo' | 'muito_negativo'
+  nota           Int      // 1-5 (overall)
+  engajamento    Int?     // 1-5
+  motivacao      Int?     // 1-5
+  pertencimento  Int?     // 1-5
+  comentario     String   @default("")
+  respondidoEm   DateTime @default(now())
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+}
+
+// ─── Registro de Conversas ─────────────────────────────
+model Conversa {
+  id              String   @id @default(cuid())
+  colaboradorId   String
+  tipo            String   // '1:1' | 'feedback' | 'avaliacao' | 'alinhamento' | 'desligamento' | 'outro'
+  titulo          String
+  assunto         String   @default("")
+  resumo          String   @default("")
+  observacoes     String   @default("")
+  pontosPositivos String   @default("")
+  pontosMelhoria  String   @default("")
+  realizadaEm     DateTime @default(now())
+  registradaEm    DateTime @default(now())
+  criadoPorId     String?
+  colaborador     Colaborador @relation("ConversaColaborador", fields: [colaboradorId], references: [id])
+  criadoPor       Colaborador? @relation("CriadorConversa", fields: [criadoPorId], references: [id])
+}
+
+// ─── Score Consolidado do Colaborador ──────────────────
+model ScoreColaborador {
+  id                  String   @id @default(cuid())
+  colaboradorId       String   @unique
+  scoreGeral          Float    @default(0)    // 0-10 consolidado
+  scoreFitCultural    Float    @default(0)    // 0-10
+  scoreDISC           Float    @default(0)    // 0-10
+  scoreSentimento     Float    @default(0)    // 0-10
+  scoreConversas      Float    @default(0)    // 0-10
+  scoreAvaliacoes     Float    @default(0)    // 0-10 (média das avaliações)
+  scoreMetricas       Float    @default(0)    // 0-10
+  scoreIniciativas    Float    @default(0)    // 0-10
+  ultimaAtualizacao   DateTime @default(now())
+  colaborador         Colaborador @relation(fields: [colaboradorId], references: [id])
 }
 
 model Impacto {
-  id              String  @id @default(cuid())
-  tipo            String
-  titulo          String
-  descricao       String  @default("")
-  colaboradorId   String?
-  colaboradorNome String?
-  regraId         String?
+  id            String   @id @default(cuid())
+  casoUso       String   // 'sugerir_candidatos' | 'feedback_avaliacao' | 'iniciativa' | 'sentimento' | 'cache'
+  provider      String   @default("nvidia")
+  model         String   @default("")
+  tokensIn      Int      @default(0)
+  tokensOut     Int      @default(0)
+  latencyMs     Int      @default(0)
+  erro          String?
+  resposta      String?
+  cacheKey      String?
+  createdAt     DateTime @default(now())
 }

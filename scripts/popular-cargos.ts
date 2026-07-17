@@ -53,9 +53,9 @@ async function main() {
   let count = 0
   for (const nome of CARGOS_INICIAIS) {
     await prisma.cargo.upsert({
-      where: { nome },
+      where: { empresaId_nome: { empresaId: 'empresa_default', nome } },
       update: {},
-      create: { nome },
+      create: { nome, empresaId: 'empresa_default' },
     })
     count++
   }

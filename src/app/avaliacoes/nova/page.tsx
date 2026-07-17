@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { criarAvaliacaoAction } from '@/lib/actions'
 import { listarColaboradores } from '@/lib/db'
 import { CRITERIOS_AVALIACAO, type CriterioNota } from '@/lib/types'
+import GerarFeedbackButton from '@/components/GerarFeedbackButton'
 
 export default async function NovaAvaliacao() {
   const colaboradores = await listarColaboradores()
@@ -102,15 +103,18 @@ export default async function NovaAvaliacao() {
           </div>
 
           <div>
-            <label htmlFor="comentarioGeral" className="mb-1 block text-sm font-medium">
-              Comentário Geral
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label htmlFor="comentarioGeral" className="block text-sm font-medium">
+                Comentário Geral
+              </label>
+              <GerarFeedbackButton criterios={CRITERIOS_AVALIACAO} />
+            </div>
             <textarea
               id="comentarioGeral"
               name="comentarioGeral"
               rows={4}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
-              placeholder="Observações sobre o desempenho..."
+              placeholder="Observações sobre o desempenho... (use o botão 'Gerar Feedback com IA' para um rascunho automático)"
             />
           </div>
 

@@ -41,7 +41,7 @@ async function zerar() {
     { nome: 'Líder com perfil inadequado', descricao: 'Impacto negativo quando um líder tem perfil Ruim.', tipo: 'negativo', condicao: JSON.stringify({ tipo: 'lider_perfil_ruim' }), ativa: true },
     { nome: 'Time ganha líder forte', descricao: 'Impacto positivo quando um time ganha um líder de alta performance.', tipo: 'positivo', condicao: JSON.stringify({ tipo: 'time_ganha_lider_forte' }), ativa: true },
   ]
-  await prisma.regraImpacto.createMany({ data: regras })
+  await prisma.regraImpacto.createMany({ data: regras.map(r => ({ ...r, empresaId: 'empresa_default' })) })
   console.log('  ✓ Regras de impacto recriadas (6 padrão)')
 
   await prisma.$disconnect()

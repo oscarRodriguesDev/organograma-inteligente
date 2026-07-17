@@ -4,15 +4,22 @@ import { useEffect, useState, useRef } from 'react'
 import { listarCargosAction } from '@/lib/actions'
 
 interface Props {
-  /** Nome do campo para o form */
+  /** Para uncontrolled (form submit) */
   name?: string
+  /** Para controlled component */
+  value?: string
+  onChange?: (value: string) => void
+  onBlur?: () => void
   required?: boolean
   placeholder?: string
   className?: string
 }
 
 export default function SelectCargo({
-  name = 'funcao',
+  name,
+  value: controlledValue,
+  onChange: controlledOnChange,
+  onBlur,
   required,
   placeholder = 'Selecione ou digite um cargo',
   className = '',
@@ -20,22 +27,25 @@ export default function SelectCargo({
   const [cargos, setCargos] = useState<{ id: string; nome: string }[]>([])
   const [modo, setModo] = useState<'select' | 'novo'>('select')
   const [novoNome, setNovoNome] = useState('')
-  const [selectValue, setSelectValue] = useState('')
+  const [selectValue, setSelectValue] = useState(controlledValue ?? '')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const isControlled = controlledValue !== undefined
 
   useEffect(() => {
     listarCargosAction().then(setCargos)
   }, [])
 
-  // Sincroniza cargos novos que foram adicionados em outros formulários
+  // Sincroniza quando controlledValue muda
   useEffect(() => {
-    const check = setInterval(() => {
-      listarCargosAction().then((lista) => {
-        if (lista.length !== cargos.length) setCargos(lista)
-      })
-    }, 3000)
-    return () => clearInterval(check)
-  }, [cargos.length])
+    if (isControlled) setSelectValue(controlledValue)
+  }, [controlledValue, isControlled])
+
+  function notificar(val: string) {
+    if (isControlled && controlledOnChange) {
+      controlledOnChange(val)
+    }
+  }
 
   function aoSelecionar(e: React.ChangeEvent<HTMLSelectElement>) {
     const val = e.target.value
@@ -45,18 +55,19 @@ export default function SelectCargo({
       setTimeout(() => inputRef.current?.focus(), 50)
     } else {
       setSelectValue(val)
+      notificar(val)
     }
   }
 
   function confirmarNovo() {
     const nome = novoNome.trim()
     if (!nome) return
-    // Adiciona localmente para feedback imediato
     setCargos((prev) => {
       if (prev.some((c) => c.nome === nome)) return prev
       return [...prev, { id: `new-${Date.now()}`, nome }]
     })
     setSelectValue(nome)
+    notificar(nome)
     setModo('select')
     setNovoNome('')
   }
@@ -71,7 +82,6 @@ export default function SelectCargo({
       <div className="flex gap-2">
         <input
           ref={inputRef}
-          name={name}
           type="text"
           value={novoNome}
           onChange={(e) => setNovoNome(e.target.value)}
@@ -104,9 +114,10 @@ export default function SelectCargo({
 
   return (
     <select
-      name={name}
+      name={isControlled ? undefined : name}
       value={selectValue}
       onChange={aoSelecionar}
+      onBlur={onBlur}
       required={required}
       className={`w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-3 py-2 text-sm focus:outline-none focus:border-zinc-500 ${className}`}
     >

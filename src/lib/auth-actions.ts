@@ -3,16 +3,20 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { criarToken, validarCredenciais } from './auth'
+import { criarToken, autenticarPorEmailSenha } from './auth'
 
 const COOKIE_NAME = 'session'
 const SESSION_DURATION = 60 * 60 * 24 // 24h
 
 export async function loginAction(formData: FormData) {
-  const username = formData.get('username')?.toString().trim() ?? ''
+  const email = formData.get('email')?.toString().trim() ?? ''
   const password = formData.get('password')?.toString() ?? ''
 
-  const session = validarCredenciais(username, password)
+  if (!email || !password) {
+    redirect('/login?erro=1')
+  }
+
+  const session = await autenticarPorEmailSenha(email, password)
   if (!session) {
     redirect('/login?erro=1')
   }

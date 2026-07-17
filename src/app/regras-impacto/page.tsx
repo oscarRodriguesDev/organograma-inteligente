@@ -12,6 +12,9 @@ const CONDICOES_DISPONIVEIS: { valor: RegraCondicao['tipo']; label: string }[] =
   { valor: 'lider_perfil_ruim', label: 'Líder com perfil inadequado' },
   { valor: 'subordinado_realocado', label: 'Subordinado realocado' },
   { valor: 'time_ganha_lider_forte', label: 'Time ganha líder forte' },
+  { valor: 'salto_hierarquico', label: 'Salto hierárquico (promoção pula níveis)' },
+  { valor: 'ex_colegas_subordinados', label: 'Ex-colegas viram subordinados' },
+  { valor: 'cascata_excessiva', label: 'Cascata excessiva de VAGOs' },
 ]
 
 export default function RegrasImpactoPage() {

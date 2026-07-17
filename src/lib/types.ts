@@ -1,7 +1,36 @@
-export interface Colaborador {
+// ─── Multi-tenant ──────────────────────────────────
+export enum Papel {
+  ADMIN_PLATAFORMA = 'ADMIN_PLATAFORMA',
+  CEO = 'CEO',
+  GESTOR = 'GESTOR',
+  RH = 'RH',
+  COLABORADOR = 'COLABORADOR',
+}
+
+export interface Empresa {
   id: string
   nome: string
+  slug: string
+  createdAt: string
+  ativa: boolean
+}
+
+export interface UsuarioSessao {
+  colaboradorId: string
+  empresaId: string
+  empresaNome: string
+  nome: string
+  email: string
+  papel: Papel
+}
+
+export interface Colaborador {
+  id: string
+  empresaId: string
+  nome: string
   funcao: string
+  email?: string
+  papel: Papel
   liderImediatoId: string | null
   createdAt: string
   status?: 'ativo' | 'vago'
@@ -98,11 +127,101 @@ export interface RegraImpacto {
 }
 
 export interface RegraCondicao {
-  tipo: 'time_sem_lider' | 'promocao_avaliacao_alta' | 'perda_lider_experiente' | 'promocao_sem_destaque' | 'lider_perfil_ruim' | 'subordinado_realocado' | 'time_ganha_lider_forte'
+  tipo: 'time_sem_lider' | 'promocao_avaliacao_alta' | 'perda_lider_experiente' | 'promocao_sem_destaque' | 'lider_perfil_ruim' | 'subordinado_realocado' | 'time_ganha_lider_forte' | 'salto_hierarquico' | 'ex_colegas_subordinados' | 'cascata_excessiva'
   parametros?: Record<string, string | number>
 }
 
 export interface Cargo {
   id: string
   nome: string
+}
+
+// ─── Fit Cultural ──────────────────────────────────────
+export interface FitCulturalPergunta {
+  id: string
+  pergunta: string
+  dimensao: 'valores' | 'comportamento' | 'comunicacao' | 'lideranca' | 'inovacao'
+  peso: number
+  ativa: boolean
+  ordem: number
+}
+
+export interface FitCulturalResposta {
+  id: string
+  colaboradorId: string
+  perguntaId: string
+  nota: number
+  respondidoEm: string
+}
+
+// ─── DISC ───────────────────────────────────────────────
+export interface PerguntaDISC {
+  id: string
+  pergunta: string
+  dimensao: 'D' | 'I' | 'S' | 'C'
+  peso: number
+  ativa: boolean
+}
+
+export interface RespostaDISC {
+  id: string
+  colaboradorId: string
+  perguntaId: string
+  nota: number
+  respondidoEm: string
+}
+
+export interface ResultadoDISC {
+  id: string
+  colaboradorId: string
+  perfil: string
+  pontuacaoD: number
+  pontuacaoI: number
+  pontuacaoS: number
+  pontuacaoC: number
+  data: string
+}
+
+// ─── Pesquisa de Sentimento ────────────────────────────
+export interface PesquisaSentimento {
+  id: string
+  colaboradorId: string
+  sentimento: 'muito_positivo' | 'positivo' | 'neutro' | 'negativo' | 'muito_negativo'
+  nota: number
+  engajamento?: number
+  motivacao?: number
+  pertencimento?: number
+  comentario: string
+  respondidoEm: string
+}
+
+// ─── Conversas ─────────────────────────────────────────
+export interface Conversa {
+  id: string
+  colaboradorId: string
+  tipo: '1:1' | 'feedback' | 'avaliacao' | 'alinhamento' | 'desligamento' | 'outro'
+  titulo: string
+  assunto: string
+  resumo: string
+  observacoes: string
+  pontosPositivos: string
+  pontosMelhoria: string
+  realizadaEm: string
+  registradaEm: string
+  criadoPorId?: string
+}
+
+// ─── Score Consolidado ──────────────────────────────────
+export interface ScoreColaborador {
+  id: string
+  colaboradorId: string
+  scoreGeral: number
+  scoreFitCultural: number
+  scoreDISC: number
+  scoreSentimento: number
+  scoreConversas: number
+  scoreAvaliacoes: number
+  scoreMetricas: number
+  scoreIniciativas: number
+  ultimaAtualizacao: string
 }

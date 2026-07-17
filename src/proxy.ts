@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
-const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET ?? 'fallback-secret')
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? 'fallback-secret')
 const COOKIE_NAME = 'session'
 
 const PUBLIC_ROUTES = ['/login']

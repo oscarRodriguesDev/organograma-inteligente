@@ -1,4 +1,5 @@
-import type { Colaborador, Avaliacao, MetricaMensal, Impacto, AcaoSimulacao, RegraImpacto, TipoImpacto } from './types'
+import type { Colaborador, Avaliacao, MetricaMensal, Impacto, AcaoSimulacao, RegraImpacto, TipoImpacto, ScoreColaborador } from './types'
+import { Papel } from './types'
 
 let impactoIdCounter = 0
 function genImpactoId(): string {
@@ -7,8 +8,38 @@ function genImpactoId(): string {
 
 // ---------- utils ----------
 
-function obterSubordinados(colaboradores: Colaborador[], id: string): Colaborador[] {
+export function obterSubordinados(colaboradores: Colaborador[], id: string): Colaborador[] {
   return colaboradores.filter((c) => c.liderImediatoId === id)
+}
+
+export function obterDescendentes(colaboradores: Colaborador[], id: string): Colaborador[] {
+  const result: Colaborador[] = []
+  const visitados = new Set<string>()
+  function dfs(pid: string) {
+    if (visitados.has(pid)) return  // safety: cycle guard
+    visitados.add(pid)
+    for (const c of colaboradores.filter((c) => c.liderImediatoId === pid)) {
+      result.push(c)
+      dfs(c.id)
+    }
+  }
+  dfs(id)
+  return result
+}
+
+function calcularNivel(colaboradores: Colaborador[], id: string): number {
+  let nivel = 0
+  let currentId: string | null = id
+  const visitados = new Set<string>()
+  while (currentId) {
+    if (visitados.has(currentId)) break  // safety: cycle guard
+    visitados.add(currentId)
+    const atual = colaboradores.find((c) => c.id === currentId)
+    if (!atual || !atual.liderImediatoId) break
+    nivel++
+    currentId = atual.liderImediatoId
+  }
+  return nivel
 }
 
 function obterLider(colaboradores: Colaborador[], id: string): Colaborador | undefined {
@@ -17,7 +48,7 @@ function obterLider(colaboradores: Colaborador[], id: string): Colaborador | und
   return colaboradores.find((c) => c.id === col.liderImediatoId)
 }
 
-function mediaAvaliacoes(avaliacoes: Avaliacao[], colaboradorId: string): number {
+export function mediaAvaliacoes(avaliacoes: Avaliacao[], colaboradorId: string): number {
   const notas = avaliacoes
     .filter((a) => a.avaliadoId === colaboradorId)
     .flatMap((a) => a.criterios.map((c) => c.nota))
@@ -25,7 +56,7 @@ function mediaAvaliacoes(avaliacoes: Avaliacao[], colaboradorId: string): number
   return notas.reduce((s, n) => s + n, 0) / notas.length
 }
 
-function perfilColaborador(metricas: MetricaMensal[], colaboradorId: string): 'Bom' | 'Ruim' | 'desconhecido' {
+export function perfilColaborador(metricas: MetricaMensal[], colaboradorId: string): 'Bom' | 'Ruim' | 'desconhecido' {
   const metas = metricas.filter((m) => m.colaboradorId === colaboradorId)
   if (metas.length === 0) return 'desconhecido'
   const ultima = metas.reduce((a, b) => (a.ano > b.ano || (a.ano === b.ano && a.mes > b.mes) ? a : b))
@@ -295,6 +326,81 @@ function aplicarRegraCustomizada(
       }
       return null
     }
+    case 'salto_hierarquico': {
+      const limite = (regra.condicao.parametros?.limite_saltos as number) ?? 1
+      for (const col of simulados) {
+        if (col.status === 'vago') continue
+        const original = originais.find((c) => c.id === col.id)
+        if (!original || original.status === 'vago') continue
+        if (original.funcao === col.funcao) continue
+        const nivelOriginal = calcularNivel(originais, original.id)
+        const nivelNovo = calcularNivel(simulados, col.id)
+        if (Math.abs(nivelNovo - nivelOriginal) > limite) {
+          return criarImpacto(
+            regra.tipo,
+            regra.nome,
+            `${col.nome} subiu de nível ${nivelOriginal} → ${nivelNovo} (limite: ${limite})`,
+            col.id,
+            col.nome,
+            regra.id
+          )
+        }
+      }
+      return null
+    }
+    case 'ex_colegas_subordinados': {
+      for (const col of simulados) {
+        if (col.status === 'vago') continue
+        const original = originais.find((c) => c.id === col.id)
+        if (!original || original.status === 'vago') continue
+        if (original.funcao === col.funcao) continue
+        const exPares = originais.filter(
+          (c) => c.id !== original.id && c.liderImediatoId === original.liderImediatoId
+        )
+        for (const exPar of exPares) {
+          const simPar = simulados.find((c) => c.id === exPar.id)
+          if (simPar && simPar.liderImediatoId === col.id) {
+            return criarImpacto(
+              regra.tipo,
+              regra.nome,
+              `${exPar.nome} era par de ${col.nome} e agora é subordinado`,
+              col.id,
+              col.nome,
+              regra.id
+            )
+          }
+        }
+      }
+      return null
+    }
+    case 'cascata_excessiva': {
+      const limite = (regra.condicao.parametros?.limite_profundidade as number) ?? 2
+      for (const v of simulados.filter((c) => c.status === 'vago')) {
+        let profundidade = 1
+        const visitVago = new Set<string>()
+        let atual = v
+        while (atual.liderImediatoId) {
+          if (visitVago.has(atual.id)) break  // safety: cycle guard
+          visitVago.add(atual.id)
+          const leader = simulados.find((c) => c.id === atual.liderImediatoId)
+          if (leader?.status === 'vago') {
+            profundidade++
+            atual = leader
+          } else break
+        }
+        if (profundidade > limite) {
+          return criarImpacto(
+            regra.tipo,
+            regra.nome,
+            `Cascata de ${profundidade} níveis de VAGO (limite: ${limite})`,
+            undefined,
+            undefined,
+            regra.id
+          )
+        }
+      }
+      return null
+    }
     default:
       return null
   }
@@ -315,18 +421,15 @@ export function processarAcao(
   if (!colAlvo) return { colaboradores, impactos }
 
   if (acao.tipo === 'demissao') {
-    const subordinados = obterSubordinados(colaboradores, colAlvo.id)
-    const liderId = colAlvo.liderImediatoId
-
-    // Transfere subordinados para o líder do demitido
-    for (const sub of subordinados) {
-      sub.liderImediatoId = liderId
-    }
+    // NÃO transfere subordinados — eles ficam sob o VAGO
+    // O VAGO mantém suas conexões (edges) e subordinados visíveis
+    // Isso permite "promover de baixo" para preencher a vaga
 
     // Marca como vago em vez de remover
     colAlvo.status = 'vago'
     colAlvo.nome = 'VAGO'
-    colAlvo.liderImediatoId = liderId
+    // Mantém o liderImediatoId original para preservar a conexão superior
+    // Subordinados permanecem com liderImediatoId = colAlvo.id (não são transferidos)
   }
 
   if (acao.tipo === 'realocacao') {
@@ -359,8 +462,10 @@ export function processarAcao(
       // Cria VAGO na posição antiga do promovido (cascata)
       const vagoPromovido: Colaborador = {
         id: `vago_${promovido.id}`,
+        empresaId: promovido.empresaId,
         nome: 'VAGO',
         funcao: promovido.funcao,
+        papel: Papel.COLABORADOR,
         liderImediatoId: promovidoAntigoLiderId,
         createdAt: promovido.createdAt,
         status: 'vago',
@@ -377,18 +482,32 @@ export function processarAcao(
       promovido.funcao = cargoVago.funcao
       promovido.status = 'ativo'
 
-      // Se o cargo vago era o topo (CEO), transfere todos os órfãos para o novo CEO
-      if (cargoVago.liderImediatoId === null) {
-        for (const c of colaboradores) {
-          if (c.liderImediatoId === null && c.id !== promovido.id && c.status !== 'vago') {
-            c.liderImediatoId = promovido.id
-          }
+      // Transfere TODOS os subordinados do VAGO para o promovido
+      // (com a nova abordagem, subordinados NÃO são transferidos na demissão
+      //  — eles ficam sob o VAGO, e ao preencher a vaga, herdam o novo líder)
+      const subordinadosVago = obterSubordinados(colaboradores, cargoVago.id)
+      for (const sub of subordinadosVago) {
+        if (sub.id !== promovido.id) {
+          sub.liderImediatoId = promovido.id
         }
       }
 
-      // Remove o nó vago original
-      const idx = colaboradores.findIndex((c) => c.id === cargoVago.id)
-      if (idx !== -1) colaboradores.splice(idx, 1)
+      // Remove o nó vago original e corrige referências
+      const removedVagoId = cargoVago.id
+      const removedVagoLeaderId = cargoVago.liderImediatoId
+      const idx = colaboradores.findIndex((c) => c.id === removedVagoId)
+      if (idx !== -1) {
+        colaboradores.splice(idx, 1)
+
+        // Corrige referências ao VAGO removido:
+        // quem apontava para ele (ex: VAGO criado na posição antiga do promovido)
+        // agora aponta para o líder do VAGO (sobe na hierarquia)
+        for (const c of colaboradores) {
+          if (c.liderImediatoId === removedVagoId) {
+            c.liderImediatoId = removedVagoLeaderId
+          }
+        }
+      }
     } else {
       // Promoção direta: escolhe novo líder e cargo
       const promovido = colaboradores.find((c) => c.id === acao.colaboradorId)
@@ -400,8 +519,10 @@ export function processarAcao(
       // Cria um nó vago no lugar do promovido
       const vago: Colaborador = {
         id: `vago_${promovido.id}`,
+        empresaId: promovido.empresaId,
         nome: 'VAGO',
         funcao: promovido.funcao,
+        papel: Papel.COLABORADOR,
         liderImediatoId: antigoLiderId,
         createdAt: promovido.createdAt,
         status: 'vago',
@@ -470,7 +591,8 @@ export function analisarEstadoSimulacao(
   simulados: Colaborador[],
   avaliacoes: Avaliacao[],
   metricas: MetricaMensal[],
-  regras: RegraImpacto[]
+  regras: RegraImpacto[],
+  scores?: Record<string, ScoreColaborador>
 ): Impacto[] {
   const impactos: Impacto[] = []
 
@@ -613,11 +735,225 @@ export function analisarEstadoSimulacao(
     }
   }
 
-  // 5. Regras customizadas
+  // 6. Salto hierárquico (promoção que pula mais de 1 nível)
+  for (const col of simulados) {
+    if (col.status === 'vago') continue
+    const original = originais.find((c) => c.id === col.id)
+    if (!original || original.status === 'vago') continue
+
+    const nivelOriginal = calcularNivel(originais, original.id)
+    const nivelNovo = calcularNivel(simulados, col.id)
+
+    // Só considera salto se o colaborador MUDOU de função (foi promovido)
+    if (original.funcao !== col.funcao) {
+      const saltos = Math.abs(nivelNovo - nivelOriginal)
+      if (saltos > 1) {
+        impactos.push(
+          criarImpacto(
+            'negativo',
+            'Salto hierárquico — promoção acima de 1 nível',
+            `${col.nome} subiu ${saltos} nível(is) de ${original.funcao} para ${col.funcao} — risco de incapacidade (Princípio de Peter)`,
+            col.id,
+            col.nome,
+            'salto_hierarquico'
+          )
+        )
+      }
+    }
+  }
+
+  // 7. Ex-colegas viram subordinados
+  for (const col of simulados) {
+    if (col.status === 'vago') continue
+    const original = originais.find((c) => c.id === col.id)
+    if (!original || original.status === 'vago') continue
+    if (original.funcao === col.funcao) continue // só se houve promoção
+
+    // Descobre quem eram os pares do promovido (mesmo líder antes)
+    const exPares = originais.filter(
+      (c) => c.id !== original.id && c.liderImediatoId === original.liderImediatoId
+    )
+
+    // Verifica se algum desses pares agora é subordinado do promovido
+    for (const exPar of exPares) {
+      const simPar = simulados.find((c) => c.id === exPar.id)
+      if (simPar && simPar.liderImediatoId === col.id) {
+        impactos.push(
+          criarImpacto(
+            'negativo',
+            'Ex-colega agora é subordinado',
+            `${exPar.nome} era par de ${col.nome} e agora reporta a ele — possível tensão no time`,
+            col.id,
+            col.nome,
+            'ex_colegas_subordinados'
+          )
+        )
+      }
+    }
+  }
+
+  // 8. Cascata excessiva (contar VAGOs criados em cadeia)
+  const vagosCriados = simulados.filter(
+    (c) => c.status === 'vago' && !originais.some((o) => o.id === c.id)
+  )
+  // VAGOs que foram criados e formam uma cadeia (um VAGO reporta a outro VAGO)
+  const vagosEmCadeia = vagosCriados.filter((v) => {
+    if (!v.liderImediatoId) return false
+    const leader = simulados.find((c) => c.id === v.liderImediatoId)
+    return leader?.status === 'vago'
+  })
+  // Conta profundidade da cascata: quantos VAGOs em sequência existem
+  let profundidadeCascata = 0
+  for (const v of simulados.filter((c) => c.status === 'vago')) {
+    let profundidade = 1
+    const visitVago = new Set<string>()
+    let atual = v
+    while (atual.liderImediatoId) {
+      if (visitVago.has(atual.id)) break  // safety: cycle guard
+      visitVago.add(atual.id)
+      const leader = simulados.find((c) => c.id === atual.liderImediatoId)
+      if (leader?.status === 'vago') {
+        profundidade++
+        atual = leader
+      } else break
+    }
+    if (profundidade > profundidadeCascata) {
+      profundidadeCascata = profundidade
+    }
+  }
+  if (profundidadeCascata >= 3) {
+    impactos.push(
+      criarImpacto(
+        'negativo',
+        'Cascata excessiva de cargos vagos',
+        `${profundidadeCascata} níveis consecutivos de VAGO — desestabilização estrutural do organograma`,
+        undefined,
+        undefined,
+        'cascata_excessiva'
+      )
+    )
+  } else if (vagosEmCadeia.length >= 2) {
+    impactos.push(
+      criarImpacto(
+        'negativo',
+        'Cadeia de cargos vagos',
+        `${vagosEmCadeia.length} cargos vagos conectados — risco de propagação de instabilidade`,
+        undefined,
+        undefined,
+        'cascata_excessiva'
+      )
+    )
+  }
+
+  // 9. Regras customizadas
   for (const regra of regras.filter((r) => r.ativa)) {
     const impactoRegra = aplicarRegraCustomizada(regra, originais, simulados, avaliacoes, metricas)
     if (impactoRegra) {
       impactos.push(impactoRegra)
+    }
+  }
+
+  // 10. Análise de scores consolidados (fit cultural, sentimento, conversas, DISC)
+  if (scores) {
+    for (const col of simulados) {
+      if (col.status === 'vago') continue
+      const score = scores[col.id]
+      if (!score) continue
+
+      const simulado = simulados.find((c) => c.id === col.id)
+      const original = originais.find((c) => c.id === col.id)
+
+      // Score fit cultural baixo = risco de desalinhamento cultural
+      if (score.scoreFitCultural > 0 && score.scoreFitCultural < 4) {
+        impactos.push(criarImpacto(
+          'negativo',
+          'Baixo alinhamento cultural',
+          `${col.nome} tem score fit cultural ${score.scoreFitCultural}/10 — risco de desalinhamento com a cultura`,
+          col.id, col.nome, 'lider_perfil_ruim'
+        ))
+      }
+
+      // Score fit cultural alto = ponto positivo
+      if (score.scoreFitCultural >= 8) {
+        impactos.push(criarImpacto(
+          'positivo',
+          'Alto alinhamento cultural',
+          `${col.nome} tem excelente fit cultural (${score.scoreFitCultural}/10)`,
+          col.id, col.nome
+        ))
+      }
+
+      // Score sentimento baixo = insatisfação
+      if (score.scoreSentimento > 0 && score.scoreSentimento < 4) {
+        impactos.push(criarImpacto(
+          'negativo',
+          'Sentimento negativo em relação à empresa',
+          `${col.nome} registrou score de sentimento ${score.scoreSentimento}/10 — possível insatisfação`,
+          col.id, col.nome
+        ))
+      }
+
+      // Conversas regulares e positivas = engajamento
+      if (score.scoreConversas >= 7) {
+        impactos.push(criarImpacto(
+          'positivo',
+          'Bom engajamento (conversas regulares)',
+          `${col.nome} tem score de conversas ${score.scoreConversas}/10 — feedbacks regulares e construtivos`,
+          col.id, col.nome
+        ))
+      }
+
+      // Score geral baixo = alerta
+      if (score.scoreGeral > 0 && score.scoreGeral < 3) {
+        impactos.push(criarImpacto(
+          'negativo',
+          'Score geral crítico',
+          `${col.nome} tem score geral ${score.scoreGeral}/10 — requires atenção`,
+          col.id, col.nome
+        ))
+      }
+
+      // Score geral alto = destaque positivo
+      if (score.scoreGeral >= 8) {
+        impactos.push(criarImpacto(
+          'positivo',
+          'Score geral de destaque',
+          `${col.nome} tem score geral ${score.scoreGeral}/10 — colaborador de alto desempenho`,
+          col.id, col.nome
+        ))
+      }
+
+      // Promoção: verifica se score geral é compatível
+      if (original && simulado && original.funcao !== simulado.funcao && original.status !== 'vago') {
+        if (score.scoreGeral < 5) {
+          impactos.push(criarImpacto(
+            'negativo',
+            'Promoção de risco (score baixo)',
+            `${col.nome} foi promovido mas tem score geral ${score.scoreGeral}/10 — risco de Princípio de Peter`,
+            col.id, col.nome
+          ))
+        }
+        if (score.scoreGeral >= 8) {
+          impactos.push(criarImpacto(
+            'positivo',
+            'Promoção de alto potencial',
+            `${col.nome} foi promovido com score geral ${score.scoreGeral}/10 — alta probabilidade de sucesso`,
+            col.id, col.nome
+          ))
+        }
+      }
+
+      // Demissão: impacto adicional se score for alto (perda de talento)
+      if (original && !simulado) {
+        if (score.scoreGeral >= 7) {
+          impactos.push(criarImpacto(
+            'negativo',
+            'Perda de talento de alto score',
+            `${col.nome} (score ${score.scoreGeral}/10) saiu — perda significativa para a organização`,
+            col.id, col.nome
+          ))
+        }
+      }
     }
   }
 
