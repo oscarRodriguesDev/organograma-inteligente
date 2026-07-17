@@ -60,7 +60,19 @@ export default async function RootLayout({
                       Métricas
                     </a>
                     <a href="/regras-impacto" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                      Regras
+                       Regras
+                    </a>
+                    <a href="/fit-cultural" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                       Fit Cultural
+                    </a>
+                    <a href="/teste-disc" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                       Teste DISC
+                    </a>
+                    <a href="/pesquisa-sentimento" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                       Sentimento
+                    </a>
+                    <a href="/conversas" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                       Conversas
                     </a>
                   </div>
                   <div className="flex items-center gap-3 text-sm">

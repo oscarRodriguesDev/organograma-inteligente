@@ -18,6 +18,13 @@
 | 8 | `v0.8-organograma-interativo` | Organograma em árvore expansível: clique para expandir/recolher subordinados. Nós móveis (arrastar), editáveis (duplo clique inline), adicionar subordinado (modal) e excluir com transferência de subordinados. Navegação progressiva (CEO inicial → expansão por níveis). | ✅ |
 
 | 9 | `v0.9-simulacao-impacto` | Modo simulação: demissão, promoção com efeito cascata, impacto automático (positivo/negativo), indicador de alerta, modal de impactos, regras de impacto customizáveis. | ✅ |
+| 10 | `v0.10-promocao-subordinados` | Demissão mantém subordinados sob VAGO (edges preservadas); promoção filtra candidatos para subordinados/descendentes apenas; novos impactos: salto hierárquico, ex-colega vira subordinado, cascata excessiva. | ✅ |
+
+| 10.1 | `v0.10.1-relocar-normal` | Botão ⟷ adicionado ao modo normal (não só simulação). Ao adicionar subordinado, checkbox "Transferir subordinados atuais" para inserir gestor entre níveis. ↑ em líder cujo chefe é VAGO redireciona para preencher vaga. | ✅ |
+| 10.2 | `v0.10.2-edges-reconnectaveis` | Edges do organograma são reconectáveis: clique na seta (edge) abre modal de relocar. Drag & drop de edge removido (instável no React Flow v12.10.2). Botão ⟷ e clique na conexão disponíveis em ambos os modos. Proteção contra ciclos em DFS/loops para evitar travamentos. | ✅ |
+
+| 11 | `v0.11-ia-fase1` | Integração de IA generativa via NVIDIA API (Fase 1): sugestão inteligente de candidatos, geração de feedback em avaliações, redação assistida de iniciativas, análise de sentimento em comentários. Infraestrutura: src/lib/ai/, tabela AILog, feature flags, fallbacks determinísticos. | ✅ |
+| 12 | `v0.12-novas-ferramentas-rh` | Fit Cultural, Teste DISC, Pesquisa de Sentimento, Registro de Conversas, navegação, correção `prisma.aILog` → `prisma.impacto` | ✅ |
 
 ## Próximos checkpoints previstos
-- `v0.10-melhorias-ux` — Animações, filtros, busca, temas
+- `v0.13-melhorias-ux` — Animações, filtros, busca, temas
