@@ -57,13 +57,18 @@ export async function autenticarPorEmailSenha(
   const senhaValida = await bcrypt.compare(senha, colaborador.senhaHash)
   if (!senhaValida) return null
 
-  if (!colaborador.empresa.ativa) return null
-  if (colaborador.status !== 'ativo') return null
+  // ADMIN_PLATAFORMA pode ter empresaId null
+  if (colaborador.papel !== 'ADMIN_PLATAFORMA') {
+    if (!colaborador.empresa?.ativa) return null
+    if (colaborador.status !== 'ativo') return null
+  } else {
+    if (colaborador.status !== 'ativo') return null
+  }
 
   return {
     colaboradorId: colaborador.id,
-    empresaId: colaborador.empresaId,
-    empresaNome: colaborador.empresa.nome,
+    empresaId: colaborador.empresaId ?? '',
+    empresaNome: colaborador.empresa?.nome ?? 'Sistema',
     nome: colaborador.nome,
     email: colaborador.email!,
     papel: colaborador.papel as Papel,

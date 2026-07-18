@@ -31,8 +31,9 @@
 
 ## Checkpoints Futuros
 - `v0.14-multi-tenant` — Schema Empresa, auth email+senha, RBAC, seed admin ✅ (17/07/2026 — build passou)
+- `v0.14.1-auth-admin-layout-seed` — LoginAction admin redirect, auth ADMIN_PLATAFORMA (empresaId nullable), layout admin nav, seed planos ✅ (17/07/2026 — build com erros pré-existentes em db.ts)
 
 ## Próximos checkpoints previstos
-- `v0.14.1-csv-import` — Importação de colaboradores via CSV
-- `v0.14.2-convite-testes` — Fluxo de convite para responder testes
+- `v0.14.2-csv-import` — Importação de colaboradores via CSV
+- `v0.14.3-convite-testes` — Fluxo de convite para responder testes
 - `v0.15-admin-tenant` — Gestão de empresas, cadastro de tenants

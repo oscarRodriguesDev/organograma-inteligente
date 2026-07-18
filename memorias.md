@@ -59,6 +59,13 @@ Sistema gerenciador de organogramas empresariais. Permite cadastrar colaboradore
 - Login por email+senha com bcrypt
 - JWT com claims: colaboradorId, empresaId, empresaNome, nome, email, papel
 - RBAC básico via Papel (ADMIN_PLATAFORMA, CEO, GESTOR, RH, COLABORADOR)
+- ADMIN_PLATAFORMA pode ter empresaId = null (logado sem tenant)
+- LoginAction redireciona ADMIN_PLATAFORMA para /admin e demais para /
+- Layout principal renderiza nav diferente para admin (Dashboard, Empresas, Gastos, Financeiro) vs empresa
+
+### Planos de Assinatura
+- Seed script em `scripts/seed-planos.ts` com 3 planos: Básico, Profissional, Enterprise
+- Uso: `npx tsx scripts/seed-planos.ts`
 
 ## 📂 Estrutura
 ```
@@ -81,6 +88,12 @@ prisma/
   schema.prisma  # Schema multi-tenant
   seed.ts        # Seed de 100 colaboradores
 ```
+
+## 🔑 Credenciais de Acesso (Seed)
+- **Email:** `admin@empresa.com`
+- **Senha:** `admin123`
+- **Papel:** CEO
+- *Nota:* Valores podem ser sobrescritos via variáveis de ambiente `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD`.
 
 ## 🚧 Próximos Passos
 1. Refatorar db.ts: filtrar TODAS as queries por empresaId da sessão

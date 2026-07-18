@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { criarToken, autenticarPorEmailSenha } from './auth'
+import { Papel } from './types'
 
 const COOKIE_NAME = 'session'
 const SESSION_DURATION = 60 * 60 * 24 // 24h
@@ -32,6 +33,10 @@ export async function loginAction(formData: FormData) {
   })
 
   revalidatePath('/')
+  // Redireciona admin para /admin, outros para /
+  if (session.papel === Papel.ADMIN_PLATAFORMA) {
+    redirect('/admin')
+  }
   redirect('/')
 }
 

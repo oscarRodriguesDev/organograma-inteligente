@@ -41,7 +41,36 @@ export default async function RootLayout({
               <a href="/" className="text-lg font-bold text-foreground">
                 Organograma
               </a>
-              {session && (
+              {session && session.papel === 'ADMIN_PLATAFORMA' ? (
+                <>
+                  <div className="flex gap-6 text-sm">
+                    <a href="/admin" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                      Dashboard
+                    </a>
+                    <a href="/admin/empresas" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                      Empresas
+                    </a>
+                    <a href="/admin/gastos" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                      Gastos
+                    </a>
+                    <a href="/admin/financeiro" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                      Financeiro
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <ThemeToggle />
+                    <span className="text-zinc-500 dark:text-zinc-400">{session.nome}</span>
+                    <form action={logoutAction}>
+                      <button
+                        type="submit"
+                        className="text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                      >
+                        Sair
+                      </button>
+                    </form>
+                  </div>
+                </>
+              ) : session ? (
                 <>
                   <div className="flex gap-6 text-sm">
                     <a href="/organograma" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
@@ -69,7 +98,7 @@ export default async function RootLayout({
                        Teste DISC
                     </a>
                     <a href="/pesquisa-sentimento" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                       Sentimento
+                      Sentimento
                     </a>
                     <a href="/conversas" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
                        Conversas
@@ -88,7 +117,7 @@ export default async function RootLayout({
                     </form>
                   </div>
                 </>
-              )}
+              ) : null}
             </nav>
           </header>
           {children}
