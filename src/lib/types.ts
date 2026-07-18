@@ -11,8 +11,61 @@ export interface Empresa {
   id: string
   nome: string
   slug: string
+  cnpj: string
+  contatoNome: string
+  contatoEmail: string
+  contatoTelefone: string
+  dataContratacao: string
   createdAt: string
   ativa: boolean
+}
+
+export interface Plano {
+  id: string
+  nome: string
+  slug: string
+  descricao: string
+  precoMensal: number
+  precoAnual: number
+  maxColaboradores: number
+  recursos: string[]
+  destaque: boolean
+  ativo: boolean
+}
+
+export interface Assinatura {
+  id: string
+  empresaId: string
+  planoId: string
+  status: string
+  dataInicio: string
+  dataProximoPagamento: string | null
+  dataCancelamento: string | null
+  ciclo: string
+  plano?: Plano
+}
+
+export interface Pagamento {
+  id: string
+  assinaturaId: string
+  valor: number
+  metodo: string
+  status: string
+  referenciaExterna: string
+  createdAt: string
+}
+
+export interface GastoSistema {
+  id: string
+  tipo: 'dominio' | 'hospedagem' | 'anuncio' | 'salario' | 'ia' | 'ferramentas' | 'outros'
+  descricao: string
+  valor: number
+  mes: number
+  ano: number
+  recorrente: boolean
+  fornecedor: string
+  observacao: string
+  createdAt: string
 }
 
 export interface UsuarioSessao {

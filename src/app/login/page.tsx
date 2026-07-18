@@ -3,15 +3,21 @@ import { loginAction } from '@/lib/auth-actions'
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ erro?: string }>
+  searchParams: Promise<{ erro?: string; sucesso?: string }>
 }) {
-  const { erro } = await searchParams
+  const { erro, sucesso } = await searchParams
 
   return (
     <div className="flex-1 flex items-center justify-center p-8">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-8">Organograma Inteligente</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">Organograma Inteligente</h1>
         <p className="text-sm text-zinc-500 text-center mb-6">Faça login para continuar</p>
+
+        {sucesso && (
+          <div className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+            Conta criada com sucesso! Faça login para acessar.
+          </div>
+        )}
 
         {erro && (
           <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">

@@ -1,0 +1,67 @@
+'use client'
+
+import { useState } from 'react'
+import { useFormStatus } from 'react-dom'
+import { deletarEmpresaAction } from '@/lib/admin-actions'
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+    >
+      {pending ? 'Excluindo...' : 'Sim, excluir empresa'}
+    </button>
+  )
+}
+
+export function ExcluirEmpresaButton({
+  empresaId,
+  empresaNome,
+}: {
+  empresaId: string
+  empresaNome: string
+}) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="text-xs px-3 py-1.5 rounded-md border border-red-200 dark:border-red-900/50 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+      >
+        Excluir
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 max-w-sm w-full mx-4 shadow-xl">
+            <h3 className="text-lg font-semibold text-foreground mb-2">Excluir Empresa</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+              Tem certeza que deseja excluir <strong className="text-foreground">{empresaNome}</strong>?
+              Esta ação é irreversível e removerá todos os dados relacionados.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <form
+                action={async () => {
+                  await deletarEmpresaAction(empresaId)
+                  setOpen(false)
+                }}
+              >
+                <SubmitButton />
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}

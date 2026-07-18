@@ -1,4 +1,6 @@
 import { prisma } from './prisma'
+import type { SessionPayload } from './auth'
+import bcrypt from 'bcryptjs'
 import type {
   Colaborador,
   Avaliacao,
@@ -15,6 +17,11 @@ import type {
   PesquisaSentimento,
   Conversa,
   ScoreColaborador,
+  Plano,
+  Assinatura,
+  Pagamento,
+  GastoSistema,
+  Empresa,
 } from './types'
 import { Papel } from './types'
 
@@ -937,6 +944,92 @@ export async function obterScore(colaboradorId: string): Promise<ScoreColaborado
   }
 }
 
+// ─── Planos ────────────────────────────────────────────────────
+
+export async function listarPlanos(): Promise<Plano[]> {
+  const data = await prisma.plano.findMany({
+    where: { ativo: true },
+    orderBy: { precoMensal: 'asc' },
+  })
+  return data.map((p: any) => ({
+    id: p.id,
+    nome: p.nome,
+    slug: p.slug,
+    descricao: p.descricao,
+    precoMensal: p.precoMensal,
+    precoAnual: p.precoAnual,
+    maxColaboradores: p.maxColaboradores,
+    recursos: JSON.parse(p.recursos),
+    destaque: p.destaque,
+    ativo: p.ativo,
+  }))
+}
+
+export async function buscarPlanoPorSlug(slug: string): Promise<Plano | null> {
+  const data = await prisma.plano.findUnique({
+    where: { slug, ativo: true },
+  })
+  if (!data) return null
+  return {
+    id: data.id,
+    nome: data.nome,
+    slug: data.slug,
+    descricao: data.descricao,
+    precoMensal: data.precoMensal,
+    precoAnual: data.precoAnual,
+    maxColaboradores: data.maxColaboradores,
+    recursos: JSON.parse(data.recursos),
+    destaque: data.destaque,
+    ativo: data.ativo,
+  }
+}
+
+// ─── Empresa + CEO (Onboarding) ──────────────────────────────
+
+export async function criarEmpresaComCEO(dados: {
+  nome: string
+  slug: string
+  cnpj: string
+  contatoNome: string
+  contatoEmail: string
+  ceoNome: string
+  ceoEmail: string
+  ceoSenha: string
+  planoId: string
+  ciclo: string
+}): Promise<void> {
+  const senhaHash = await bcrypt.hash(dados.ceoSenha, 10)
+
+  await prisma.empresa.create({
+    data: {
+      nome: dados.nome,
+      slug: dados.slug,
+      cnpj: dados.cnpj,
+      contatoNome: dados.contatoNome,
+      contatoEmail: dados.contatoEmail,
+      dataContratacao: new Date(),
+      colaboradores: {
+        create: {
+          nome: dados.ceoNome,
+          email: dados.ceoEmail,
+          senhaHash,
+          funcao: 'CEO',
+          papel: Papel.CEO,
+          status: 'ativo',
+        },
+      },
+      assinatura: {
+        create: {
+          planoId: dados.planoId,
+          status: 'ativa',
+          ciclo: dados.ciclo,
+          dataInicio: new Date(),
+        },
+      },
+    },
+  })
+}
+
 export async function listarScores(ordenarPor?: string): Promise<ScoreColaborador[]> {
   const camposValidos = [
     'scoreGeral', 'scoreFitCultural', 'scoreDISC', 'scoreSentimento',
@@ -963,4 +1056,279 @@ export async function listarScores(ordenarPor?: string): Promise<ScoreColaborado
     scoreIniciativas: s.scoreIniciativas,
     ultimaAtualizacao: s.ultimaAtualizacao.toISOString(),
   }))
+}
+
+// ═══════════════════════════════════════════════════════════
+// ─── SaaS / Admin ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+
+export async function buscarPlano(slug: string): Promise<Plano | null> {
+  const data = await prisma.plano.findUnique({ where: { slug } })
+  if (!data) return null
+  return { ...data, recursos: JSON.parse(data.recursos as string) }
+}
+
+export async function buscarPlanoPorId(id: string): Promise<Plano | null> {
+  const data = await prisma.plano.findUnique({ where: { id } })
+  if (!data) return null
+  return { ...data, recursos: JSON.parse(data.recursos as string) }
+}
+
+// ─── Assinaturas ──────────────────────────────────────────
+export async function criarAssinatura(dados: { empresaId: string; planoId: string; ciclo: string }): Promise<Assinatura> {
+  const data = await prisma.assinatura.create({
+    data: {
+      empresaId: dados.empresaId,
+      planoId: dados.planoId,
+      ciclo: dados.ciclo,
+      status: 'ativa',
+      dataInicio: new Date(),
+      dataProximoPagamento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    },
+    include: { plano: true },
+  })
+  return { ...data, dataInicio: data.dataInicio.toISOString(), dataProximoPagamento: data.dataProximoPagamento?.toISOString() ?? null, dataCancelamento: data.dataCancelamento?.toISOString() ?? null, plano: { ...data.plano, recursos: JSON.parse(data.plano.recursos as string) } }
+}
+
+export async function buscarAssinatura(empresaId: string): Promise<Assinatura | null> {
+  const data = await prisma.assinatura.findUnique({
+    where: { empresaId },
+    include: { plano: true },
+  })
+  if (!data) return null
+  return { ...data, dataInicio: data.dataInicio.toISOString(), dataProximoPagamento: data.dataProximoPagamento?.toISOString() ?? null, dataCancelamento: data.dataCancelamento?.toISOString() ?? null, plano: { ...data.plano, recursos: JSON.parse(data.plano.recursos as string) } }
+}
+
+// ─── Pagamentos (Mock) ────────────────────────────────────
+export async function registrarPagamentoMock(dados: { assinaturaId: string; valor: number; metodo: string }): Promise<Pagamento> {
+  const data = await prisma.pagamento.create({
+    data: {
+      assinaturaId: dados.assinaturaId,
+      valor: dados.valor,
+      metodo: dados.metodo,
+      status: 'aprovado',
+      referenciaExterna: `MOCK-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    },
+  })
+  return { ...data, createdAt: data.createdAt.toISOString() }
+}
+
+export async function listarPagamentos(assinaturaId: string): Promise<Pagamento[]> {
+  const data = await prisma.pagamento.findMany({
+    where: { assinaturaId },
+    orderBy: { createdAt: 'desc' },
+  })
+  return data.map(p => ({ ...p, createdAt: p.createdAt.toISOString() }))
+}
+
+// ─── Gastos do Sistema ────────────────────────────────────
+export async function listarGastosSistema(mes?: number, ano?: number): Promise<GastoSistema[]> {
+  const where: any = {}
+  if (mes !== undefined) where.mes = mes
+  if (ano !== undefined) where.ano = ano
+  const data = await prisma.gastoSistema.findMany({ where, orderBy: [{ ano: 'desc' }, { mes: 'desc' }] })
+  return data.map(g => ({ ...g, tipo: g.tipo as GastoSistema['tipo'], createdAt: g.createdAt.toISOString() }))
+}
+
+export async function criarGastoSistema(dados: Omit<GastoSistema, 'id' | 'createdAt'>): Promise<GastoSistema> {
+  const data = await prisma.gastoSistema.create({ data: dados as any })
+  return { ...data, tipo: data.tipo as GastoSistema['tipo'], createdAt: data.createdAt.toISOString() }
+}
+
+export async function atualizarGastoSistema(id: string, dados: Partial<Omit<GastoSistema, 'id' | 'createdAt'>>): Promise<GastoSistema | null> {
+  try {
+    const data = await prisma.gastoSistema.update({ where: { id }, data: dados as any })
+    return { ...data, tipo: data.tipo as GastoSistema['tipo'], createdAt: data.createdAt.toISOString() }
+  } catch { return null }
+}
+
+export async function removerGastoSistema(id: string): Promise<boolean> {
+  try { await prisma.gastoSistema.delete({ where: { id } }); return true }
+  catch { return false }
+}
+
+export async function obterTotalGastos(mes?: number, ano?: number): Promise<number> {
+  const where: any = {}
+  if (mes !== undefined) where.mes = mes
+  if (ano !== undefined) where.ano = ano
+  const result = await prisma.gastoSistema.aggregate({ where, _sum: { valor: true } })
+  return result._sum.valor ?? 0
+}
+
+export async function obterGastosPorTipo(mes: number, ano: number): Promise<{ tipo: string; valor: number }[]> {
+  const gastos = await prisma.gastoSistema.findMany({ where: { mes, ano } })
+  const agrupado: Record<string, number> = {}
+  for (const g of gastos) {
+    agrupado[g.tipo] = (agrupado[g.tipo] ?? 0) + g.valor
+  }
+  return Object.entries(agrupado).map(([tipo, valor]) => ({ tipo, valor }))
+}
+
+// ─── Admin: Empresas ──────────────────────────────────────
+export async function listarEmpresasAdmin(): Promise<(Empresa & { totalColaboradores: number; assinatura?: Assinatura | null })[]> {
+  const data = await prisma.empresa.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      _count: { select: { colaboradores: true } },
+      assinatura: { include: { plano: true } },
+    },
+  })
+  return data.map(e => ({
+    id: e.id, nome: e.nome, slug: e.slug, cnpj: e.cnpj,
+    contatoNome: e.contatoNome, contatoEmail: e.contatoEmail, contatoTelefone: e.contatoTelefone,
+    dataContratacao: e.dataContratacao.toISOString(), createdAt: e.createdAt.toISOString(), ativa: e.ativa,
+    totalColaboradores: e._count.colaboradores,
+    assinatura: e.assinatura ? {
+      ...e.assinatura,
+      dataInicio: e.assinatura.dataInicio.toISOString(),
+      dataProximoPagamento: e.assinatura.dataProximoPagamento?.toISOString() ?? null,
+      dataCancelamento: e.assinatura.dataCancelamento?.toISOString() ?? null,
+      plano: { ...e.assinatura.plano, recursos: JSON.parse(e.assinatura.plano.recursos as string) },
+    } : null,
+  }))
+}
+
+export async function buscarEmpresaAdmin(id: string): Promise<(Empresa & { totalColaboradores: number; assinatura?: Assinatura | null }) | null> {
+  const data = await prisma.empresa.findUnique({
+    where: { id },
+    include: {
+      _count: { select: { colaboradores: true } },
+      assinatura: { include: { plano: true } },
+    },
+  })
+  if (!data) return null
+  return {
+    id: data.id, nome: data.nome, slug: data.slug, cnpj: data.cnpj,
+    contatoNome: data.contatoNome, contatoEmail: data.contatoEmail, contatoTelefone: data.contatoTelefone,
+    dataContratacao: data.dataContratacao.toISOString(), createdAt: data.createdAt.toISOString(), ativa: data.ativa,
+    totalColaboradores: data._count.colaboradores,
+    assinatura: data.assinatura ? {
+      ...data.assinatura,
+      dataInicio: data.assinatura.dataInicio.toISOString(),
+      dataProximoPagamento: data.assinatura.dataProximoPagamento?.toISOString() ?? null,
+      dataCancelamento: data.assinatura.dataCancelamento?.toISOString() ?? null,
+      plano: { ...data.assinatura.plano, recursos: JSON.parse(data.assinatura.plano.recursos as string) },
+    } : null,
+  }
+}
+
+export async function alternarStatusEmpresa(id: string, ativa: boolean): Promise<boolean> {
+  try {
+    await prisma.empresa.update({ where: { id }, data: { ativa } })
+    return true
+  } catch { return false }
+}
+
+export async function deletarEmpresaAdmin(id: string): Promise<boolean> {
+  try {
+    // Remove dados relacionados
+    const colaboradores = await prisma.colaborador.findMany({ where: { empresaId: id }, select: { id: true } })
+    const ids = colaboradores.map(c => c.id)
+    
+    await prisma.avaliacao.deleteMany({ where: { OR: [{ avaliadorId: { in: ids } }, { avaliadoId: { in: ids } }] } })
+    await prisma.metricaMensal.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.iniciativa.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.fitCulturalResposta.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.respostaDISC.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.resultadoDISC.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.pesquisaSentimento.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.conversa.deleteMany({ where: { OR: [{ colaboradorId: { in: ids } }, { criadoPorId: { in: ids } }] } })
+    await prisma.scoreColaborador.deleteMany({ where: { colaboradorId: { in: ids } } })
+    await prisma.pagamento.deleteMany({ where: { assinatura: { empresaId: id } } })
+    await prisma.assinatura.deleteMany({ where: { empresaId: id } })
+    await prisma.colaborador.deleteMany({ where: { empresaId: id } })
+    await prisma.regraImpacto.deleteMany({ where: { empresaId: id } })
+    await prisma.cargo.deleteMany({ where: { empresaId: id } })
+    await prisma.fitCulturalPergunta.deleteMany({ where: { empresaId: id } })
+    await prisma.perguntaDISC.deleteMany({ where: { empresaId: id } })
+    await prisma.empresa.delete({ where: { id } })
+    return true
+  } catch { return false }
+}
+
+export async function obterReceitaTotal(ano?: number): Promise<number> {
+  const where: any = { status: 'aprovado' }
+  if (ano !== undefined) {
+    const data = await prisma.pagamento.findMany({ where: { status: 'aprovado' } })
+    return data.filter(p => new Date(p.createdAt).getFullYear() === ano).reduce((s, p) => s + p.valor, 0)
+  }
+  const result = await prisma.pagamento.aggregate({ where, _sum: { valor: true } })
+  return result._sum.valor ?? 0
+}
+
+export async function obterReceitaMensal(mes: number, ano: number): Promise<number> {
+  const pagamentos = await prisma.pagamento.findMany({ where: { status: 'aprovado' } })
+  return pagamentos
+    .filter(p => {
+      const d = new Date(p.createdAt)
+      return d.getMonth() + 1 === mes && d.getFullYear() === ano
+    })
+    .reduce((s, p) => s + p.valor, 0)
+}
+
+export async function obterReceitaDiaria(dia: Date): Promise<number> {
+  const inicio = new Date(dia)
+  inicio.setHours(0, 0, 0, 0)
+  const fim = new Date(dia)
+  fim.setHours(23, 59, 59, 999)
+  const pagamentos = await prisma.pagamento.findMany({
+    where: {
+      status: 'aprovado',
+      createdAt: { gte: inicio, lte: fim },
+    },
+  })
+  return pagamentos.reduce((s, p) => s + p.valor, 0)
+}
+
+export async function contarEmpresasAtivas(): Promise<number> {
+  return prisma.empresa.count({ where: { ativa: true } })
+}
+
+export async function contarEmpresasInativas(): Promise<number> {
+  return prisma.empresa.count({ where: { ativa: false } })
+}
+
+export async function obterTotalColaboradoresSistema(): Promise<number> {
+  return prisma.colaborador.count({ where: { empresaId: { not: null } } })
+}
+
+export async function obterAdminPorEmail(email: string): Promise<SessionPayload | null> {
+  const data = await prisma.colaborador.findFirst({
+    where: { email, papel: 'ADMIN_PLATAFORMA' },
+  })
+  if (!data || !data.senhaHash) return null
+  return {
+    colaboradorId: data.id,
+    empresaId: data.empresaId ?? '',
+    empresaNome: 'Sistema',
+    nome: data.nome,
+    email: data.email!,
+    papel: Papel.ADMIN_PLATAFORMA,
+  }
+}
+
+export async function criarAdminSistema(dados: {
+  nome: string
+  email: string
+  senha: string
+}): Promise<boolean> {
+  const senhaHash = await bcrypt.hash(dados.senha, 10)
+  
+  const existente = await prisma.colaborador.findFirst({
+    where: { email: dados.email, papel: 'ADMIN_PLATAFORMA' },
+  })
+  if (existente) return false
+
+  await prisma.colaborador.create({
+    data: {
+      empresaId: null,
+      nome: dados.nome,
+      funcao: 'Administrador do Sistema',
+      email: dados.email,
+      senhaHash,
+      papel: 'ADMIN_PLATAFORMA',
+      status: 'ativo',
+    },
+  })
+  return true
 }

@@ -16,24 +16,91 @@ enum Papel {
   COLABORADOR
 }
 
+// ─── Planos de Assinatura ─────────────────────────
+model Plano {
+  id               String   @id @default(cuid())
+  nome             String
+  slug             String   @unique
+  descricao        String   @default("")
+  precoMensal      Float    @default(0)
+  precoAnual       Float    @default(0)
+  maxColaboradores Int      @default(10)
+  recursos         String   @default("[]") // JSON array
+  destaque         Boolean  @default(false)
+  ativo            Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  assinaturas      Assinatura[]
+}
+
+// ─── Assinatura da Empresa ─────────────────────────
+model Assinatura {
+  id                   String   @id @default(cuid())
+  empresaId            String   @unique
+  planoId              String
+  status               String   @default("ativa") // ativa, cancelada, expirada, trial
+  dataInicio           DateTime @default(now())
+  dataProximoPagamento DateTime?
+  dataCancelamento     DateTime?
+  ciclo                String   @default("mensal") // mensal, anual
+  createdAt            DateTime @default(now())
+
+  empresa              Empresa  @relation(fields: [empresaId], references: [id])
+  plano                Plano    @relation(fields: [planoId], references: [id])
+  pagamentos           Pagamento[]
+}
+
+// ─── Pagamento (Mockado) ──────────────────────────
+model Pagamento {
+  id              String   @id @default(cuid())
+  assinaturaId    String
+  valor           Float
+  metodo          String   @default("cartao_credito") // cartao_credito, boleto, pix
+  status          String   @default("aprovado") // aprovado, pendente, recusado, estornado
+  referenciaExterna String @default("")
+  createdAt       DateTime @default(now())
+
+  assinatura      Assinatura @relation(fields: [assinaturaId], references: [id])
+}
+
+// ─── Gastos do Sistema (admin financeiro) ─────────
+model GastoSistema {
+  id          String   @id @default(cuid())
+  tipo        String   // dominio, hospedagem, anuncio, salario, ia, ferramentas, outros
+  descricao   String
+  valor       Float
+  mes         Int
+  ano         Int
+  recorrente  Boolean  @default(false)
+  fornecedor  String   @default("")
+  observacao  String   @default("")
+  createdAt   DateTime @default(now())
+}
+
 // ─── Empresa (Tenant) ─────────────────────────────
 model Empresa {
-  id        String   @id @default(cuid())
-  nome      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  ativa     Boolean  @default(true)
+  id            String   @id @default(cuid())
+  nome          String
+  slug          String   @unique
+  cnpj          String   @default("")
+  contatoNome   String   @default("")
+  contatoEmail  String   @default("")
+  contatoTelefone String @default("")
+  dataContratacao DateTime @default(now())
+  ativa         Boolean  @default(true)
+  createdAt     DateTime @default(now())
 
   colaboradores      Colaborador[]
   cargos             Cargo[]
   regrasImpacto      RegraImpacto[]
   fitCulturalPerguntas FitCulturalPergunta[]
   perguntasDISC      PerguntaDISC[]
+  assinatura         Assinatura?
 }
 
 model Colaborador {
   id              String   @id @default(cuid())
-  empresaId       String
+  empresaId       String?
   nome            String
   funcao          String
   email           String?  // email para login (nullable para migração)
@@ -43,7 +110,7 @@ model Colaborador {
   createdAt       DateTime @default(now())
   status          String   @default("ativo")
 
-  empresa      Empresa       @relation(fields: [empresaId], references: [id])
+  empresa      Empresa?      @relation(fields: [empresaId], references: [id])
   lider        Colaborador?  @relation("LiderSubordinados", fields: [liderImediatoId], references: [id])
   subordinados Colaborador[] @relation("LiderSubordinados")
 

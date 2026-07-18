@@ -5,7 +5,7 @@ import { jwtVerify } from 'jose'
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? 'fallback-secret')
 const COOKIE_NAME = 'session'
 
-const PUBLIC_ROUTES = ['/login']
+const PUBLIC_ROUTES = ['/login', '/', '/checkout', '/onboarding']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -25,7 +25,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Rotas públicas não precisam de autenticação
-  if (PUBLIC_ROUTES.includes(pathname)) {
+  if (PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route + '/'))) {
     return NextResponse.next()
   }
 
