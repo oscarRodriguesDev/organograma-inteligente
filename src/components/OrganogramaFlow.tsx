@@ -50,9 +50,31 @@ interface NodeData {
   expandido: boolean
   temFilhos: boolean
   modoSimulacao?: boolean
+  modoVisual?: 'formal' | 'ludico'
   simulacaoVago?: boolean
   simulacaoPromovido?: boolean
   sugerido?: boolean
+  editandoNodeId?: string | null
+  clearEditando?: () => void
+}
+
+import {
+  FaCrown, FaBullseye, FaChartLine, FaSearch, FaWrench,
+  FaStar, FaCogs, FaHandshake, FaUser, FaDesktop, FaHeadset,
+} from 'react-icons/fa'
+
+const ICONE_POR_PAPEL: Record<string, React.ReactNode> = {
+  CEO:               <FaCrown className="text-yellow-500" />,
+  DIRETOR:           <FaBullseye className="text-red-500" />,
+  GERENTE:           <FaChartLine className="text-blue-500" />,
+  SUPERVISOR:        <FaSearch className="text-purple-500" />,
+  GESTOR:            <FaWrench className="text-orange-500" />,
+  LIDER:             <FaStar className="text-amber-400" />,
+  OPERACIONAL:       <FaCogs className="text-zinc-500" />,
+  RH:                <FaHandshake className="text-teal-500" />,
+  COLABORADOR:       <FaUser className="text-sky-500" />,
+  ADMIN_PLATAFORMA:  <FaDesktop className="text-indigo-500" />,
+  ADMIN_SUPORTE:     <FaHeadset className="text-emerald-500" />,
 }
 
 function calcularNivel(colaboradores: Colaborador[], id: string): number {
@@ -176,23 +198,7 @@ function layoutArvore(
 function OrganogramaNode({
   data,
 }: {
-  data: {
-    colaborador: Colaborador
-    onToggle: (id: string) => void
-    onEditar: (id: string, nome: string, funcao: string) => void
-    onExcluir: (id: string) => void
-    onAdicionar: (id: string) => void
-    onSimularDemissao?: (id: string) => void
-    onSimularPromocao?: (id: string) => void
-    onContratar?: (id: string) => void
-    onRelocar?: (id: string) => void
-    expandido: boolean
-    temFilhos: boolean
-    modoSimulacao?: boolean
-    simulacaoVago?: boolean
-    simulacaoPromovido?: boolean
-    sugerido?: boolean
-  }
+  data: NodeData
 }) {
   const {
     colaborador,
@@ -207,6 +213,7 @@ function OrganogramaNode({
     expandido,
     temFilhos,
     modoSimulacao,
+    modoVisual,
     simulacaoVago,
     simulacaoPromovido,
     sugerido,
@@ -217,33 +224,36 @@ function OrganogramaNode({
   const nomeRef = useRef<HTMLInputElement>(null)
   const [hover, setHover] = useState(false)
 
+  // Entrar em modo edição via duplo clique do ReactFlow
   useEffect(() => {
-    if (editando && nomeRef.current) nomeRef.current.focus()
-  }, [editando])
-
-  const handleDoubleClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation()
+    if (data.editandoNodeId === colaborador.id && !editando) {
       setNome(colaborador.nome)
       setFuncao(colaborador.funcao)
       setEditando(true)
-    },
-    [colaborador.nome, colaborador.funcao]
-  )
+    }
+  }, [data.editandoNodeId, colaborador.id, colaborador.nome, colaborador.funcao, editando])
+
+  useEffect(() => {
+    if (editando && nomeRef.current) nomeRef.current.focus()
+  }, [editando])
 
   const handleSalvar = useCallback(() => {
     if (nome.trim() && funcao.trim()) {
       onEditar(colaborador.id, nome.trim(), funcao.trim())
     }
     setEditando(false)
-  }, [nome, funcao, colaborador.id, onEditar])
+    data.clearEditando?.()
+  }, [nome, funcao, colaborador.id, onEditar, data])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') handleSalvar()
-      if (e.key === 'Escape') setEditando(false)
+      if (e.key === 'Escape') {
+        setEditando(false)
+        data.clearEditando?.()
+      }
     },
-    [handleSalvar]
+    [handleSalvar, data]
   )
 
   if (editando) {
@@ -274,6 +284,146 @@ function OrganogramaNode({
           position={Position.Bottom}
           className="!border-zinc-300"
         />
+      </div>
+    )
+  }
+
+  // ─── Modo Lúdico ──────────────────────────────────────
+  if (modoVisual === 'ludico') {
+    const avatarSize = 56
+    const temFoto = !!colaborador.fotoUrl
+    const ehVagoL = colaborador.status === 'vago'
+    const bordaAvt = ehVagoL
+      ? 'border-red-400'
+      : simulacaoPromovido
+      ? 'border-emerald-400'
+      : 'border-zinc-300'
+
+    return (
+      <div
+        className="group flex flex-col items-center gap-1 cursor-pointer select-none"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <Handle type="target" position={Position.Top} className="!border-zinc-300" />
+
+        {/* Avatar */}
+        <div className="relative">
+          {/* Badges */}
+          {ehVagoL && (
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap px-1.5 py-0.5 rounded-full bg-red-500 text-white text-[9px] font-semibold shadow-sm">
+              VAGO
+            </div>
+          )}
+          {simulacaoPromovido && (
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-semibold shadow-sm">
+              PROMOVIDO
+            </div>
+          )}
+
+          {/* Expand indicator */}
+          {temFilhos && (
+            <div
+              className={`absolute -left-2 top-1/2 -translate-y-1/2 z-10 text-xs text-zinc-400 transition-transform duration-200 ${
+                expandido ? 'rotate-90' : ''
+              }`}
+            >
+              ▶
+            </div>
+          )}
+
+          <div
+            onClick={() => onToggle(colaborador.id)}
+            className={`w-[${avatarSize}px] h-[${avatarSize}px] rounded-full border-2 ${bordaAvt} flex items-center justify-center overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow ${
+              sugerido ? 'animate-pulse shadow-lg shadow-emerald-200/50 border-emerald-400' : ''
+            }`}
+            style={{ width: avatarSize, height: avatarSize }}
+          >
+            {ehVagoL ? (
+              <span className="text-base font-bold text-red-500">?</span>
+            ) : temFoto ? (
+              <img
+                src={colaborador.fotoUrl!}
+                alt={colaborador.nome}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-xl leading-none">{ICONE_POR_PAPEL[colaborador.papel] || <FaUser className="text-sky-500" />}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Nome + Cargo */}
+        <div
+          className={`text-center min-w-[80px] max-w-[120px] ${ehVagoL ? 'opacity-60' : ''}`}
+        >
+          {editando ? (
+            <div className="flex flex-col gap-0.5">
+              <input
+                ref={nomeRef}
+                className="w-full text-[10px] font-semibold text-center text-zinc-900 bg-white border border-zinc-300 rounded px-0.5 outline-none"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={handleSalvar}
+              />
+              <SelectCargo
+                value={funcao}
+                onChange={(val) => setFuncao(val)}
+                onBlur={handleSalvar}
+                placeholder="Cargo"
+                className="text-[9px] !px-0.5 !py-0 !border-zinc-300 text-center"
+              />
+            </div>
+          ) : (
+            <>
+              <div className={`text-[11px] font-semibold leading-tight truncate ${
+                ehVagoL ? 'text-red-500' : simulacaoPromovido ? 'text-emerald-700' : 'text-zinc-800'
+              }`}>
+                {ehVagoL ? 'VAGO' : colaborador.nome}
+              </div>
+              <div className={`text-[9px] leading-tight truncate ${
+                ehVagoL ? 'text-red-400' : simulacaoPromovido ? 'text-emerald-600' : 'text-zinc-400'
+              }`}>
+                {colaborador.funcao}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Hover actions */}
+        {hover && (
+          <div className="absolute -top-2 right-0 z-20 flex gap-1">
+            {modoSimulacao && ehVagoL ? (
+              <>
+                <button onClick={(e) => { e.stopPropagation(); onSimularPromocao?.(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] hover:bg-amber-600 shadow-sm" title="Preencher cargo vago">↑</button>
+                <button onClick={(e) => { e.stopPropagation(); onContratar?.(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 text-white text-[9px] hover:bg-emerald-600 shadow-sm" title="Contratar nova pessoa">+</button>
+              </>
+            ) : modoSimulacao ? (
+              <>
+                <button onClick={(e) => { e.stopPropagation(); onSimularDemissao?.(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-red-500 text-white text-[9px] hover:bg-red-600 shadow-sm" title="Simular demissão">↓</button>
+                <button onClick={(e) => { e.stopPropagation(); onSimularPromocao?.(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] hover:bg-amber-600 shadow-sm" title="Promover">↑</button>
+                <button onClick={(e) => { e.stopPropagation(); onRelocar?.(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-violet-500 text-white text-[9px] hover:bg-violet-600 shadow-sm" title="Relocar">⟷</button>
+              </>
+            ) : (
+              <>
+                <button onClick={(e) => { e.stopPropagation(); onAdicionar(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 text-white text-[9px] hover:bg-emerald-600 shadow-sm" title="Adicionar subordinado">+</button>
+                <button onClick={(e) => { e.stopPropagation(); onRelocar?.(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-violet-500 text-white text-[9px] hover:bg-violet-600 shadow-sm" title="Relocar">⟷</button>
+                <button onClick={(e) => { e.stopPropagation(); onExcluir(colaborador.id) }}
+                  className="flex items-center justify-center w-4 h-4 rounded-full bg-red-500 text-white text-[9px] hover:bg-red-600 shadow-sm" title="Excluir">×</button>
+              </>
+            )}
+          </div>
+        )}
+
+        <Handle type="source" position={Position.Bottom} className="!border-zinc-300" />
       </div>
     )
   }
@@ -321,7 +471,6 @@ function OrganogramaNode({
       {/* Expand/collapse area */}
       <div
         className="flex items-center gap-2 cursor-pointer"
-        onDoubleClick={handleDoubleClick}
       >
         {temFilhos && (
           <span
@@ -439,7 +588,7 @@ const nodeTypes = { colaborador: OrganogramaNode }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FlowInner(props: any) {
-  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick, onEdgeClick } = props
+  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick, onNodeDoubleClick, onEdgeClick } = props
   const reactFlow = useReactFlow()
 
   useEffect(() => {
@@ -455,6 +604,7 @@ function FlowInner(props: any) {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onNodeClick={onNodeClick}
+      onNodeDoubleClick={onNodeDoubleClick}
       onEdgeClick={onEdgeClick}
       edgesReconnectable={false}
       nodeTypes={nodeTypes}
@@ -492,7 +642,15 @@ export default function OrganogramaFlow({
   const [adicionandoEm, setAdicionandoEm] = useState<string | null>(null)
   const [novoNome, setNovoNome] = useState('')
   const [novaFuncao, setNovaFuncao] = useState('')
+  const [novoCpf, setNovoCpf] = useState('')
   const [transferirSubordinados, setTransferirSubordinados] = useState(false)
+
+  // Edição inline (duplo clique)
+  const [editandoNodeId, setEditandoNodeId] = useState<string | null>(null)
+  const clearEditando = useCallback(() => setEditandoNodeId(null), [])
+
+  // Visual
+  const [modoVisual, setModoVisual] = useState<'formal' | 'ludico'>('formal')
 
   // Simulação
   const [modoSimulacao, setModoSimulacao] = useState(false)
@@ -656,6 +814,7 @@ export default function OrganogramaFlow({
     setAdicionandoEm(id)
     setNovoNome('')
     setNovaFuncao('')
+    setNovoCpf('')
   }, [])
 
   // ---------- Simulação callbacks ----------
@@ -947,7 +1106,7 @@ export default function OrganogramaFlow({
       empresaId: vago.empresaId,
       nome: contratarModal.nome.trim(),
       funcao: contratarModal.funcao.trim(),
-      papel: Papel.COLABORADOR,
+      papel: Papel.OPERACIONAL,
       liderImediatoId: vago.liderImediatoId,
       createdAt: new Date().toISOString(),
       status: 'ativo',
@@ -1075,15 +1234,24 @@ export default function OrganogramaFlow({
     setImpactoManual('')
   }, [impactoManual])
 
+  const [aplicandoSimulacao, setAplicandoSimulacao] = useState(false)
+
   const handleAplicarSimulacao = useCallback(async () => {
-    if (!simulando) return
-    await salvarImpactosAction(impactosSimulacao)
-    await aplicarSimulacaoAction(simulando)
-    setColaboradoresState(simulando)
-    setSimulando(null)    // ← CRÍTICO: limpa para dadosVisiveis usar colaboradoresState
-    setModoSimulacao(false)
-    resetarSimulacao()
-  }, [simulando, impactosSimulacao])
+    if (!simulando || aplicandoSimulacao) return
+    setAplicandoSimulacao(true)
+    try {
+      await salvarImpactosAction(impactosSimulacao)
+      await aplicarSimulacaoAction(simulando)
+      setColaboradoresState(simulando)
+      setSimulando(null)    // ← CRÍTICO: limpa para dadosVisiveis usar colaboradoresState
+      setModoSimulacao(false)
+      resetarSimulacao()
+    } catch (err) {
+      console.error('Erro ao aplicar simulação:', err)
+    } finally {
+      setAplicandoSimulacao(false)
+    }
+  }, [simulando, impactosSimulacao, aplicandoSimulacao])
 
   const handleConfirmarAdicao = useCallback(async () => {
     if (!adicionandoEm || !novoNome.trim() || !novaFuncao.trim()) return
@@ -1092,7 +1260,8 @@ export default function OrganogramaFlow({
       const criado = await adicionarColaboradorRapido(
         novoNome.trim(),
         novaFuncao.trim(),
-        adicionandoEm
+        adicionandoEm,
+        novoCpf.trim() || undefined
       )
 
       // Se marcou "Transferir subordinados", move todos os subordinados diretos do líder para o novo gestor
@@ -1170,6 +1339,15 @@ export default function OrganogramaFlow({
     [handleToggle, dadosVisiveis, dadosSimulacao]
   )
 
+  const onNodeDoubleClick = useCallback(
+    (_e: React.MouseEvent, node: Node) => {
+      const d = node.data as unknown as NodeData
+      if (!d.colaborador || d.colaborador.status === 'vago') return
+      setEditandoNodeId(node.id)
+    },
+    []
+  )
+
   const idsPromovidos = new Set(
     acoesSimulacao.filter((a) => a.tipo === 'promocao' && a.novoCargo).map((a) => a.colaboradorId)
   )
@@ -1202,14 +1380,38 @@ export default function OrganogramaFlow({
             expandido: expandidos.has(n.id),
             temFilhos: obterSubordinados(dadosVisiveis, n.id).length > 0,
             modoSimulacao,
+            modoVisual,
             simulacaoVago: vago,
             simulacaoPromovido: promovido,
             sugerido,
+            editandoNodeId,
+            clearEditando,
           },
         }
       }),
-    [nodes, handleToggle, handleEditar, handleExcluir, handleAdicionar, handleSimularDemissao, handleSimularPromocao, handleContratar, handleRelocar, expandidos, dadosVisiveis, colaboradoresState, simulando, modoSimulacao, idsPromovidos, idsSugeridos]
+    [nodes, handleToggle, handleEditar, handleExcluir, handleAdicionar, handleSimularDemissao, handleSimularPromocao, handleContratar, handleRelocar, expandidos, dadosVisiveis, colaboradoresState, simulando, modoSimulacao, modoVisual, idsPromovidos, idsSugeridos, editandoNodeId, clearEditando]
   )
+
+  // ─── Expandir/Recolher Tudo ────────────────────────────
+  const todosExpandidos = useMemo(
+    () => expandidos.size > 0 && dadosVisiveis.every((c) => c.liderImediatoId ? expandidos.has(c.liderImediatoId) : true),
+    [expandidos, dadosVisiveis]
+  )
+
+  function toggleExpandirTudo() {
+    if (expandidos.size === 0) {
+      // Expandir todos: adiciona IDs de todos que têm filhos
+      const todosIds = new Set<string>()
+      for (const col of dadosVisiveis) {
+        const temFilhos = dadosVisiveis.some((c) => c.liderImediatoId === col.id)
+        if (temFilhos) todosIds.add(col.id)
+      }
+      setExpandidos(todosIds)
+    } else {
+      // Recolher todos
+      setExpandidos(new Set())
+    }
+  }
 
   const lidereAdicionar = adicionandoEm
     ? colaboradoresState.find((c) => c.id === adicionandoEm)
@@ -1270,6 +1472,28 @@ export default function OrganogramaFlow({
             {modoSimulacao ? '🔮 Sair da Simulação' : '🔮 Simular'}
           </button>
 
+          {/* Visual toggle: Formal / Lúdico */}
+          <button
+            onClick={() => setModoVisual((v) => (v === 'formal' ? 'ludico' : 'formal'))}
+            className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
+              modoVisual === 'ludico'
+                ? 'bg-fuchsia-100 border-fuchsia-400 text-fuchsia-700 hover:bg-fuchsia-200'
+                : 'bg-white border-zinc-300 text-zinc-600 hover:bg-zinc-50'
+            }`}
+            title="Alternar entre visual formal e lúdico"
+          >
+            {modoVisual === 'ludico' ? '🎨 Formal' : '🎨 Lúdico'}
+          </button>
+
+          {/* Expandir/Recolher Tudo */}
+          <button
+            onClick={toggleExpandirTudo}
+            className="px-3 py-1.5 text-xs rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors bg-white"
+            title={expandidos.size === 0 ? 'Expandir todos os nós' : 'Recolher todos os nós'}
+          >
+            {expandidos.size === 0 ? '⬇ Expandir Tudo' : '⬆ Recolher Tudo'}
+          </button>
+
           {/* Count */}
           <div className="text-xs text-zinc-400 bg-white/80 px-2 py-1 rounded border border-zinc-200">
             {visiveis.length} de {dadosVisiveis.length}
@@ -1288,9 +1512,17 @@ export default function OrganogramaFlow({
                 </span>
                 <button
                   onClick={handleAplicarSimulacao}
-                  className="px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                  disabled={aplicandoSimulacao}
+                  className="px-3 py-1 text-xs rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
                 >
-                  ✓ Aplicar Simulação
+                  {aplicandoSimulacao ? (
+                    <>
+                      <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Aplicando...
+                    </>
+                  ) : (
+                    '✓ Aplicar Simulação'
+                  )}
                 </button>
                 <button
                   onClick={limparSimulacaoCompleta}
@@ -1328,6 +1560,7 @@ export default function OrganogramaFlow({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          onNodeDoubleClick={onNodeDoubleClick}
           onEdgeClick={handleEdgeClick}
         />
       </ReactFlowProvider>
@@ -1364,6 +1597,14 @@ export default function OrganogramaFlow({
               value={novaFuncao}
               onChange={(e) => setNovaFuncao(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleConfirmarAdicao()}
+            />
+            <input
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
+              placeholder="CPF (apenas números) — gera login automático"
+              value={novoCpf}
+              onChange={(e) => setNovoCpf(e.target.value.replace(/\D/g, '').slice(0, 11))}
+              maxLength={11}
+              inputMode="numeric"
             />
             {lidereAdicionar && obterSubordinados(colaboradoresState, adicionandoEm).length > 0 && (
               <label className="flex items-center gap-2 mb-4 text-xs text-zinc-600 cursor-pointer select-none">

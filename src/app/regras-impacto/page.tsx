@@ -27,7 +27,11 @@ export default function RegrasImpactoPage() {
   const [condicao, setCondicao] = useState<RegraCondicao['tipo']>('time_sem_lider')
 
   useEffect(() => {
-    listarRegrasImpactoAction().then(setRegras)
+    listarRegrasImpactoAction()
+      .then(setRegras)
+      .catch((err) => {
+        console.error('Erro ao carregar regras de impacto:', err)
+      })
   }, [])
 
   function abrirNova() {

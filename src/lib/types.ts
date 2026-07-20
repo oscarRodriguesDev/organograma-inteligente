@@ -1,10 +1,45 @@
 // ─── Multi-tenant ──────────────────────────────────
 export enum Papel {
   ADMIN_PLATAFORMA = 'ADMIN_PLATAFORMA',
+  ADMIN_SUPORTE = 'ADMIN_SUPORTE',
   CEO = 'CEO',
+  DIRETOR = 'DIRETOR',
+  GERENTE = 'GERENTE',
+  SUPERVISOR = 'SUPERVISOR',
   GESTOR = 'GESTOR',
+  LIDER = 'LIDER',
+  OPERACIONAL = 'OPERACIONAL',
   RH = 'RH',
   COLABORADOR = 'COLABORADOR',
+}
+
+/** Hierarquia de promoção: posição 0 = base, última = topo */
+export const HIERARQUIA_PAPEIS: Papel[] = [
+  Papel.OPERACIONAL,
+  Papel.LIDER,
+  Papel.GESTOR,
+  Papel.SUPERVISOR,
+  Papel.GERENTE,
+  Papel.DIRETOR,
+  Papel.CEO,
+]
+
+/** Retorna o próximo papel na hierarquia de promoção (ou null se já é o topo) */
+export function proximoPapel(papel: Papel): Papel | null {
+  const idx = HIERARQUIA_PAPEIS.indexOf(papel)
+  if (idx === -1 || idx >= HIERARQUIA_PAPEIS.length - 1) return null
+  return HIERARQUIA_PAPEIS[idx + 1]
+}
+
+/** Verifica se papelA pode promover papelB (papelA deve ser imediatamente acima) */
+export function podePromover(promotor: Papel, promovido: Papel): boolean {
+  const idxPromovido = HIERARQUIA_PAPEIS.indexOf(promovido)
+  if (idxPromovido === -1) return false
+  const prox = HIERARQUIA_PAPEIS[idxPromovido + 1]
+  if (!prox) return false
+  // O promotor precisa ser no mínimo o papel acima do promovido
+  const idxPromotor = HIERARQUIA_PAPEIS.indexOf(promotor)
+  return idxPromotor >= idxPromovido + 1
 }
 
 export interface Empresa {
@@ -68,6 +103,14 @@ export interface GastoSistema {
   createdAt: string
 }
 
+export interface Investimento {
+  id: string
+  descricao: string
+  valor: number
+  data: string
+  createdAt: string
+}
+
 export interface UsuarioSessao {
   colaboradorId: string
   empresaId: string
@@ -75,6 +118,9 @@ export interface UsuarioSessao {
   nome: string
   email: string
   papel: Papel
+  tema?: string
+  fotoUrl?: string
+  username?: string
 }
 
 export interface Colaborador {
@@ -83,10 +129,12 @@ export interface Colaborador {
   nome: string
   funcao: string
   email?: string
+  cpf?: string
   papel: Papel
   liderImediatoId: string | null
   createdAt: string
   status?: 'ativo' | 'vago'
+  fotoUrl?: string | null
 }
 
 export interface ColaboradorFormData {

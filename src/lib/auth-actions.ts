@@ -31,10 +31,18 @@ export async function loginAction(formData: FormData) {
     maxAge: SESSION_DURATION,
     path: '/',
   })
+  // Tema cookie (não httpOnly para o cliente ler)
+  cookieStore.set('tema', session.tema ?? 'system', {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: SESSION_DURATION,
+    path: '/',
+  })
 
   revalidatePath('/')
   // Redireciona admin para /admin, outros para /
-  if (session.papel === Papel.ADMIN_PLATAFORMA) {
+  if (session.papel === Papel.ADMIN_PLATAFORMA || session.papel === Papel.ADMIN_SUPORTE) {
     redirect('/admin')
   }
   redirect('/')

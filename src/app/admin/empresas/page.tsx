@@ -12,11 +12,19 @@ export default async function AdminEmpresasPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Empresas</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-          Gerencie todas as empresas da plataforma
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Empresas</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">
+            Gerencie todas as empresas da plataforma
+          </p>
+        </div>
+        <Link
+          href="/admin/empresas/nova"
+          className="px-4 py-2 text-sm font-medium text-white bg-black dark:bg-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shrink-0"
+        >
+          + Nova Empresa
+        </Link>
       </div>
 
       {empresas.length === 0 ? (

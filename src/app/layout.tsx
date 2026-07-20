@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { logoutAction } from "@/lib/auth-actions";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggle from "@/components/ThemeToggle";
+import ToastProvider from "@/components/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,25 +42,42 @@ export default async function RootLayout({
               <a href="/" className="text-lg font-bold text-foreground">
                 Organograma
               </a>
-              {session && session.papel === 'ADMIN_PLATAFORMA' ? (
+              {session && (session.papel === 'ADMIN_PLATAFORMA' || session.papel === 'ADMIN_SUPORTE') ? (
                 <>
                   <div className="flex gap-6 text-sm">
-                    <a href="/admin" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                      Dashboard
-                    </a>
+                    {session.papel === 'ADMIN_PLATAFORMA' && (
+                      <a href="/admin" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                        Dashboard
+                      </a>
+                    )}
                     <a href="/admin/empresas" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
                       Empresas
                     </a>
-                    <a href="/admin/gastos" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                      Gastos
-                    </a>
-                    <a href="/admin/financeiro" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                      Financeiro
-                    </a>
+                    {session.papel === 'ADMIN_PLATAFORMA' && (
+                      <>
+                        <a href="/admin/gastos" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                          Gastos
+                        </a>
+                        <a href="/admin/financeiro" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                          Financeiro
+                        </a>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <ThemeToggle />
-                    <span className="text-zinc-500 dark:text-zinc-400">{session.nome}</span>
+                    <a href="/admin/perfil" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                      <div className="w-7 h-7 rounded-full bg-black dark:bg-white flex items-center justify-center overflow-hidden shrink-0">
+                        {session.fotoUrl ? (
+                          <img src={session.fotoUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-[10px] font-bold text-white dark:text-black">
+                            {session.nome.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-zinc-500 dark:text-zinc-400">{session.username || session.nome}</span>
+                    </a>
                     <form action={logoutAction}>
                       <button
                         type="submit"
@@ -106,7 +124,18 @@ export default async function RootLayout({
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <ThemeToggle />
-                    <span className="text-zinc-500 dark:text-zinc-400">{session.nome}</span>
+                    <a href="/perfil" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                      <div className="w-7 h-7 rounded-full bg-black dark:bg-white flex items-center justify-center overflow-hidden shrink-0">
+                        {session.fotoUrl ? (
+                          <img src={session.fotoUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-[10px] font-bold text-white dark:text-black">
+                            {session.nome.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-zinc-500 dark:text-zinc-400">{session.username || session.nome}</span>
+                    </a>
                     <form action={logoutAction}>
                       <button
                         type="submit"
@@ -120,7 +149,9 @@ export default async function RootLayout({
               ) : null}
             </nav>
           </header>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

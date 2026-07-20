@@ -10,8 +10,14 @@ datasource db {
 // ─── Enum de Papéis ───────────────────────────────
 enum Papel {
   ADMIN_PLATAFORMA
+  ADMIN_SUPORTE
   CEO
+  DIRETOR
+  GERENTE
+  SUPERVISOR
   GESTOR
+  LIDER
+  OPERACIONAL
   RH
   COLABORADOR
 }
@@ -63,6 +69,15 @@ model Pagamento {
   assinatura      Assinatura @relation(fields: [assinaturaId], references: [id])
 }
 
+// ─── Investimentos (admin financeiro) ─────────────
+model Investimento {
+  id          String   @id @default(cuid())
+  descricao   String
+  valor       Float
+  data        DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
 // ─── Gastos do Sistema (admin financeiro) ─────────
 model GastoSistema {
   id          String   @id @default(cuid())
@@ -104,9 +119,13 @@ model Colaborador {
   nome            String
   funcao          String
   email           String?  // email para login (nullable para migração)
+  cpf             String?  // CPF do colaborador (usado para login cpf@empresa.com)
   senhaHash       String?  // hash da senha
   papel           Papel    @default(COLABORADOR)
   liderImediatoId String?
+  fotoUrl         String?  // URL da foto de perfil
+  username        String?  // nome de exibição/editável
+  tema            String   @default("system") // light | dark | system
   createdAt       DateTime @default(now())
   status          String   @default("ativo")
 

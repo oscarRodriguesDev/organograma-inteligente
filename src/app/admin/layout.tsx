@@ -4,11 +4,19 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { logoutAction } from '@/lib/auth-actions'
 
-const navItems = [
+const navItemsSystem = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
   { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
+  { href: '/admin/investimentos', label: 'Investimentos', icon: '📈' },
   { href: '/admin/gastos', label: 'Gastos', icon: '💰' },
-  { href: '/admin/financeiro', label: 'Financeiro', icon: '📈' },
+  { href: '/admin/financeiro', label: 'Financeiro', icon: '📊' },
+  { href: '/admin/usuarios', label: 'Admins', icon: '🔐' },
+  { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
+]
+
+const navItemsSuporte = [
+  { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
+  { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
 ]
 
 export default async function AdminLayout({
@@ -18,9 +26,40 @@ export default async function AdminLayout({
 }) {
   const session = await getSession()
 
-  if (!session || session.papel !== Papel.ADMIN_PLATAFORMA) {
+  // Apenas ADMIN_PLATAFORMA e ADMIN_SUPORTE podem acessar
+  if (!session) {
     redirect('/login')
   }
+  if (session.papel !== Papel.ADMIN_PLATAFORMA && session.papel !== Papel.ADMIN_SUPORTE) {
+    return (
+      <div className="flex-1 flex items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-7xl font-bold text-zinc-300 dark:text-zinc-700">403</h1>
+          <h2 className="mt-4 text-xl font-semibold text-foreground">Acesso Negado</h2>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+            Você não tem permissão para acessar esta página.
+          </p>
+          <div className="mt-6 flex gap-3 justify-center">
+            <a
+              href="/"
+              className="px-4 py-2 text-sm rounded-lg bg-black dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+            >
+              Ir para o início
+            </a>
+            <a
+              href="/organograma"
+              className="px-4 py-2 text-sm rounded-lg border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            >
+              Ver organograma
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const isSystem = session.papel === Papel.ADMIN_PLATAFORMA
+  const navItems = isSystem ? navItemsSystem : navItemsSuporte
 
   return (
     <div className="flex-1 flex">
@@ -30,7 +69,9 @@ export default async function AdminLayout({
           <Link href="/admin" className="text-lg font-bold text-foreground">
             Painel Admin
           </Link>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Administração da Plataforma</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            {isSystem ? 'Administração da Plataforma' : 'Suporte da Plataforma'}
+          </p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -48,14 +89,23 @@ export default async function AdminLayout({
 
         <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center">
-              <span className="text-xs font-bold text-white dark:text-black">
-                {session.nome.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center overflow-hidden shrink-0">
+              {session.fotoUrl ? (
+                <img src={session.fotoUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-xs font-bold text-white dark:text-black">
+                  {session.nome.charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{session.nome}</p>
+              <p className="text-sm font-medium text-foreground truncate">{session.username || session.nome}</p>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate">{session.email}</p>
+              <p className={`text-[10px] mt-0.5 font-medium ${
+                isSystem ? 'text-violet-500 dark:text-violet-400' : 'text-amber-500 dark:text-amber-400'
+              }`}>
+                {isSystem ? 'Admin Sistema' : 'Admin Suporte'}
+              </p>
             </div>
           </div>
           <form action={logoutAction} className="mt-3">

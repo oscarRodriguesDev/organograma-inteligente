@@ -32,6 +32,13 @@ export default async function AdminFinanceiroPage() {
       fundo: 'bg-rose-50 dark:bg-rose-950/30',
     },
     {
+      titulo: 'Investimento Total',
+      valor: formatarMoeda(dados.totalInvestimentos),
+      icone: '💼',
+      cor: 'text-sky-600 dark:text-sky-400',
+      fundo: 'bg-sky-50 dark:bg-sky-950/30',
+    },
+    {
       titulo: 'Lucro Líquido',
       valor: formatarMoeda(dados.lucroLiquido),
       icone: '💎',

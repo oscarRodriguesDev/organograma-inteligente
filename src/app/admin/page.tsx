@@ -1,4 +1,7 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { getSession } from '@/lib/auth'
+import { Papel } from '@/lib/types'
 import { obterDadosDashboard, listarEmpresas } from '@/lib/admin-actions'
 
 function formatarMoeda(valor: number): string {
@@ -6,6 +9,12 @@ function formatarMoeda(valor: number): string {
 }
 
 export default async function AdminDashboard() {
+  const session = await getSession()
+  // ADMIN_SUPORTE não tem dashboard financeiro, redireciona para empresas
+  if (session?.papel === Papel.ADMIN_SUPORTE) {
+    redirect('/admin/empresas')
+  }
+
   const [dados, empresas] = await Promise.all([
     obterDadosDashboard().catch(() => null),
     listarEmpresas().catch(() => []),
@@ -27,6 +36,14 @@ export default async function AdminDashboard() {
       cor: 'text-emerald-600 dark:text-emerald-400',
       fundo: 'bg-emerald-50 dark:bg-emerald-950/30',
       link: '/admin/financeiro',
+    },
+    {
+      titulo: 'Investimento Total',
+      valor: formatarMoeda(dados?.totalInvestimentos ?? 0),
+      icone: '📈',
+      cor: 'text-sky-600 dark:text-sky-400',
+      fundo: 'bg-sky-50 dark:bg-sky-950/30',
+      link: '/admin/investimentos',
     },
     {
       titulo: 'Total Colaboradores',
@@ -87,6 +104,16 @@ export default async function AdminDashboard() {
               <div>
                 <p className="text-sm font-medium text-foreground">Gerenciar Empresas</p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">{empresas.length} empresas cadastradas</p>
+              </div>
+            </Link>
+            <Link
+              href="/admin/investimentos"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            >
+              <span className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center text-lg">📈</span>
+              <div>
+                <p className="text-sm font-medium text-foreground">Registrar Investimentos</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">Controle de capital investido</p>
               </div>
             </Link>
             <Link

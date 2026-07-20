@@ -28,16 +28,17 @@ export default async function LoginPage({
         <form action={loginAction} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-medium">
-              Email
+              Email ou Username
             </label>
             <input
               id="email"
               name="email"
-              type="email"
+              type="text"
               required
               autoFocus
+              autoComplete="username"
               className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
-              placeholder="seu@email.com"
+              placeholder="seu@email.com ou usuario"
             />
           </div>
 

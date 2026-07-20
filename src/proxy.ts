@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { jwtVerify } from 'jose'
-
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? 'fallback-secret')
-const COOKIE_NAME = 'session'
 
 const PUBLIC_ROUTES = ['/login', '/', '/checkout', '/onboarding']
 
+/**
+ * Proxy (equivalente ao middleware do Next.js padrão).
+ *
+ * Diferentemente do middleware tradicional, este proxy NÃO redireciona
+ * páginas inexistentes para login — ele deixa o Next.js renderizar 404
+ * naturalmente. A autenticação é feita por cada página individualmente
+ * via `if (!session) redirect('/login')`.
+ */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Permite arquivos estáticos e API
+  // Permite arquivos estáticos e recursos
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/static/') ||
@@ -24,27 +28,20 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Rotas públicas não precisam de autenticação
+  // Rotas públicas: sempre permitidas
   if (PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route + '/'))) {
     return NextResponse.next()
   }
 
-  // Verifica o token
-  const token = request.cookies.get(COOKIE_NAME)?.value
-  if (!token) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
+  // Rotas de API públicas
+  if (pathname.startsWith('/api/public/') || pathname === '/api/upload-foto') {
+    return NextResponse.next()
   }
 
-  try {
-    await jwtVerify(token, SECRET)
-    return NextResponse.next()
-  } catch {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
-  }
+  // Para todo o resto (páginas protegidas, APIs privadas, rotas inexistentes),
+  // deixa passar — a página/rota lida com a própria autenticação.
+  // Isso garante que rotas inexistentes mostrem 404 em vez de redirecionar.
+  return NextResponse.next()
 }
 
 export const config = {

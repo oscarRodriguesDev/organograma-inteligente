@@ -19,19 +19,63 @@ import { CRITERIOS_AVALIACAO, Papel } from './types'
 import type { Colaborador } from './types'
 import { getSession } from './auth'
 
-export async function cadastrarColaborador(formData: FormData) {
-  const nome = formData.get('nome')?.toString().trim()
-  const funcao = formData.get('funcao')?.toString().trim()
-  const liderImediatoId = formData.get('liderImediatoId')?.toString() || null
+// ─── Helpers de validação ─────────────────────────
+const MAX_NOME_LENGTH = 120
+const CPF_LENGTH = 11
 
-  if (!nome || !funcao) return
+function validarNome(nome: string): string | null {
+  if (!nome.trim()) return 'Nome é obrigatório'
+  if (nome.trim().length > MAX_NOME_LENGTH) return `Nome deve ter no máximo ${MAX_NOME_LENGTH} caracteres`
+  return null
+}
+
+function validarCPF(cpf?: string): string | null {
+  if (!cpf) return null // CPF é opcional
+  const digitos = cpf.replace(/\D/g, '')
+  if (digitos.length !== CPF_LENGTH) return `CPF deve ter exatamente ${CPF_LENGTH} dígitos numéricos`
+  return null
+}
+
+export async function cadastrarColaborador(formData: FormData) {
+  const nome = formData.get('nome')?.toString().trim() ?? ''
+  const funcao = formData.get('funcao')?.toString().trim() ?? ''
+  const liderImediatoId = formData.get('liderImediatoId')?.toString() || null
+  const cpf = formData.get('cpf')?.toString().trim() || undefined
+
+  const erroNome = validarNome(nome)
+  if (erroNome) throw new Error(erroNome)
+  if (!funcao) throw new Error('Função é obrigatória')
+
+  const erroCPF = validarCPF(cpf)
+  if (erroCPF) throw new Error(erroCPF)
 
   const session = await getSession()
-  const empresaId = session?.empresaId ?? 'empresa_default'
+  const empresaId = session?.empresaId
+  if (!empresaId) return
 
   // Garante que o cargo existe na lista global
-  await garantirCargo(funcao)
-  await criarColaborador({ nome, funcao, empresaId, papel: Papel.COLABORADOR, liderImediatoId: liderImediatoId || null })
+  await garantirCargo(funcao, empresaId)
+  await criarColaborador({ nome, funcao, empresaId, papel: Papel.OPERACIONAL, liderImediatoId: liderImediatoId || null, cpf })
+  revalidatePath('/colaboradores')
+  revalidatePath('/organograma')
+  redirect('/colaboradores')
+}
+
+export async function editarColaboradorAction(formData: FormData) {
+  const id = formData.get('id')?.toString()
+  if (!id) throw new Error('ID não fornecido')
+
+  const nome = formData.get('nome')?.toString().trim() ?? ''
+  const funcao = formData.get('funcao')?.toString().trim() ?? ''
+  const liderImediatoId = formData.get('liderImediatoId')?.toString() || null
+
+  const erroNome = validarNome(nome)
+  if (erroNome) throw new Error(erroNome)
+  if (!funcao.trim()) throw new Error('Função é obrigatória')
+
+  const session = await getSession()
+  await garantirCargo(funcao, session?.empresaId)
+  await atualizarColaborador(id, { nome, funcao, liderImediatoId })
   revalidatePath('/colaboradores')
   revalidatePath('/organograma')
   redirect('/colaboradores')
@@ -63,8 +107,15 @@ export async function excluirColaboradorComSubordinados(id: string) {
 export async function adicionarColaboradorRapido(
   nome: string,
   funcao: string,
-  liderImediatoId: string | null
+  liderImediatoId: string | null,
+  cpf?: string
 ) {
+  const erroNome = validarNome(nome)
+  if (erroNome) throw new Error(erroNome)
+  if (!funcao.trim()) throw new Error('Função é obrigatória')
+  const erroCPF = validarCPF(cpf)
+  if (erroCPF) throw new Error(erroCPF)
+
   // Valida se o líder ainda existe no banco (evita FK error)
   if (liderImediatoId) {
     const lider = await buscarColaborador(liderImediatoId)
@@ -76,14 +127,19 @@ export async function adicionarColaboradorRapido(
   const session = await getSession()
   const empresaId = session?.empresaId ?? 'empresa_default'
 
-  const col = await criarColaborador({ nome, funcao, empresaId, papel: Papel.COLABORADOR, liderImediatoId })
+  const col = await criarColaborador({ nome, funcao, empresaId, papel: Papel.OPERACIONAL, liderImediatoId, cpf })
   revalidatePath('/organograma')
   revalidatePath('/colaboradores')
   return col
 }
 
 export async function atualizarColaboradorAction(id: string, nome: string, funcao: string) {
-  await garantirCargo(funcao)
+  const erroNome = validarNome(nome)
+  if (erroNome) throw new Error(erroNome)
+  if (!funcao.trim()) throw new Error('Função é obrigatória')
+
+  const session = await getSession()
+  await garantirCargo(funcao, session?.empresaId)
   await atualizarColaborador(id, { nome, funcao })
   revalidatePath('/organograma')
 }
@@ -103,7 +159,7 @@ export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
 
   // 1. Garantir cargos
   for (const col of colaboradores) {
-    if (col.funcao) await garantirCargo(col.funcao)
+    if (col.funcao) await garantirCargo(col.funcao, empresaId !== 'empresa_default' ? empresaId : undefined)
   }
 
   // 2. Criar/atualizar cada colaborador da simulação
@@ -122,7 +178,7 @@ export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
               nome: col.nome,
               funcao: col.funcao,
               empresaId,
-              papel: Papel.COLABORADOR,
+              papel: Papel.OPERACIONAL,
               liderImediatoId: col.liderImediatoId,
               status: 'vago',
             },
@@ -140,7 +196,7 @@ export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
             nome: col.nome,
             funcao: col.funcao,
             empresaId,
-            papel: Papel.COLABORADOR,
+            papel: Papel.OPERACIONAL,
             liderImediatoId: col.liderImediatoId,
             status: col.status || 'ativo',
           },
@@ -171,7 +227,7 @@ export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
             nome: col.nome,
             funcao: col.funcao,
             empresaId,
-            papel: Papel.COLABORADOR,
+            papel: Papel.OPERACIONAL,
             liderImediatoId: col.liderImediatoId,
             status: col.status || 'ativo',
           },
@@ -265,7 +321,8 @@ export async function listarCargosAction() {
 export async function adicionarCargoAction(formData: FormData) {
   const nome = formData.get('nome')?.toString().trim()
   if (!nome) return
-  await garantirCargo(nome)
+  const session = await getSession()
+  await garantirCargo(nome, session?.empresaId)
   revalidatePath('/colaboradores/novo')
   revalidatePath('/organograma')
 }

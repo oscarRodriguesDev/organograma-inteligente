@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { listarColaboradores } from '@/lib/db'
-import { excluirColaborador } from '@/lib/actions'
+import { excluirColaboradorComSubordinados } from '@/lib/actions'
 
 export default async function ListaColaboradores() {
   const colaboradores = await listarColaboradores()
@@ -35,6 +35,7 @@ export default async function ListaColaboradores() {
                 <tr>
                   <th className="px-4 py-3 text-left font-medium text-zinc-600">Nome</th>
                   <th className="px-4 py-3 text-left font-medium text-zinc-600">Função</th>
+                  <th className="px-4 py-3 text-left font-medium text-zinc-600">Status</th>
                   <th className="px-4 py-3 text-left font-medium text-zinc-600">Líder Imediato</th>
                   <th className="px-4 py-3 text-right font-medium text-zinc-600">Ações</th>
                 </tr>
@@ -43,26 +44,45 @@ export default async function ListaColaboradores() {
                 {colaboradores.map((col) => {
                   const lider = colaboradores.find((c) => c.id === col.liderImediatoId)
                   return (
-                    <tr key={col.id} className="hover:bg-zinc-50">
+                    <tr key={col.id} className={`hover:bg-zinc-50 ${col.status === 'vago' ? 'opacity-60' : ''}`}>
                       <td className="px-4 py-3 font-medium">{col.nome}</td>
                       <td className="px-4 py-3 text-zinc-600">{col.funcao}</td>
+                      <td className="px-4 py-3">
+                        {col.status === 'vago' ? (
+                          <span className="inline-block rounded-full bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 text-xs font-medium px-2 py-0.5">
+                            VAGO
+                          </span>
+                        ) : (
+                          <span className="inline-block rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-medium px-2 py-0.5">
+                            Ativo
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-zinc-600">
                         {lider ? lider.nome : <span className="text-zinc-400">—</span>}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <form
-                          action={async () => {
-                            'use server'
-                            await excluirColaborador(col.id)
-                          }}
-                        >
-                          <button
-                            type="submit"
-                            className="text-sm text-red-600 hover:text-red-800"
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/colaboradores/${col.id}/editar`}
+                            className="text-sm text-blue-600 hover:text-blue-800"
                           >
-                            Excluir
-                          </button>
-                        </form>
+                            Editar
+                          </Link>
+                          <form
+                            action={async () => {
+                              'use server'
+                              await excluirColaboradorComSubordinados(col.id)
+                            }}
+                          >
+                            <button
+                              type="submit"
+                              className="text-sm text-red-600 hover:text-red-800"
+                            >
+                              Excluir
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                   )
