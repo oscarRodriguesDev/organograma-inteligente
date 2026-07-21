@@ -433,19 +433,35 @@ export async function limparImpactosSimulacao(): Promise<void> {
   await prisma.impacto.deleteMany({ where: { casoUso: 'simulacao' } })
 }
 
+// ─── Cargos Default ────────────────────────────────────────────
+// Cargos que toda empresa já possui por padrão, baseados nos papéis do sistema
+const CARGOS_DEFAULT = [
+  'CEO',
+  'DIRETOR',
+  'GERENTE',
+  'SUPERVISOR',
+  'GESTOR',
+  'LIDER',
+  'OPERACIONAL',
+]
+
 // ─── Cargos ─────────────────────────────────────────────────
 
 export async function listarCargos(): Promise<Cargo[]> {
-  // Busca APENAS cargos que estão em uso por colaboradores ativos da empresa
-  const todos = await prisma.colaborador.findMany({
+  // 1. Busca cargos registrados na tabela Cargo (empresa pode ter adicionado)
+  const cargosTabela = await prisma.cargo.findMany({
+    select: { nome: true },
+  })
+
+  // 2. Busca funções em uso por colaboradores ativos (para incluir cargos
+  //    que foram atribuídos diretamente sem passar pela tabela Cargo)
+  const colaboradores = await prisma.colaborador.findMany({
     where: { status: 'ativo' },
     select: { funcao: true, papel: true },
   })
-
-  // Exclui cargos de admins da plataforma (não são relevantes para empresas)
-  const funcoes = [
+  const funcoesEmUso = [
     ...new Set(
-      todos
+      colaboradores
         .filter(
           (c) =>
             c.funcao &&
@@ -455,9 +471,18 @@ export async function listarCargos(): Promise<Cargo[]> {
         .map((c) => c.funcao)
         .filter(Boolean)
     ),
+  ]
+
+  // 3. Mescla tudo: defaults + tabela + funções em uso, sem duplicatas
+  const todosNomes = [
+    ...new Set([
+      ...CARGOS_DEFAULT,
+      ...cargosTabela.map((c) => c.nome),
+      ...funcoesEmUso,
+    ]),
   ].sort()
 
-  return funcoes.map((nome, i) => ({ id: `cargo_${i}`, nome }))
+  return todosNomes.map((nome, i) => ({ id: `cargo_${i}`, nome }))
 }
 
 export async function criarCargo(nome: string, empresaId: string): Promise<Cargo | null> {
@@ -1083,6 +1108,9 @@ export async function criarEmpresaComCEO(dados: {
           status: 'ativo',
         },
       },
+      cargos: {
+        create: CARGOS_DEFAULT.map((nome) => ({ nome })),
+      },
       assinatura: {
         create: {
           planoId: dados.planoId,
@@ -1524,7 +1552,7 @@ export async function criarEmpresaPeloAdmin(dados: {
 
   const senhaHash = await bcrypt.hash(dados.ceoSenha, 10)
 
-  // Cria empresa + CEO + assinatura grátis
+  // Cria empresa + CEO + cargos default + assinatura grátis
   const empresa = await prisma.empresa.create({
     data: {
       nome: dados.empresaNome,
@@ -1541,6 +1569,9 @@ export async function criarEmpresaPeloAdmin(dados: {
           username: dados.ceoNome,
           status: 'ativo',
         },
+      },
+      cargos: {
+        create: CARGOS_DEFAULT.map((nome) => ({ nome })),
       },
       assinatura: {
         create: {

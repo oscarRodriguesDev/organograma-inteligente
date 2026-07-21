@@ -81,7 +81,22 @@ async function seed() {
   await prisma.empresa.upsert({
     where: { slug: 'empresa-default' },
     update: {},
-    create: { id: 'empresa_default', nome: 'Empresa Default', slug: 'empresa-default' },
+    create: {
+      id: 'empresa_default',
+      nome: 'Empresa Default',
+      slug: 'empresa-default',
+      cargos: {
+        create: [
+          { nome: 'CEO' },
+          { nome: 'DIRETOR' },
+          { nome: 'GERENTE' },
+          { nome: 'SUPERVISOR' },
+          { nome: 'GESTOR' },
+          { nome: 'LIDER' },
+          { nome: 'OPERACIONAL' },
+        ],
+      },
+    },
   })
 
   // ── Estrutura hierárquica ──
