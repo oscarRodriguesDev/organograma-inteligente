@@ -205,6 +205,8 @@ export default function NavBar({ session }: NavBarProps) {
             <NavLink href="/organograma" label="Organograma" isActive={pathname.startsWith('/organograma')} />
             <NavLink href="/colaboradores" label="Colaboradores" isActive={pathname.startsWith('/colaboradores')} />
             <NavLink href="/avaliacoes" label="Avaliações" isActive={pathname.startsWith('/avaliacoes')} />
+            <NavLink href="/conversas" label="Conversas" isActive={pathname.startsWith('/conversas')} />
+            <NavLink href="/conversas" label="Advertencias" isActive={pathname.startsWith('/advertencias')} />
 
             {/* Separador visual */}
             <span className="mx-2 w-px h-5 bg-zinc-200 dark:bg-zinc-700" />
@@ -218,7 +220,7 @@ export default function NavBar({ session }: NavBarProps) {
 
             <span className="mx-2 w-px h-5 bg-zinc-200 dark:bg-zinc-700" />
 
-            <NavLink href="/conversas" label="Conversas" isActive={pathname.startsWith('/conversas')} />
+
           </div>
 
           {/* Mobile menu - dropdown compacto */}
