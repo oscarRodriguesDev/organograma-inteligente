@@ -117,6 +117,131 @@ function TestesDropdown() {
   )
 }
 
+// ─── Dropdown de Colaboradores ──────────────────────
+function ColaboradoresDropdown({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const isParentActive =
+    pathname.startsWith('/colaboradores') ||
+    pathname.startsWith('/avaliacoes') ||
+    pathname.startsWith('/conversas')
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`
+          flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200
+          ${isParentActive || open
+            ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
+            : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+          }
+        `}
+      >
+        Colaboradores
+        <svg
+          className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-lg py-1.5 z-50">
+          <Link
+            href="/colaboradores"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname === '/colaboradores'
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
+          >
+            Visão Geral
+          </Link>
+          <Link
+            href="/avaliacoes"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/avaliacoes')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
+          >
+            Avaliações
+          </Link>
+          <Link
+            href="/conversas"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/conversas')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
+          >
+            Conversas
+          </Link>
+          <hr className="my-1 mx-2 border-zinc-200 dark:border-zinc-700" />
+          <button
+            type="button"
+            onClick={() => { setOpen(false); showDevAlert() }}
+            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Advertências
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); showDevAlert() }}
+            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Suspensão
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); showDevAlert() }}
+            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Iniciativas
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); showDevAlert() }}
+            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Métricas
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); showDevAlert() }}
+            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            Sentimento
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ═══════════════════════════════════════════════════════
 //  NavBar Principal
 // ═══════════════════════════════════════════════════════
@@ -203,24 +328,12 @@ export default function NavBar({ session }: NavBarProps) {
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-1">
             <NavLink href="/organograma" label="Organograma" isActive={pathname.startsWith('/organograma')} />
-            <NavLink href="/colaboradores" label="Colaboradores" isActive={pathname.startsWith('/colaboradores')} />
-            <NavLink href="/avaliacoes" label="Avaliações" isActive={pathname.startsWith('/avaliacoes')} />
-            <NavLink href="/conversas" label="Conversas" isActive={pathname.startsWith('/conversas')} />
-            <NavLink href="/conversas" label="Advertencias" isActive={pathname.startsWith('/advertencias')} />
+            <ColaboradoresDropdown pathname={pathname} />
 
-            {/* Separador visual */}
-            <span className="mx-2 w-px h-5 bg-zinc-200 dark:bg-zinc-700" />
-
-            {/* Itens desabilitados */}
-            <DisabledNavItem label="Iniciativas" />
-            <DisabledNavItem label="Métricas" />
             <DisabledNavItem label="Regras" />
             <TestesDropdown />
-            <DisabledNavItem label="Sentimento" />
 
             <span className="mx-2 w-px h-5 bg-zinc-200 dark:bg-zinc-700" />
-
-
           </div>
 
           {/* Mobile menu - dropdown compacto */}
@@ -307,18 +420,13 @@ function MobileMenu({ session, pathname }: { session: NavBarSession; pathname: s
         <div className="absolute top-full left-0 right-0 mt-0 border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 shadow-lg py-3 px-4 z-50">
           <div className="flex flex-col gap-1">
             <MobileLink href="/organograma" label="Organograma" isActive={pathname.startsWith('/organograma')} />
-            <MobileLink href="/colaboradores" label="Colaboradores" isActive={pathname.startsWith('/colaboradores')} />
-            <MobileLink href="/avaliacoes" label="Avaliações" isActive={pathname.startsWith('/avaliacoes')} />
-            <MobileLink href="/conversas" label="Conversas" isActive={pathname.startsWith('/conversas')} />
+            <MobileColaboradoresSection pathname={pathname} />
 
             <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
 
-            <MobileDisabled label="Iniciativas" />
-            <MobileDisabled label="Métricas" />
             <MobileDisabled label="Regras" />
             <MobileDisabled label="Fit Cultural" />
             <MobileDisabled label="Teste DISC" />
-            <MobileDisabled label="Sentimento" />
 
             <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
 
@@ -364,5 +472,51 @@ function MobileDisabled({ label }: { label: string }) {
     >
       {label}
     </button>
+  )
+}
+
+function MobileColaboradoresSection({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false)
+
+  const isParentActive =
+    pathname.startsWith('/colaboradores') ||
+    pathname.startsWith('/avaliacoes') ||
+    pathname.startsWith('/conversas')
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`
+          flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors
+          ${isParentActive || open
+            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white'
+            : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+          }
+        `}
+      >
+        Colaboradores
+        <svg
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="ml-3 mt-1 flex flex-col gap-0.5">
+          <MobileLink href="/colaboradores" label="Visão Geral" isActive={pathname === '/colaboradores'} />
+          <MobileLink href="/avaliacoes" label="Avaliações" isActive={pathname.startsWith('/avaliacoes')} />
+          <MobileLink href="/conversas" label="Conversas" isActive={pathname.startsWith('/conversas')} />
+          <MobileDisabled label="Advertências" />
+          <MobileDisabled label="Suspensão" />
+          <MobileDisabled label="Iniciativas" />
+          <MobileDisabled label="Métricas" />
+          <MobileDisabled label="Sentimento" />
+        </div>
+      )}
+    </div>
   )
 }

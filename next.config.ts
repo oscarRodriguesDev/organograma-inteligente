@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // ─── Client Cache ──────────────────────────────────────────
+  // Mantém páginas dinâmicas em cache no navegador por 30s,
+  // evitando requisições repetidas ao servidor em navegações
+  // frequentes entre páginas já visitadas.
+  experimental: {
+    staleTimes: {
+      dynamic: 30,   // 30s: páginas dinâmicas ficam em cache no cliente
+      static: 300,   // 5min: páginas estáticas/prefetched
+    },
+  },
 };
 
 export default nextConfig;
