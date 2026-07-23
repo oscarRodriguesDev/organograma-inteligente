@@ -1,4 +1,4 @@
-# Plano de Testes Funcionais — Organograma Inteligente
+# Plano de Testes Funcionais — OxyGen AI
 
 > **Versão:** 1.0  
 > **Data:** 19/07/2026  

@@ -11,6 +11,7 @@ datasource db {
 enum Papel {
   ADMIN_PLATAFORMA
   ADMIN_SUPORTE
+  ADMIN_PSICH
   CEO
   DIRETOR
   GERENTE
@@ -34,6 +35,14 @@ model Plano {
   recursos         String   @default("[]") // JSON array
   destaque         Boolean  @default(false)
   ativo            Boolean  @default(true)
+  ordem            Int      @default(0)   // ordem de exibição
+
+  // ─── Promoções ─────────────────────────────────
+  descontoPercentual Float   @default(0)  // 0 = sem desconto
+  promocaoAtiva      Boolean @default(false)
+  promocaoValidade   DateTime?
+  promocaoDescricao  String  @default("")
+
   createdAt        DateTime @default(now())
 
   assinaturas      Assinatura[]
@@ -111,6 +120,7 @@ model Empresa {
   fitCulturalPerguntas FitCulturalPergunta[]
   perguntasDISC      PerguntaDISC[]
   assinatura         Assinatura?
+  testesDisponiveis  EmpresaTesteDisponivel[]
 }
 
 model Colaborador {
@@ -144,6 +154,7 @@ model Colaborador {
   conversas            Conversa[]            @relation("ConversaColaborador")
   conversasCriadas     Conversa[]            @relation("CriadorConversa")
   scores               ScoreColaborador?
+  testesCriados        TestePsicologico[]
 
   @@unique([empresaId, email])
 }
@@ -315,6 +326,50 @@ model ScoreColaborador {
   scoreIniciativas    Float    @default(0)    // 0-10
   ultimaAtualizacao   DateTime @default(now())
   colaborador         Colaborador @relation(fields: [colaboradorId], references: [id])
+}
+
+// ─── Testes Psicológicos (admin_psich) ─────────────
+model TestePsicologico {
+  id          String   @id @default(cuid())
+  titulo      String
+  descricao   String   @default("")
+  instrucoes  String   @default("")
+  tipo        String   @default("personalidade") // personalidade, comportamental, perfil, etc
+  criadoPorId String
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  criadoPor   Colaborador                @relation(fields: [criadoPorId], references: [id])
+  perguntas   PerguntaTestePsicologico[]
+  empresasDisponiveis EmpresaTesteDisponivel[]
+}
+
+model PerguntaTestePsicologico {
+  id            String   @id @default(cuid())
+  testeId       String
+  pergunta      String
+  tipo          String   @default("escala_1_5") // multipla_escolha, escala_1_5, texto, verdadeiro_falso
+  opcoes        String   @default("[]")          // JSON array para multipla_escolha
+  peso          Int      @default(1)
+  ordem         Int      @default(0)
+  obrigatoria   Boolean  @default(true)
+
+  teste         TestePsicologico @relation(fields: [testeId], references: [id], onDelete: Cascade)
+}
+
+/// Disponibilidade do teste para uma empresa
+model EmpresaTesteDisponivel {
+  id        String   @id @default(cuid())
+  testeId   String
+  empresaId String
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  teste   TestePsicologico @relation(fields: [testeId], references: [id], onDelete: Cascade)
+  empresa Empresa          @relation(fields: [empresaId], references: [id])
+
+  @@unique([testeId, empresaId])
 }
 
 model Impacto {

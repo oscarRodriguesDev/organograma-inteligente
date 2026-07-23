@@ -10,7 +10,13 @@ export default async function LoginPage({
   return (
     <div className="flex-1 flex items-center justify-center p-8">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-2">Organograma Inteligente</h1>
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-center mb-1">
+            <span className="text-[#0EA5E9] dark:text-[#38BDF8]">OxyGen</span>{' '}
+            <span className="text-foreground font-light">AI</span>
+          </h1>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">O ar que sua organização precisa</p>
+        </div>
         <p className="text-sm text-zinc-500 text-center mb-6">Faça login para continuar</p>
 
         {sucesso && (

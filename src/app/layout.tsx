@@ -17,8 +17,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Organograma Inteligente",
-  description: "Gerenciador de organogramas de empresas",
+  title: "OxyGen AI — O ar que sua organização precisa",
+  description: "Plataforma de inteligência organizacional que oxigena a gestão de pessoas com organogramas, avaliações, testes, métricas e IA.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  openGraph: {
+    title: 'OxyGen AI',
+    description: 'O ar que sua organização precisa.',
+    type: 'website',
+    locale: 'pt_BR',
+  },
 };
 
 export default async function RootLayout({
@@ -34,7 +48,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
           <NavBar session={session} />
           <ToastProvider>

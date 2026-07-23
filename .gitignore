@@ -47,3 +47,6 @@ dev.db-journal
 
 # opencode config (local only)
 /.opencode/
+
+# plano mock para testes locais (não versionar)
+/scripts/seed-plano-mock.ts

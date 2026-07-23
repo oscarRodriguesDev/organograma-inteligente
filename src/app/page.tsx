@@ -20,27 +20,32 @@ export default async function Home() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center px-6 pt-24 pb-16 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
-          Organograma Inteligente
-        </h1>
-        <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mb-8">
-          Gerencie a estrutura hierárquica da sua empresa com simplicidade,
-          métricas de desempenho, avaliações e muito mais.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Link
-            href={planos.length > 0 ? `/checkout/${planos[0].slug}` : '/login'}
-            className="rounded-lg bg-black px-6 py-3 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-colors"
-          >
-            Começar Agora
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-lg border border-zinc-300 px-6 py-3 text-sm font-medium hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900 transition-colors"
-          >
-            Já tenho conta
-          </Link>
+      <section className="flex flex-col items-center justify-center px-6 pt-24 pb-16 text-center relative overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/5 via-[#06B6D4]/5 to-transparent dark:from-[#0EA5E9]/10 dark:via-[#06B6D4]/5 dark:to-transparent pointer-events-none" />
+        <div className="relative">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4">
+            <span className="text-[#0EA5E9] dark:text-[#38BDF8]">OxyGen</span>{' '}
+            <span className="text-foreground font-light">AI</span>
+          </h1>
+          <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mb-8">
+            O ar que sua organização precisa — inteligência organizacional para
+            gerir pessoas, times e talentos com leveza e clareza.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href={planos.length > 0 ? `/checkout/${planos[0].slug}` : '/login'}
+              className="rounded-lg bg-[#0EA5E9] px-6 py-3 text-sm font-medium text-white hover:bg-[#0284C7] dark:bg-[#38BDF8] dark:text-[#0B1121] dark:hover:bg-[#0EA5E9] transition-colors"
+            >
+              Começar Agora
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-lg border border-zinc-300 dark:border-zinc-700 px-6 py-3 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+            >
+              Já tenho conta
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -64,14 +69,30 @@ export default async function Home() {
                   Mais popular
                 </span>
               )}
+              {plano.promocaoAtiva && (
+                <span className="absolute -top-3 right-4 rounded-full bg-green-600 dark:bg-green-500 px-3 py-0.5 text-xs font-medium text-white">
+                  {plano.promocaoDescricao || `${plano.descontoPercentual}% OFF`}
+                </span>
+              )}
               <h3 className="text-lg font-semibold mb-1">{plano.nome}</h3>
               <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
                 {plano.descricao}
               </p>
               <div className="mb-4">
-                <span className="text-3xl font-bold">
-                  R$ {plano.precoMensal.toFixed(2)}
-                </span>
+                {plano.promocaoAtiva && plano.descontoPercentual > 0 ? (
+                  <>
+                    <span className="text-xl text-zinc-400 line-through">
+                      R$ {plano.precoMensal.toFixed(2)}
+                    </span>
+                    <span className="text-3xl font-bold text-green-600 dark:text-green-400 ml-2">
+                      R$ {(plano.precoMensal * (1 - plano.descontoPercentual / 100)).toFixed(2)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-3xl font-bold">
+                    R$ {plano.precoMensal.toFixed(2)}
+                  </span>
+                )}
                 <span className="text-sm text-zinc-500 dark:text-zinc-400">
                   /mês
                 </span>
@@ -104,7 +125,7 @@ export default async function Home() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-200 dark:border-zinc-800 py-8 text-center text-sm text-zinc-400">
-        <p>© {new Date().getFullYear()} Organograma Inteligente. Todos os direitos reservados.</p>
+        <p>© {new Date().getFullYear()} OxyGen AI. Todos os direitos reservados.</p>
       </footer>
     </div>
   )

@@ -2,6 +2,7 @@
 export enum Papel {
   ADMIN_PLATAFORMA = 'ADMIN_PLATAFORMA',
   ADMIN_SUPORTE = 'ADMIN_SUPORTE',
+  ADMIN_PSICH = 'ADMIN_PSICH',
   CEO = 'CEO',
   DIRETOR = 'DIRETOR',
   GERENTE = 'GERENTE',
@@ -66,6 +67,11 @@ export interface Plano {
   recursos: string[]
   destaque: boolean
   ativo: boolean
+  ordem: number
+  descontoPercentual: number
+  promocaoAtiva: boolean
+  promocaoValidade: string | null
+  promocaoDescricao: string
 }
 
 export interface Assinatura {
@@ -310,6 +316,44 @@ export interface Conversa {
   realizadaEm: string
   registradaEm: string
   criadoPorId?: string
+}
+
+// ─── Testes Psicológicos ────────────────────────────────
+export type TipoPerguntaTeste = 'multipla_escolha' | 'escala_1_5' | 'texto' | 'verdadeiro_falso' | 'escala_labeled'
+
+export interface PerguntaTestePsicologico {
+  id: string
+  testeId: string
+  pergunta: string
+  tipo: TipoPerguntaTeste
+  opcoes: string[] // for multipla_escolha
+  peso: number
+  ordem: number
+  obrigatoria: boolean
+}
+
+export interface TestePsicologico {
+  id: string
+  titulo: string
+  descricao: string
+  instrucoes: string
+  tipo: string
+  criadoPorId: string
+  criadoPorNome?: string
+  ativo: boolean
+  createdAt: string
+  updatedAt: string
+  perguntas?: PerguntaTestePsicologico[]
+  empresasDisponiveis?: string[] // empresaIds
+}
+
+export interface EmpresaTesteDisponivel {
+  id: string
+  testeId: string
+  empresaId: string
+  empresaNome?: string
+  ativo: boolean
+  createdAt: string
 }
 
 // ─── Score Consolidado ──────────────────────────────────

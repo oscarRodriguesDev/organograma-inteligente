@@ -248,8 +248,9 @@ function ColaboradoresDropdown({ pathname }: { pathname: string }) {
 
 export default function NavBar({ session }: NavBarProps) {
   const pathname = usePathname()
-  const isAdmin = session?.papel === 'ADMIN_PLATAFORMA' || session?.papel === 'ADMIN_SUPORTE'
+  const isAdmin = session?.papel === 'ADMIN_PLATAFORMA' || session?.papel === 'ADMIN_SUPORTE' || session?.papel === 'ADMIN_PSICH'
   const isSuperAdmin = session?.papel === 'ADMIN_PLATAFORMA'
+  const isPsichAdmin = session?.papel === 'ADMIN_PSICH'
 
   // Admin Navigation
   if (isAdmin && session) {
@@ -258,16 +259,22 @@ export default function NavBar({ session }: NavBarProps) {
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-base text-foreground">
-            <span className="w-7 h-7 rounded-lg bg-zinc-900 dark:bg-white flex items-center justify-center text-xs font-bold text-white dark:text-black">
-              OI
+            <span className="w-7 h-7 rounded-lg bg-[#0EA5E9] dark:bg-[#38BDF8] flex items-center justify-center text-xs font-bold text-white dark:text-[#0B1121]">
+              OG
             </span>
-            <span className="hidden sm:inline">Organograma</span>
+            <span className="hidden sm:inline">
+              <span className="text-[#0EA5E9] dark:text-[#38BDF8]">OxyGen</span>{' '}
+              <span className="font-light text-zinc-500 dark:text-zinc-400">AI</span>
+            </span>
           </Link>
 
           {/* Nav Links */}
           <div className="flex items-center gap-1">
             {isSuperAdmin && (
               <NavLink href="/admin" label="Dashboard" isActive={pathname === '/admin'} />
+            )}
+            {isPsichAdmin && (
+              <NavLink href="/admin/testes-psicologicos" label="Testes" isActive={pathname.startsWith('/admin/testes-psicologicos')} />
             )}
             <NavLink href="/admin/empresas" label="Empresas" isActive={pathname.startsWith('/admin/empresas')} />
             {isSuperAdmin && (
@@ -319,10 +326,16 @@ export default function NavBar({ session }: NavBarProps) {
         <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-base text-foreground">
-            <span className="w-7 h-7 rounded-lg bg-zinc-900 dark:bg-white flex items-center justify-center text-xs font-bold text-white dark:text-black">
-              OI
+            <span className="w-7 h-7 rounded-lg bg-[#0EA5E9] dark:bg-[#38BDF8] flex items-center justify-center text-xs font-bold text-white dark:text-[#0B1121]">
+              OG
             </span>
-            <span className="hidden sm:inline">{session.empresaNome || 'Organograma'}</span>
+            <span className="hidden sm:inline">
+              {session.empresaNome ? (
+                session.empresaNome
+              ) : (
+                <><span className="text-[#0EA5E9] dark:text-[#38BDF8]">OxyGen</span> <span className="font-light text-zinc-500 dark:text-zinc-400">AI</span></>
+              )}
+            </span>
           </Link>
 
           {/* Nav Links */}

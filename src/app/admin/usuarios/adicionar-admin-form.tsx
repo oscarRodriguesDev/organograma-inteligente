@@ -83,6 +83,7 @@ export function AdicionarAdminForm() {
           >
             <option value="ADMIN_PLATAFORMA">Admin Sistema (acesso total)</option>
             <option value="ADMIN_SUPORTE">Admin Suporte (empresas + perfil)</option>
+            <option value="ADMIN_PSICH">Admin Psicólogo (testes psicológicos)</option>
           </select>
         </div>
 

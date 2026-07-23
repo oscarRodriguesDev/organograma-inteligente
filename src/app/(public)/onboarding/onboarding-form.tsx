@@ -3,11 +3,9 @@
 import { criarContaAction } from '@/lib/public-actions'
 
 export function OnboardingForm({
-  planoId,
-  ciclo,
+  sessionToken,
 }: {
-  planoId: string
-  ciclo: string
+  sessionToken: string
 }) {
   function autoPreencherSlug(e: React.ChangeEvent<HTMLInputElement>) {
     const slugInput = document.getElementById('slug') as HTMLInputElement
@@ -160,9 +158,8 @@ export function OnboardingForm({
             </div>
           </fieldset>
 
-          {/* Hidden fields */}
-          <input type="hidden" name="planoId" value={planoId} />
-          <input type="hidden" name="ciclo" value={ciclo} />
+          {/* Sessão de pagamento (criptograficamente assinada) */}
+          <input type="hidden" name="sessionToken" value={sessionToken} />
 
           <button
             type="submit"

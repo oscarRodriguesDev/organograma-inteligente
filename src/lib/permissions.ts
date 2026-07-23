@@ -29,7 +29,7 @@ export function podeEditarColaborador(
   alvo: Colaborador
 ): boolean {
   // Admin da plataforma pode editar qualquer um
-  if (sessionPapel === Papel.ADMIN_PLATAFORMA || sessionPapel === Papel.ADMIN_SUPORTE) return true
+  if (sessionPapel === Papel.ADMIN_PLATAFORMA || sessionPapel === Papel.ADMIN_SUPORTE || sessionPapel === Papel.ADMIN_PSICH) return true
 
   // CEO pode editar todo o organograma da empresa
   if (sessionPapel === Papel.CEO) return alvo.empresaId === sessionEmpresaId
@@ -53,6 +53,8 @@ export function podeContratar(sessionPapel: Papel, papelContratado: Papel): bool
     case Papel.ADMIN_PLATAFORMA:
     case Papel.ADMIN_SUPORTE:
       return true
+    case Papel.ADMIN_PSICH:
+      return false
     case Papel.CEO:
       return papelContratado === Papel.DIRETOR
     case Papel.DIRETOR:
@@ -77,6 +79,8 @@ export function podeDemitir(sessionPapel: Papel, papelAlvo: Papel): boolean {
     case Papel.ADMIN_PLATAFORMA:
     case Papel.ADMIN_SUPORTE:
       return true
+    case Papel.ADMIN_PSICH:
+      return false
     case Papel.CEO:
       return papelAlvo === Papel.DIRETOR
     case Papel.DIRETOR:
@@ -101,6 +105,8 @@ export function podePromoverPara(sessionPapel: Papel, papelAlvo: Papel): boolean
     case Papel.ADMIN_PLATAFORMA:
     case Papel.ADMIN_SUPORTE:
       return true
+    case Papel.ADMIN_PSICH:
+      return false
     case Papel.CEO:
       // CEO pode promover Gerentes a Diretores (decisão em conselho)
       return papelAlvo === Papel.GERENTE
@@ -124,6 +130,9 @@ export function podeCriarRegrasPromocao(sessionPapel: Papel): boolean {
     case Papel.ADMIN_PLATAFORMA:
     case Papel.ADMIN_SUPORTE:
     case Papel.CEO:
+      return true
+    case Papel.ADMIN_PSICH:
+      return false
       return true
     default:
       return false
@@ -178,6 +187,7 @@ export function obterAcoesColaborador(papel: Papel): AcoesColaborador {
   switch (papel) {
     case Papel.ADMIN_PLATAFORMA:
     case Papel.ADMIN_SUPORTE:
+    case Papel.ADMIN_PSICH:
       return { ...base, podeSolicitarTestes: true, podeDarFeedback: true }
 
     case Papel.CEO:

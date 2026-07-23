@@ -7,6 +7,7 @@ import { logoutAction } from '@/lib/auth-actions'
 const navItemsSystem = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
   { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
+  { href: '/admin/planos', label: 'Planos', icon: '📋' },
   { href: '/admin/investimentos', label: 'Investimentos', icon: '📈' },
   { href: '/admin/gastos', label: 'Gastos', icon: '💰' },
   { href: '/admin/financeiro', label: 'Financeiro', icon: '📊' },
@@ -19,6 +20,12 @@ const navItemsSuporte = [
   { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
 ]
 
+const navItemsPsich = [
+  { href: '/admin/testes-psicologicos', label: 'Testes', icon: '📝' },
+  { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
+  { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
+]
+
 export default async function AdminLayout({
   children,
 }: {
@@ -26,11 +33,11 @@ export default async function AdminLayout({
 }) {
   const session = await getSession()
 
-  // Apenas ADMIN_PLATAFORMA e ADMIN_SUPORTE podem acessar
+  // Apenas ADMIN_PLATAFORMA, ADMIN_SUPORTE e ADMIN_PSICH podem acessar
   if (!session) {
     redirect('/login')
   }
-  if (session.papel !== Papel.ADMIN_PLATAFORMA && session.papel !== Papel.ADMIN_SUPORTE) {
+  if (session.papel !== Papel.ADMIN_PLATAFORMA && session.papel !== Papel.ADMIN_SUPORTE && session.papel !== Papel.ADMIN_PSICH) {
     return (
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="text-center">
@@ -59,7 +66,8 @@ export default async function AdminLayout({
   }
 
   const isSystem = session.papel === Papel.ADMIN_PLATAFORMA
-  const navItems = isSystem ? navItemsSystem : navItemsSuporte
+  const isPsich = session.papel === Papel.ADMIN_PSICH
+  const navItems = isSystem ? navItemsSystem : isPsich ? navItemsPsich : navItemsSuporte
 
   return (
     <div className="flex-1 flex">
@@ -70,7 +78,7 @@ export default async function AdminLayout({
             Painel Admin
           </Link>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-            {isSystem ? 'Administração da Plataforma' : 'Suporte da Plataforma'}
+            {isSystem ? 'Administração da Plataforma' : isPsich ? 'Testes Psicológicos' : 'Suporte da Plataforma'}
           </p>
         </div>
 
@@ -102,9 +110,9 @@ export default async function AdminLayout({
               <p className="text-sm font-medium text-foreground truncate">{session.username || session.nome}</p>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate">{session.email}</p>
               <p className={`text-[10px] mt-0.5 font-medium ${
-                isSystem ? 'text-violet-500 dark:text-violet-400' : 'text-amber-500 dark:text-amber-400'
+                isSystem ? 'text-violet-500 dark:text-violet-400' : isPsich ? 'text-cyan-500 dark:text-cyan-400' : 'text-amber-500 dark:text-amber-400'
               }`}>
-                {isSystem ? 'Admin Sistema' : 'Admin Suporte'}
+                {isSystem ? 'Admin Sistema' : isPsich ? 'Admin Psicólogo' : 'Admin Suporte'}
               </p>
             </div>
           </div>

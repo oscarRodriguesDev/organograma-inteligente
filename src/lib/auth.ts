@@ -65,8 +65,8 @@ export async function autenticarPorEmailSenha(
   const senhaValida = await bcrypt.compare(senha, colaborador.senhaHash)
   if (!senhaValida) return null
 
-  // Admins da plataforma (ADMIN_PLATAFORMA e ADMIN_SUPORTE) podem ter empresaId null
-  if (colaborador.papel === 'ADMIN_PLATAFORMA' || colaborador.papel === 'ADMIN_SUPORTE') {
+  // Admins da plataforma (ADMIN_PLATAFORMA, ADMIN_SUPORTE, ADMIN_PSICH) podem ter empresaId null
+  if (colaborador.papel === 'ADMIN_PLATAFORMA' || colaborador.papel === 'ADMIN_SUPORTE' || colaborador.papel === 'ADMIN_PSICH') {
     if (colaborador.status !== 'ativo') return null
   } else {
     if (!colaborador.empresa?.ativa) return null
@@ -105,6 +105,7 @@ const HIERARQUIA_PERMISSOES: Record<Papel, number> = {
   [Papel.DIRETOR]: 7,
   [Papel.CEO]: 8,
   [Papel.ADMIN_SUPORTE]: 9,
+  [Papel.ADMIN_PSICH]: 9,
   [Papel.ADMIN_PLATAFORMA]: 10,
 }
 

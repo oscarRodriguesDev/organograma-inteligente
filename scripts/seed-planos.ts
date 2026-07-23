@@ -21,6 +21,10 @@ async function main() {
       maxColaboradores: 10,
       recursos: JSON.stringify(['Organograma básico', 'Até 10 colaboradores', 'Avaliações de desempenho', 'Métricas mensais']),
       destaque: false,
+      ordem: 1,
+      descontoPercentual: 0,
+      promocaoAtiva: false,
+      promocaoDescricao: '',
     },
     {
       nome: 'Profissional',
@@ -31,6 +35,10 @@ async function main() {
       maxColaboradores: 50,
       recursos: JSON.stringify(['Organograma interativo', 'Até 50 colaboradores', 'Testes comportamentais (Fit Cultural + DISC)', 'Pesquisa de sentimento', 'Registro de conversas', 'Score consolidado', 'IA generativa']),
       destaque: true,
+      ordem: 2,
+      descontoPercentual: 0,
+      promocaoAtiva: false,
+      promocaoDescricao: '',
     },
     {
       nome: 'Enterprise',
@@ -41,6 +49,10 @@ async function main() {
       maxColaboradores: -1, // ilimitado
       recursos: JSON.stringify(['Tudo do Profissional', 'Colaboradores ilimitados', 'Simulação de impacto', 'Múltiplos gestores', 'Suporte prioritário', 'Importação CSV', 'API de integração']),
       destaque: false,
+      ordem: 3,
+      descontoPercentual: 0,
+      promocaoAtiva: false,
+      promocaoDescricao: '',
     },
   ]
 

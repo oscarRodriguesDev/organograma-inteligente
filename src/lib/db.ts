@@ -23,6 +23,10 @@ import type {
   GastoSistema,
   Investimento,
   Empresa,
+  TestePsicologico,
+  PerguntaTestePsicologico,
+  TipoPerguntaTeste,
+  EmpresaTesteDisponivel,
 } from './types'
 import { Papel } from './types'
 
@@ -102,7 +106,7 @@ export async function listarColaboradores(options?: { incluirAdmins?: boolean })
   // Por padrão, exclui admins da plataforma (não pertencem a empresas)
   if (!options?.incluirAdmins) {
     result = result.filter(
-      (c) => c.papel !== Papel.ADMIN_PLATAFORMA && c.papel !== Papel.ADMIN_SUPORTE
+      (c) => c.papel !== Papel.ADMIN_PLATAFORMA && c.papel !== Papel.ADMIN_SUPORTE && c.papel !== Papel.ADMIN_PSICH
     )
   }
   return result
@@ -180,10 +184,11 @@ export async function removerColaborador(id: string): Promise<boolean> {
   try {
     // Proteção: nunca permitir excluir o último ADMIN_PLATAFORMA ou ADMIN_SUPORTE
     const alvo = await prisma.colaborador.findUnique({ where: { id }, select: { papel: true } })
-    if (alvo && (alvo.papel === 'ADMIN_PLATAFORMA' || alvo.papel === 'ADMIN_SUPORTE')) {
+    if (alvo && (alvo.papel === 'ADMIN_PLATAFORMA' || alvo.papel === 'ADMIN_SUPORTE' || alvo.papel === 'ADMIN_PSICH')) {
       const total = await prisma.colaborador.count({ where: { papel: alvo.papel } })
       if (total <= 1) {
-        throw new Error(`Não é possível excluir o último ${alvo.papel === 'ADMIN_PLATAFORMA' ? 'Administrador da Plataforma' : 'Administrador de Suporte'}. Crie outro admin antes ou use o script scripts/criar-admin.ts.`)
+        const nomePapel = alvo.papel === 'ADMIN_PLATAFORMA' ? 'Administrador da Plataforma' : alvo.papel === 'ADMIN_SUPORTE' ? 'Administrador de Suporte' : 'Administrador Psicólogo'
+        throw new Error(`Não é possível excluir o último ${nomePapel}. Crie outro admin antes ou use o script scripts/criar-admin.ts.`)
       }
     }
 
@@ -466,7 +471,8 @@ export async function listarCargos(): Promise<Cargo[]> {
           (c) =>
             c.funcao &&
             c.papel !== 'ADMIN_PLATAFORMA' &&
-            c.papel !== 'ADMIN_SUPORTE'
+            c.papel !== 'ADMIN_SUPORTE' &&
+            c.papel !== 'ADMIN_PSICH'
         )
         .map((c) => c.funcao)
         .filter(Boolean)
@@ -1030,12 +1036,8 @@ export async function obterScore(colaboradorId: string): Promise<ScoreColaborado
 
 // ─── Planos ────────────────────────────────────────────────────
 
-export async function listarPlanos(): Promise<Plano[]> {
-  const data = await prisma.plano.findMany({
-    where: { ativo: true },
-    orderBy: { precoMensal: 'asc' },
-  })
-  return data.map((p: any) => ({
+function planoPrismaParaModelo(p: any): Plano {
+  return {
     id: p.id,
     nome: p.nome,
     slug: p.slug,
@@ -1046,26 +1048,34 @@ export async function listarPlanos(): Promise<Plano[]> {
     recursos: JSON.parse(p.recursos),
     destaque: p.destaque,
     ativo: p.ativo,
-  }))
+    ordem: p.ordem,
+    descontoPercentual: p.descontoPercentual,
+    promocaoAtiva: p.promocaoAtiva,
+    promocaoValidade: p.promocaoValidade?.toISOString() ?? null,
+    promocaoDescricao: p.promocaoDescricao,
+  }
+}
+
+export async function listarPlanos(apenasAtivos = true): Promise<Plano[]> {
+  const where: any = {}
+  if (apenasAtivos) where.ativo = true
+  const data = await prisma.plano.findMany({
+    where,
+    orderBy: [{ ordem: 'asc' }, { precoMensal: 'asc' }],
+  })
+  return data.map(planoPrismaParaModelo)
+}
+
+export async function listarTodosPlanos(): Promise<Plano[]> {
+  return listarPlanos(false)
 }
 
 export async function buscarPlanoPorSlug(slug: string): Promise<Plano | null> {
   const data = await prisma.plano.findUnique({
-    where: { slug, ativo: true },
+    where: { slug },
   })
   if (!data) return null
-  return {
-    id: data.id,
-    nome: data.nome,
-    slug: data.slug,
-    descricao: data.descricao,
-    precoMensal: data.precoMensal,
-    precoAnual: data.precoAnual,
-    maxColaboradores: data.maxColaboradores,
-    recursos: JSON.parse(data.recursos),
-    destaque: data.destaque,
-    ativo: data.ativo,
-  }
+  return planoPrismaParaModelo(data)
 }
 
 // ─── Empresa + CEO (Onboarding) ──────────────────────────────
@@ -1088,7 +1098,10 @@ export async function criarEmpresaComCEO(dados: {
   const plano = await prisma.plano.findUnique({ where: { id: dados.planoId } })
   if (!plano) throw new Error('Plano não encontrado')
 
-  const valor = dados.ciclo === 'anual' ? plano.precoAnual : plano.precoMensal
+  let valor = dados.ciclo === 'anual' ? plano.precoAnual : plano.precoMensal
+  if (plano.promocaoAtiva && plano.descontoPercentual > 0) {
+    valor = valor * (1 - plano.descontoPercentual / 100)
+  }
 
   const empresa = await prisma.empresa.create({
     data: {
@@ -1167,6 +1180,275 @@ export async function listarScores(ordenarPor?: string): Promise<ScoreColaborado
   }))
 }
 
+// ─── Testes Psicológicos (admin_psich) ─────────────────────
+
+export async function listarTestesPsicologicos(): Promise<TestePsicologico[]> {
+  const data = await prisma.testePsicologico.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      criadoPor: { select: { nome: true } },
+      perguntas: { orderBy: { ordem: 'asc' } },
+      empresasDisponiveis: { select: { empresaId: true } },
+    },
+  })
+  return data.map(t => ({
+    id: t.id,
+    titulo: t.titulo,
+    descricao: t.descricao,
+    instrucoes: t.instrucoes,
+    tipo: t.tipo,
+    criadoPorId: t.criadoPorId,
+    criadoPorNome: t.criadoPor.nome,
+    ativo: t.ativo,
+    createdAt: t.createdAt.toISOString(),
+    updatedAt: t.updatedAt.toISOString(),
+    perguntas: t.perguntas.map(p => ({
+      id: p.id,
+      testeId: p.testeId,
+      pergunta: p.pergunta,
+      tipo: p.tipo as TipoPerguntaTeste,
+      opcoes: JSON.parse(p.opcoes),
+      peso: p.peso,
+      ordem: p.ordem,
+      obrigatoria: p.obrigatoria,
+    })),
+    empresasDisponiveis: t.empresasDisponiveis.map(e => e.empresaId),
+  }))
+}
+
+export async function buscarTestePsicologico(id: string): Promise<TestePsicologico | null> {
+  const data = await prisma.testePsicologico.findUnique({
+    where: { id },
+    include: {
+      criadoPor: { select: { nome: true } },
+      perguntas: { orderBy: { ordem: 'asc' } },
+      empresasDisponiveis: { include: { empresa: { select: { nome: true } } } },
+    },
+  })
+  if (!data) return null
+  return {
+    id: data.id,
+    titulo: data.titulo,
+    descricao: data.descricao,
+    instrucoes: data.instrucoes,
+    tipo: data.tipo,
+    criadoPorId: data.criadoPorId,
+    criadoPorNome: data.criadoPor.nome,
+    ativo: data.ativo,
+    createdAt: data.createdAt.toISOString(),
+    updatedAt: data.updatedAt.toISOString(),
+    perguntas: data.perguntas.map(p => ({
+      id: p.id,
+      testeId: p.testeId,
+      pergunta: p.pergunta,
+      tipo: p.tipo as TipoPerguntaTeste,
+      opcoes: JSON.parse(p.opcoes),
+      peso: p.peso,
+      ordem: p.ordem,
+      obrigatoria: p.obrigatoria,
+    })),
+    empresasDisponiveis: data.empresasDisponiveis.map(e => e.empresaId),
+  }
+}
+
+export async function criarTestePsicologico(dados: {
+  titulo: string
+  descricao: string
+  instrucoes: string
+  tipo: string
+  criadoPorId: string
+  perguntas: {
+    pergunta: string
+    tipo: TipoPerguntaTeste
+    opcoes: string[]
+    peso: number
+    ordem: number
+    obrigatoria: boolean
+  }[]
+  empresasDisponiveis?: string[]
+}): Promise<TestePsicologico> {
+  const data = await prisma.testePsicologico.create({
+    data: {
+      titulo: dados.titulo,
+      descricao: dados.descricao,
+      instrucoes: dados.instrucoes,
+      tipo: dados.tipo,
+      criadoPorId: dados.criadoPorId,
+      perguntas: {
+        create: dados.perguntas.map(p => ({
+          pergunta: p.pergunta,
+          tipo: p.tipo,
+          opcoes: JSON.stringify(p.opcoes),
+          peso: p.peso,
+          ordem: p.ordem,
+          obrigatoria: p.obrigatoria,
+        })),
+      },
+      empresasDisponiveis: dados.empresasDisponiveis ? {
+        create: dados.empresasDisponiveis.map(empresaId => ({
+          empresaId,
+        })),
+      } : undefined,
+    },
+    include: {
+      criadoPor: { select: { nome: true } },
+      perguntas: { orderBy: { ordem: 'asc' } },
+      empresasDisponiveis: true,
+    },
+  })
+  return {
+    id: data.id,
+    titulo: data.titulo,
+    descricao: data.descricao,
+    instrucoes: data.instrucoes,
+    tipo: data.tipo,
+    criadoPorId: data.criadoPorId,
+    criadoPorNome: data.criadoPor.nome,
+    ativo: data.ativo,
+    createdAt: data.createdAt.toISOString(),
+    updatedAt: data.updatedAt.toISOString(),
+    perguntas: data.perguntas.map(p => ({
+      id: p.id,
+      testeId: p.testeId,
+      pergunta: p.pergunta,
+      tipo: p.tipo as TipoPerguntaTeste,
+      opcoes: JSON.parse(p.opcoes),
+      peso: p.peso,
+      ordem: p.ordem,
+      obrigatoria: p.obrigatoria,
+    })),
+    empresasDisponiveis: data.empresasDisponiveis.map(e => e.empresaId),
+  }
+}
+
+export async function atualizarTestePsicologico(
+  id: string,
+  dados: {
+    titulo?: string
+    descricao?: string
+    instrucoes?: string
+    tipo?: string
+    ativo?: boolean
+    perguntas?: {
+      pergunta: string
+      tipo: TipoPerguntaTeste
+      opcoes: string[]
+      peso: number
+      ordem: number
+      obrigatoria: boolean
+    }[]
+    empresasDisponiveis?: string[]
+  }
+): Promise<TestePsicologico | null> {
+  // Se for atualizar perguntas, remove as antigas e cria novas
+  if (dados.perguntas) {
+    await prisma.perguntaTestePsicologico.deleteMany({ where: { testeId: id } })
+  }
+
+  const data = await prisma.testePsicologico.update({
+    where: { id },
+    data: {
+      ...(dados.titulo !== undefined ? { titulo: dados.titulo } : {}),
+      ...(dados.descricao !== undefined ? { descricao: dados.descricao } : {}),
+      ...(dados.instrucoes !== undefined ? { instrucoes: dados.instrucoes } : {}),
+      ...(dados.tipo !== undefined ? { tipo: dados.tipo } : {}),
+      ...(dados.ativo !== undefined ? { ativo: dados.ativo } : {}),
+      ...(dados.perguntas ? {
+        perguntas: {
+          create: dados.perguntas.map(p => ({
+            pergunta: p.pergunta,
+            tipo: p.tipo,
+            opcoes: JSON.stringify(p.opcoes),
+            peso: p.peso,
+            ordem: p.ordem,
+            obrigatoria: p.obrigatoria,
+          })),
+        },
+      } : {}),
+      ...(dados.empresasDisponiveis !== undefined ? {
+        empresasDisponiveis: {
+          deleteMany: {},
+          create: dados.empresasDisponiveis.map(empresaId => ({
+            empresaId,
+          })),
+        },
+      } : {}),
+    },
+    include: {
+      criadoPor: { select: { nome: true } },
+      perguntas: { orderBy: { ordem: 'asc' } },
+      empresasDisponiveis: true,
+    },
+  })
+  return {
+    id: data.id,
+    titulo: data.titulo,
+    descricao: data.descricao,
+    instrucoes: data.instrucoes,
+    tipo: data.tipo,
+    criadoPorId: data.criadoPorId,
+    criadoPorNome: data.criadoPor.nome,
+    ativo: data.ativo,
+    createdAt: data.createdAt.toISOString(),
+    updatedAt: data.updatedAt.toISOString(),
+    perguntas: data.perguntas.map(p => ({
+      id: p.id,
+      testeId: p.testeId,
+      pergunta: p.pergunta,
+      tipo: p.tipo as TipoPerguntaTeste,
+      opcoes: JSON.parse(p.opcoes),
+      peso: p.peso,
+      ordem: p.ordem,
+      obrigatoria: p.obrigatoria,
+    })),
+    empresasDisponiveis: data.empresasDisponiveis.map(e => e.empresaId),
+  }
+}
+
+export async function alternarStatusTestePsicologico(id: string, ativo: boolean): Promise<boolean> {
+  try {
+    await prisma.testePsicologico.update({ where: { id }, data: { ativo } })
+    return true
+  } catch { return false }
+}
+
+export async function removerTestePsicologico(id: string): Promise<boolean> {
+  try {
+    await prisma.testePsicologico.delete({ where: { id } })
+    return true
+  } catch { return false }
+}
+
+export async function listarEmpresasDisponiveisParaTeste(testeId: string): Promise<EmpresaTesteDisponivel[]> {
+  const data = await prisma.empresaTesteDisponivel.findMany({
+    where: { testeId, ativo: true },
+    include: { empresa: { select: { nome: true } } },
+  })
+  return data.map(e => ({
+    id: e.id,
+    testeId: e.testeId,
+    empresaId: e.empresaId,
+    empresaNome: e.empresa.nome,
+    ativo: e.ativo,
+    createdAt: e.createdAt.toISOString(),
+  }))
+}
+
+export async function alternarDisponibilidadeEmpresa(
+  testeId: string,
+  empresaId: string,
+  ativo: boolean
+): Promise<boolean> {
+  try {
+    await prisma.empresaTesteDisponivel.upsert({
+      where: { testeId_empresaId: { testeId, empresaId } },
+      update: { ativo },
+      create: { testeId, empresaId, ativo },
+    })
+    return true
+  } catch { return false }
+}
+
 // ═══════════════════════════════════════════════════════════
 // ─── SaaS / Admin ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
@@ -1174,13 +1456,13 @@ export async function listarScores(ordenarPor?: string): Promise<ScoreColaborado
 export async function buscarPlano(slug: string): Promise<Plano | null> {
   const data = await prisma.plano.findUnique({ where: { slug } })
   if (!data) return null
-  return { ...data, recursos: JSON.parse(data.recursos as string) }
+  return planoPrismaParaModelo(data)
 }
 
 export async function buscarPlanoPorId(id: string): Promise<Plano | null> {
   const data = await prisma.plano.findUnique({ where: { id } })
   if (!data) return null
-  return { ...data, recursos: JSON.parse(data.recursos as string) }
+  return planoPrismaParaModelo(data)
 }
 
 // ─── Assinaturas ──────────────────────────────────────────
@@ -1196,7 +1478,8 @@ export async function criarAssinatura(dados: { empresaId: string; planoId: strin
     },
     include: { plano: true },
   })
-  return { ...data, dataInicio: data.dataInicio.toISOString(), dataProximoPagamento: data.dataProximoPagamento?.toISOString() ?? null, dataCancelamento: data.dataCancelamento?.toISOString() ?? null, plano: { ...data.plano, recursos: JSON.parse(data.plano.recursos as string) } }
+  const plano: Plano = { ...data.plano, recursos: JSON.parse(data.plano.recursos as string), promocaoValidade: data.plano.promocaoValidade?.toISOString() ?? null }
+  return { ...data, dataInicio: data.dataInicio.toISOString(), dataProximoPagamento: data.dataProximoPagamento?.toISOString() ?? null, dataCancelamento: data.dataCancelamento?.toISOString() ?? null, plano }
 }
 
 export async function buscarAssinatura(empresaId: string): Promise<Assinatura | null> {
@@ -1205,7 +1488,8 @@ export async function buscarAssinatura(empresaId: string): Promise<Assinatura | 
     include: { plano: true },
   })
   if (!data) return null
-  return { ...data, dataInicio: data.dataInicio.toISOString(), dataProximoPagamento: data.dataProximoPagamento?.toISOString() ?? null, dataCancelamento: data.dataCancelamento?.toISOString() ?? null, plano: { ...data.plano, recursos: JSON.parse(data.plano.recursos as string) } }
+  const plano: Plano = { ...data.plano, recursos: JSON.parse(data.plano.recursos as string), promocaoValidade: data.plano.promocaoValidade?.toISOString() ?? null }
+  return { ...data, dataInicio: data.dataInicio.toISOString(), dataProximoPagamento: data.dataProximoPagamento?.toISOString() ?? null, dataCancelamento: data.dataCancelamento?.toISOString() ?? null, plano }
 }
 
 // ─── Pagamentos (Mock) ────────────────────────────────────
@@ -1312,19 +1596,22 @@ export async function listarEmpresasAdmin(): Promise<(Empresa & { totalColaborad
       assinatura: { include: { plano: true } },
     },
   })
-  return data.map(e => ({
-    id: e.id, nome: e.nome, slug: e.slug, cnpj: e.cnpj,
-    contatoNome: e.contatoNome, contatoEmail: e.contatoEmail, contatoTelefone: e.contatoTelefone,
-    dataContratacao: e.dataContratacao.toISOString(), createdAt: e.createdAt.toISOString(), ativa: e.ativa,
-    totalColaboradores: e._count.colaboradores,
-    assinatura: e.assinatura ? {
-      ...e.assinatura,
-      dataInicio: e.assinatura.dataInicio.toISOString(),
-      dataProximoPagamento: e.assinatura.dataProximoPagamento?.toISOString() ?? null,
-      dataCancelamento: e.assinatura.dataCancelamento?.toISOString() ?? null,
-      plano: { ...e.assinatura.plano, recursos: JSON.parse(e.assinatura.plano.recursos as string) },
-    } : null,
-  }))
+  return data.map(e => {
+    const plano = e.assinatura?.plano ? { ...e.assinatura.plano, recursos: JSON.parse(e.assinatura.plano.recursos as string), promocaoValidade: e.assinatura.plano.promocaoValidade?.toISOString() ?? null } as Plano : undefined
+    return {
+      id: e.id, nome: e.nome, slug: e.slug, cnpj: e.cnpj,
+      contatoNome: e.contatoNome, contatoEmail: e.contatoEmail, contatoTelefone: e.contatoTelefone,
+      dataContratacao: e.dataContratacao.toISOString(), createdAt: e.createdAt.toISOString(), ativa: e.ativa,
+      totalColaboradores: e._count.colaboradores,
+      assinatura: e.assinatura ? {
+        ...e.assinatura,
+        dataInicio: e.assinatura.dataInicio.toISOString(),
+        dataProximoPagamento: e.assinatura.dataProximoPagamento?.toISOString() ?? null,
+        dataCancelamento: e.assinatura.dataCancelamento?.toISOString() ?? null,
+        plano,
+      } as Assinatura : null,
+    }
+  })
 }
 
 export async function buscarEmpresaAdmin(id: string): Promise<(Empresa & { totalColaboradores: number; assinatura?: Assinatura | null }) | null> {
@@ -1336,6 +1623,7 @@ export async function buscarEmpresaAdmin(id: string): Promise<(Empresa & { total
     },
   })
   if (!data) return null
+  const plano = data.assinatura?.plano ? { ...data.assinatura.plano, recursos: JSON.parse(data.assinatura.plano.recursos as string), promocaoValidade: data.assinatura.plano.promocaoValidade?.toISOString() ?? null } as Plano : undefined
   return {
     id: data.id, nome: data.nome, slug: data.slug, cnpj: data.cnpj,
     contatoNome: data.contatoNome, contatoEmail: data.contatoEmail, contatoTelefone: data.contatoTelefone,
@@ -1346,8 +1634,8 @@ export async function buscarEmpresaAdmin(id: string): Promise<(Empresa & { total
       dataInicio: data.assinatura.dataInicio.toISOString(),
       dataProximoPagamento: data.assinatura.dataProximoPagamento?.toISOString() ?? null,
       dataCancelamento: data.assinatura.dataCancelamento?.toISOString() ?? null,
-      plano: { ...data.assinatura.plano, recursos: JSON.parse(data.assinatura.plano.recursos as string) },
-    } : null,
+      plano,
+    } as Assinatura : null,
   }
 }
 
@@ -1450,7 +1738,7 @@ export async function criarAdminSistema(dados: {
   nome: string
   email: string
   senha: string
-  papel?: 'ADMIN_PLATAFORMA' | 'ADMIN_SUPORTE'
+  papel?: 'ADMIN_PLATAFORMA' | 'ADMIN_SUPORTE' | 'ADMIN_PSICH'
 }): Promise<boolean> {
   const senhaHash = await bcrypt.hash(dados.senha, 10)
   
@@ -1460,11 +1748,17 @@ export async function criarAdminSistema(dados: {
   })
   if (existente) return false
 
+  const funcaoMap: Record<string, string> = {
+    ADMIN_PLATAFORMA: 'Administrador do Sistema',
+    ADMIN_SUPORTE: 'Suporte da Plataforma',
+    ADMIN_PSICH: 'Psicólogo da Plataforma',
+  }
+
   await prisma.colaborador.create({
     data: {
       empresaId: null,
       nome: dados.nome,
-      funcao: papelAlvo === 'ADMIN_SUPORTE' ? 'Suporte da Plataforma' : 'Administrador do Sistema',
+      funcao: funcaoMap[papelAlvo] ?? 'Administrador',
       email: dados.email,
       senhaHash,
       papel: papelAlvo,
@@ -1517,6 +1811,7 @@ export async function listarAdmins(): Promise<{
       OR: [
         { papel: 'ADMIN_PLATAFORMA' },
         { papel: 'ADMIN_SUPORTE' },
+        { papel: 'ADMIN_PSICH' },
       ],
     },
     orderBy: { createdAt: 'desc' },

@@ -10,9 +10,12 @@ function formatarMoeda(valor: number): string {
 
 export default async function AdminDashboard() {
   const session = await getSession()
-  // ADMIN_SUPORTE não tem dashboard financeiro, redireciona para empresas
+  // ADMIN_SUPORTE e ADMIN_PSICH não tem dashboard financeiro, redireciona
   if (session?.papel === Papel.ADMIN_SUPORTE) {
     redirect('/admin/empresas')
+  }
+  if (session?.papel === Papel.ADMIN_PSICH) {
+    redirect('/admin/testes-psicologicos')
   }
 
   const [dados, empresas] = await Promise.all([

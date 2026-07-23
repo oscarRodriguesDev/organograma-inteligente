@@ -56,9 +56,11 @@ export default async function AdminUsuariosPage() {
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                         admin.papel === 'ADMIN_PLATAFORMA'
                           ? 'bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400'
+                          : admin.papel === 'ADMIN_PSICH'
+                          ? 'bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400'
                           : 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400'
                       }`}>
-                        {admin.papel === 'ADMIN_PLATAFORMA' ? 'Sistema' : 'Suporte'}
+                        {admin.papel === 'ADMIN_PLATAFORMA' ? 'Sistema' : admin.papel === 'ADMIN_PSICH' ? 'Psicólogo' : 'Suporte'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">

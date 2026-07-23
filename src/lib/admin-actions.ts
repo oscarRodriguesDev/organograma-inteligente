@@ -23,7 +23,7 @@ import {
   obterReceitaMensal,
   obterTotalGastos,
   obterReceitaTotal,
-  listarPlanos,
+  listarTodosPlanos,
   atualizarPerfilAdmin,
   alterarSenhaAdmin,
   listarAdmins,
@@ -46,7 +46,7 @@ async function verificarAdmin() {
 
 async function verificarSuporte() {
   const session = await getSession()
-  if (!session || (session.papel !== Papel.ADMIN_PLATAFORMA && session.papel !== Papel.ADMIN_SUPORTE)) {
+  if (!session || (session.papel !== Papel.ADMIN_PLATAFORMA && session.papel !== Papel.ADMIN_SUPORTE && session.papel !== Papel.ADMIN_PSICH)) {
     redirect('/login')
   }
   return session
@@ -321,9 +321,9 @@ export async function criarAdminAction(formData: FormData): Promise<{ ok: boolea
   if (!nome || !email || !senha) return { ok: false, erro: 'Preencha todos os campos' }
   if (nome.length > 120) return { ok: false, erro: 'Nome deve ter no máximo 120 caracteres' }
   if (senha.length < 6) return { ok: false, erro: 'A senha deve ter no mínimo 6 caracteres' }
-  if (papel !== 'ADMIN_PLATAFORMA' && papel !== 'ADMIN_SUPORTE') return { ok: false, erro: 'Papel inválido' }
+  if (papel !== 'ADMIN_PLATAFORMA' && papel !== 'ADMIN_SUPORTE' && papel !== 'ADMIN_PSICH') return { ok: false, erro: 'Papel inválido' }
 
-  const criado = await criarAdminSistema({ nome, email, senha, papel: papel as 'ADMIN_PLATAFORMA' | 'ADMIN_SUPORTE' })
+  const criado = await criarAdminSistema({ nome, email, senha, papel: papel as 'ADMIN_PLATAFORMA' | 'ADMIN_SUPORTE' | 'ADMIN_PSICH' })
   if (!criado) return { ok: false, erro: 'Email já cadastrado' }
 
   revalidatePath('/admin/usuarios')
@@ -370,5 +370,5 @@ export async function criarEmpresaAdminAction(formData: FormData): Promise<{ ok:
 
 export async function obterPlanos() {
   await verificarAdmin()
-  return listarPlanos()
+  return listarTodosPlanos()
 }

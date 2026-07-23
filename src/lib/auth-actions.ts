@@ -42,7 +42,7 @@ export async function loginAction(formData: FormData) {
 
   revalidatePath('/')
   // Redireciona admin para /admin, outros para /
-  if (session.papel === Papel.ADMIN_PLATAFORMA || session.papel === Papel.ADMIN_SUPORTE) {
+  if (session.papel === Papel.ADMIN_PLATAFORMA || session.papel === Papel.ADMIN_SUPORTE || session.papel === Papel.ADMIN_PSICH) {
     redirect('/admin')
   }
   redirect('/')
