@@ -240,10 +240,29 @@ export async function criarContaAction(formData: FormData) {
     throw new Error('Sessão expirada ou inválida. Faça o checkout novamente.')
   }
 
-  const { planoId, ciclo } = session
+  const { planoId, ciclo, pagamentoId, metodo } = session
 
   if (!nome || !slug || !ceoNome || !ceoEmail || !ceoSenha || !planoId) {
     throw new Error('Campos obrigatórios não preenchidos')
+  }
+
+  // Para pagamento real (não mock), verifica se o webhook já confirmou
+  if (pagamentoId && !pagamentoId.startsWith('mock-')) {
+    const pagamento = await prisma.pagamento.findFirst({
+      where: {
+        OR: [
+          { referenciaExterna: pagamentoId },
+          { id: pagamentoId },
+        ],
+      },
+    })
+
+    if (pagamento && pagamento.status === 'pendente') {
+      throw new Error(
+        'Pagamento ainda não foi confirmado. O PIX pode levar alguns segundos para ser aprovado. ' +
+        'Se já pagou, aguarde e tente novamente.'
+      )
+    }
   }
 
   await criarEmpresaComCEO({
@@ -257,6 +276,8 @@ export async function criarContaAction(formData: FormData) {
     ceoSenha,
     planoId,
     ciclo,
+    pagamentoId,
+    metodo: metodo ?? (pagamentoId?.startsWith('mock-') ? 'cartao_credito' : undefined),
   })
 
   redirect('/login?sucesso=1')

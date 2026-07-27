@@ -8,6 +8,7 @@
  * - O plano "mock" usa simulação local para testes
  */
 
+import { createHmac, timingSafeEqual } from 'crypto'
 import { config } from 'dotenv'
 config({ override: true })
 
@@ -350,15 +351,61 @@ export async function criarPagamentoCartao(
 // ─── Webhook ─────────────────────────────────────────────────
 
 /**
+ * Resultado do processamento de um evento de webhook Asaas.
+ */
+export interface WebhookEventResult {
+  /** ID do pagamento no Asaas (ex: pay_abc123) */
+  asaasPaymentId: string
+  /** ExternalReference enviado na criação do checkout */
+  externalReference: string
+  /** Status interno mapeado */
+  status: 'aprovado' | 'pendente' | 'recusado' | 'estornado'
+  /** Evento original do Asaas */
+  event: string
+  /** Valor do pagamento */
+  value: number
+  /** Método de pagamento */
+  billingType: string
+  /** ID do customer no Asaas */
+  customerId: string
+}
+
+/**
+ * Verifica a assinatura HMAC-SHA256 do webhook do Asaas.
+ *
+ * O Asaas envia o header `x-signature` com o hash HMAC-SHA256 do corpo da requisição.
+ * A chave usada é a mesma ASAAS_API_KEY.
+ *
+ * @param body - Corpo bruto da requisição (string)
+ * @param signature - Valor do header x-signature
+ * @returns true se a assinatura for válida
+ */
+export function verificarAssinaturaWebhook(body: string, signature: string | null): boolean {
+  if (!signature) {
+    console.warn('[Asaas Webhook] Header x-signature ausente')
+    return false
+  }
+
+  try {
+    const hash = createHmac('sha256', ASAAS_API_KEY)
+      .update(body)
+      .digest('hex')
+
+    // Timing-safe comparison para evitar timing attacks
+    return timingSafeEqual(Buffer.from(hash), Buffer.from(signature))
+  } catch (error) {
+    console.error('[Asaas Webhook] Erro ao verificar assinatura:', error)
+    return false
+  }
+}
+
+/**
  * Processa um evento de webhook recebido do Asaas.
- * Retorna o externalReference (ID do plano/assinatura) e o novo status.
+ * Retorna dados estruturados do evento para processamento.
  */
 export function processarEventoWebhook(
   payload: AsaasWebhookEvent
-): {
-  externalReference: string
-  status: 'aprovado' | 'pendente' | 'recusado' | 'estornado'
-} | null {
+): WebhookEventResult | null {
   const { event, payment } = payload
 
   // Mapeia eventos do Asaas para status internos
@@ -382,7 +429,12 @@ export function processarEventoWebhook(
   }
 
   return {
+    asaasPaymentId: payment.id,
     externalReference: payment.externalReference,
     status: internalStatus,
+    event,
+    value: payment.value,
+    billingType: payment.billingType,
+    customerId: payment.customer,
   }
 }

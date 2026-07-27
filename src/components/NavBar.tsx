@@ -18,6 +18,7 @@ interface NavBarSession {
 
 interface NavBarProps {
   session: NavBarSession | null
+  testesDisponiveis?: { id: string; titulo: string; tipo: string }[]
 }
 
 function showDevAlert() {
@@ -59,7 +60,13 @@ function DisabledNavItem({ label }: { label: string }) {
 }
 
 // ─── Dropdown de Testes ───────────────────────────
-function TestesDropdown() {
+function TestesDropdown({
+  testes,
+  pathname,
+}: {
+  testes: { id: string; titulo: string; tipo: string }[]
+  pathname: string
+}) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -73,6 +80,8 @@ function TestesDropdown() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  const isActive = pathname.startsWith('/testes')
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -80,8 +89,10 @@ function TestesDropdown() {
         onClick={() => setOpen(!open)}
         className={`
           flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200
-          text-zinc-300 dark:text-zinc-600 cursor-not-allowed select-none
-          hover:bg-zinc-50 dark:hover:bg-zinc-800/30
+          ${isActive || open
+            ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
+            : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+          }
         `}
       >
         Testes
@@ -94,23 +105,34 @@ function TestesDropdown() {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-lg py-1.5 z-50">
-          <button
-            type="button"
-            onClick={() => { setOpen(false); showDevAlert() }}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-          >
-            <span className="text-xs">🧪</span>
-            Fit Cultural
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); showDevAlert() }}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-          >
-            <span className="text-xs">📊</span>
-            Teste DISC
-          </button>
+        <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-lg py-1.5 z-50">
+          {testes.length === 0 ? (
+            <div className="px-4 py-4 text-center">
+              <p className="text-xs text-zinc-400 dark:text-zinc-500">
+                Ainda não há testes disponíveis na plataforma
+              </p>
+            </div>
+          ) : (
+            testes.map(teste => (
+              <Link
+                key={teste.id}
+                href={`/testes/${teste.id}`}
+                onClick={() => setOpen(false)}
+                className={`
+                  flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+                  ${pathname === `/testes/${teste.id}`
+                    ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                  }
+                `}
+              >
+                <span className="truncate flex-1">{teste.titulo}</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase shrink-0">
+                  {teste.tipo}
+                </span>
+              </Link>
+            ))
+          )}
         </div>
       )}
     </div>
@@ -135,7 +157,12 @@ function ColaboradoresDropdown({ pathname }: { pathname: string }) {
   const isParentActive =
     pathname.startsWith('/colaboradores') ||
     pathname.startsWith('/avaliacoes') ||
-    pathname.startsWith('/conversas')
+    pathname.startsWith('/conversas') ||
+    pathname.startsWith('/advertencias') ||
+    pathname.startsWith('/suspensoes') ||
+    pathname.startsWith('/iniciativas') ||
+    pathname.startsWith('/metricas') ||
+    pathname.startsWith('/projetos')
 
   return (
     <div ref={ref} className="relative">
@@ -201,34 +228,71 @@ function ColaboradoresDropdown({ pathname }: { pathname: string }) {
             Conversas
           </Link>
           <hr className="my-1 mx-2 border-zinc-200 dark:border-zinc-700" />
-          <button
-            type="button"
-            onClick={() => { setOpen(false); showDevAlert() }}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          <Link
+            href="/advertencias"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/advertencias')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
           >
             Advertências
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); showDevAlert() }}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          </Link>
+          <Link
+            href="/suspensoes"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/suspensoes')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
           >
-            Suspensão
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); showDevAlert() }}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            Suspensões
+          </Link>
+          <Link
+            href="/iniciativas"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/iniciativas')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
           >
             Iniciativas
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); showDevAlert() }}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-zinc-400 dark:text-zinc-500 cursor-not-allowed select-none hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+          </Link>
+          <Link
+            href="/metricas"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/metricas')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
           >
             Métricas
-          </button>
+          </Link>
+          <Link
+            href="/projetos"
+            onClick={() => setOpen(false)}
+            className={`
+              flex items-center gap-2 w-full px-4 py-2 text-sm transition-colors
+              ${pathname.startsWith('/projetos')
+                ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 font-medium'
+                : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+              }
+            `}
+          >
+            Projetos
+          </Link>
           <button
             type="button"
             onClick={() => { setOpen(false); showDevAlert() }}
@@ -246,7 +310,7 @@ function ColaboradoresDropdown({ pathname }: { pathname: string }) {
 //  NavBar Principal
 // ═══════════════════════════════════════════════════════
 
-export default function NavBar({ session }: NavBarProps) {
+export default function NavBar({ session, testesDisponiveis = [] }: NavBarProps) {
   const pathname = usePathname()
   const isAdmin = session?.papel === 'ADMIN_PLATAFORMA' || session?.papel === 'ADMIN_SUPORTE' || session?.papel === 'ADMIN_PSICH'
   const isSuperAdmin = session?.papel === 'ADMIN_PLATAFORMA'
@@ -341,16 +405,20 @@ export default function NavBar({ session }: NavBarProps) {
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-1">
             <NavLink href="/organograma" label="Organograma" isActive={pathname.startsWith('/organograma')} />
+            <NavLink href="/meu-desempenho" label="Meu Desempenho" isActive={pathname.startsWith('/meu-desempenho')} />
             <ColaboradoresDropdown pathname={pathname} />
 
             <DisabledNavItem label="Regras" />
-            <TestesDropdown />
+            {session && ['GESTOR', 'SUPERVISOR', 'GERENTE', 'DIRETOR', 'CEO', 'RH', 'ADMIN_PLATAFORMA', 'ADMIN_SUPORTE'].includes(session.papel) && (
+              <NavLink href="/gestao/testes" label="Gestão" isActive={pathname.startsWith('/gestao')} />
+            )}
+            <TestesDropdown testes={testesDisponiveis} pathname={pathname} />
 
-            <span className="mx-2 w-px h-5 bg-zinc-200 dark:bg-zinc-700" />
+            <span className="mx-2 w-px h-5 bg-zinc-200 dark:border-zinc-700" />
           </div>
 
           {/* Mobile menu - dropdown compacto */}
-          <MobileMenu session={session} pathname={pathname} />
+          <MobileMenu session={session} pathname={pathname} testesDisponiveis={testesDisponiveis} />
 
           {/* User area - desktop */}
           <div className="hidden md:flex items-center gap-3">
@@ -394,7 +462,15 @@ export default function NavBar({ session }: NavBarProps) {
 //  Mobile Menu
 // ═══════════════════════════════════════════════════════
 
-function MobileMenu({ session, pathname }: { session: NavBarSession; pathname: string }) {
+function MobileMenu({
+  session,
+  pathname,
+  testesDisponiveis,
+}: {
+  session: NavBarSession
+  pathname: string
+  testesDisponiveis: { id: string; titulo: string; tipo: string }[]
+}) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -433,13 +509,36 @@ function MobileMenu({ session, pathname }: { session: NavBarSession; pathname: s
         <div className="absolute top-full left-0 right-0 mt-0 border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 shadow-lg py-3 px-4 z-50">
           <div className="flex flex-col gap-1">
             <MobileLink href="/organograma" label="Organograma" isActive={pathname.startsWith('/organograma')} />
+            <MobileLink href="/meu-desempenho" label="Meu Desempenho" isActive={pathname.startsWith('/meu-desempenho')} />
             <MobileColaboradoresSection pathname={pathname} />
 
             <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
 
             <MobileDisabled label="Regras" />
-            <MobileDisabled label="Fit Cultural" />
-            <MobileDisabled label="Teste DISC" />
+
+            {['GESTOR', 'SUPERVISOR', 'GERENTE', 'DIRETOR', 'CEO', 'RH', 'ADMIN_PLATAFORMA', 'ADMIN_SUPORTE'].includes(session.papel) && (
+              <MobileLink
+                href="/gestao/testes"
+                label="Gestão de Testes"
+                isActive={pathname.startsWith('/gestao')}
+              />
+            )}
+
+            {/* Testes no mobile */}
+            {testesDisponiveis.length === 0 ? (
+              <div className="px-3 py-2 rounded-lg text-sm text-zinc-400 dark:text-zinc-500 italic">
+                Testes — nenhum disponível
+              </div>
+            ) : (
+              testesDisponiveis.map(teste => (
+                <MobileLink
+                  key={teste.id}
+                  href={`/testes/${teste.id}`}
+                  label={teste.titulo}
+                  isActive={pathname === `/testes/${teste.id}`}
+                />
+              ))
+            )}
 
             <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
 
@@ -494,7 +593,12 @@ function MobileColaboradoresSection({ pathname }: { pathname: string }) {
   const isParentActive =
     pathname.startsWith('/colaboradores') ||
     pathname.startsWith('/avaliacoes') ||
-    pathname.startsWith('/conversas')
+    pathname.startsWith('/conversas') ||
+    pathname.startsWith('/advertencias') ||
+    pathname.startsWith('/suspensoes') ||
+    pathname.startsWith('/iniciativas') ||
+    pathname.startsWith('/metricas') ||
+    pathname.startsWith('/projetos')
 
   return (
     <div>
@@ -523,11 +627,11 @@ function MobileColaboradoresSection({ pathname }: { pathname: string }) {
           <MobileLink href="/colaboradores" label="Visão Geral" isActive={pathname === '/colaboradores'} />
           <MobileLink href="/avaliacoes" label="Avaliações" isActive={pathname.startsWith('/avaliacoes')} />
           <MobileLink href="/conversas" label="Conversas" isActive={pathname.startsWith('/conversas')} />
-          <MobileDisabled label="Advertências" />
-          <MobileDisabled label="Suspensão" />
-          <MobileDisabled label="Iniciativas" />
-          <MobileDisabled label="Métricas" />
-          <MobileDisabled label="Sentimento" />
+          <MobileLink href="/advertencias" label="Advertências" isActive={pathname.startsWith('/advertencias')} />
+          <MobileLink href="/suspensoes" label="Suspensões" isActive={pathname.startsWith('/suspensoes')} />
+          <MobileLink href="/iniciativas" label="Iniciativas" isActive={pathname.startsWith('/iniciativas')} />
+          <MobileLink href="/metricas" label="Métricas" isActive={pathname.startsWith('/metricas')} />
+          <MobileLink href="/projetos" label="Projetos" isActive={pathname.startsWith('/projetos')} />
         </div>
       )}
     </div>

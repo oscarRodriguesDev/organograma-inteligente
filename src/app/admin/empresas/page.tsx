@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { getSession } from '@/lib/auth'
+import { Papel } from '@/lib/types'
 import { listarEmpresas } from '@/lib/admin-actions'
 import { AlternarStatusEmpresaButton } from './alternar-status-button'
 import { ExcluirEmpresaButton } from './excluir-empresa-button'
@@ -8,7 +10,9 @@ function formatarData(iso: string): string {
 }
 
 export default async function AdminEmpresasPage() {
+  const session = await getSession()
   const empresas = await listarEmpresas()
+  const isAdmin = session?.papel === Papel.ADMIN_PLATAFORMA
 
   return (
     <div>
@@ -19,12 +23,14 @@ export default async function AdminEmpresasPage() {
             Gerencie todas as empresas da plataforma
           </p>
         </div>
-        <Link
-          href="/admin/empresas/nova"
-          className="px-4 py-2 text-sm font-medium text-white bg-black dark:bg-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shrink-0"
-        >
-          + Nova Empresa
-        </Link>
+        {isAdmin && (
+          <Link
+            href="/admin/empresas/nova"
+            className="px-4 py-2 text-sm font-medium text-white bg-black dark:bg-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shrink-0"
+          >
+            + Nova Empresa
+          </Link>
+        )}
       </div>
 
       {empresas.length === 0 ? (
@@ -44,7 +50,7 @@ export default async function AdminEmpresasPage() {
                   <th className="text-left px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Plano</th>
                   <th className="text-center px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Colabs</th>
                   <th className="text-left px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Desde</th>
-                  <th className="text-right px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Ações</th>
+                  {isAdmin && <th className="text-right px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Ações</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -89,20 +95,24 @@ export default async function AdminEmpresasPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <AlternarStatusEmpresaButton
-                          empresaId={emp.id}
-                          ativa={emp.ativa}
-                        />
+                        {isAdmin && (
+                          <>
+                            <AlternarStatusEmpresaButton
+                              empresaId={emp.id}
+                              ativa={emp.ativa}
+                            />
+                            <ExcluirEmpresaButton
+                              empresaId={emp.id}
+                              empresaNome={emp.nome}
+                            />
+                          </>
+                        )}
                         <Link
                           href={`/admin/empresas/${emp.id}`}
                           className="text-xs px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                         >
                           Detalhes
                         </Link>
-                        <ExcluirEmpresaButton
-                          empresaId={emp.id}
-                          empresaNome={emp.nome}
-                        />
                       </div>
                     </td>
                   </tr>

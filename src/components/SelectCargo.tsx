@@ -13,6 +13,8 @@ interface Props {
   required?: boolean
   placeholder?: string
   className?: string
+  /** Lista pré-carregada (evita fetch duplicado) */
+  cargosList?: { id: string; nome: string }[]
 }
 
 export default function SelectCargo({
@@ -23,6 +25,7 @@ export default function SelectCargo({
   required,
   placeholder = 'Selecione ou digite um cargo',
   className = '',
+  cargosList,
 }: Props) {
   const [cargos, setCargos] = useState<{ id: string; nome: string }[]>([])
   const [modo, setModo] = useState<'select' | 'novo'>('select')
@@ -32,9 +35,17 @@ export default function SelectCargo({
 
   const isControlled = controlledValue !== undefined
 
+  // Carrega cargos ao montar (sempre). Se cargosList for fornecida, usa ela
+  // como complemento após o fetch inicial.
   useEffect(() => {
-    listarCargosAction().then(setCargos)
-  }, [])
+    listarCargosAction().then((dados) => {
+      // Mescla dados do servidor com lista pré-carregada (se houver)
+      const merged = cargosList && cargosList.length > 0
+        ? [...new Map([...dados, ...cargosList].map((c) => [c.nome, c])).values()]
+        : dados
+      setCargos(merged)
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sincroniza quando controlledValue muda
   useEffect(() => {

@@ -1,5 +1,5 @@
 import type { Colaborador, Avaliacao, MetricaMensal, Impacto, AcaoSimulacao, RegraImpacto, TipoImpacto, ScoreColaborador } from './types'
-import { Papel } from './types'
+import { Papel, calcularPapelSubordinado } from './types'
 
 let impactoIdCounter = 0
 function genImpactoId(): string {
@@ -438,6 +438,17 @@ export function processarAcao(
     const antigoLiderId = colAlvo.liderImediatoId
     colAlvo.liderImediatoId = acao.novoLiderId ?? null
     colAlvo.status = 'ativo'
+
+    // Recalcula o papel com base no novo líder
+    if (colAlvo.liderImediatoId) {
+      const lider = colaboradores.find((c) => c.id === colAlvo.liderImediatoId)
+      if (lider) {
+        colAlvo.papel = calcularPapelSubordinado(lider.papel)
+      }
+    } else {
+      colAlvo.papel = Papel.OPERACIONAL
+    }
+
     if (colAlvo.liderImediatoId === null) {
       for (const c of colaboradores) {
         if (c.liderImediatoId === null && c.id !== colAlvo.id && c.status !== 'vago') {
@@ -481,6 +492,16 @@ export function processarAcao(
       promovido.liderImediatoId = cargoVago.liderImediatoId
       promovido.funcao = cargoVago.funcao
       promovido.status = 'ativo'
+
+      // Recalcula o papel do promovido com base no novo líder
+      if (promovido.liderImediatoId) {
+        const lider = colaboradores.find((c) => c.id === promovido.liderImediatoId)
+        if (lider) {
+          promovido.papel = calcularPapelSubordinado(lider.papel)
+        }
+      } else {
+        promovido.papel = Papel.OPERACIONAL
+      }
 
       // Transfere TODOS os subordinados do VAGO para o promovido
       // (com a nova abordagem, subordinados NÃO são transferidos na demissão

@@ -155,6 +155,14 @@ model Colaborador {
   conversasCriadas     Conversa[]            @relation("CriadorConversa")
   scores               ScoreColaborador?
   testesCriados        TestePsicologico[]
+  testesAtribuidos     TesteAtribuido[]      @relation("AtribuidorTeste")
+  testesRecebidos      TesteAtribuido[]      @relation("RecebedorTeste")
+  respostasTestes      RespostaTesteColaborador[]
+  advertencias         Advertencia[]
+  advertenciasAplicadas Advertencia[]        @relation("AdvertenciaAplicador")
+  suspensoes           Suspensao[]
+  suspensoesAplicadas  Suspensao[]           @relation("SuspensaoAplicador")
+  projetos             Projeto[]
 
   @@unique([empresaId, email])
 }
@@ -193,9 +201,38 @@ model Iniciativa {
   resultado      String   @default("")
   valorResultado Float
   unidadeMedida  String   @default("")
+  status         String   @default("pendente") // pendente, aprovada, recusada
   data           DateTime @default(now())
 
   colaborador Colaborador @relation(fields: [colaboradorId], references: [id])
+}
+
+model Advertencia {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  titulo         String
+  descricao      String   @default("")
+  tipo           String   @default("leve") // leve, media, grave
+  aplicadaPorId  String
+  data           DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  colaborador  Colaborador @relation(fields: [colaboradorId], references: [id])
+  aplicadaPor  Colaborador @relation("AdvertenciaAplicador", fields: [aplicadaPorId], references: [id])
+}
+
+model Suspensao {
+  id             String    @id @default(cuid())
+  colaboradorId  String
+  motivo         String
+  dataInicio     DateTime
+  dataFim        DateTime?
+  aplicadaPorId  String
+  observacao     String    @default("")
+  createdAt      DateTime  @default(now())
+
+  colaborador  Colaborador @relation(fields: [colaboradorId], references: [id])
+  aplicadaPor  Colaborador @relation("SuspensaoAplicador", fields: [aplicadaPorId], references: [id])
 }
 
 model RegraImpacto {
@@ -343,6 +380,8 @@ model TestePsicologico {
   criadoPor   Colaborador                @relation(fields: [criadoPorId], references: [id])
   perguntas   PerguntaTestePsicologico[]
   empresasDisponiveis EmpresaTesteDisponivel[]
+  respostas   RespostaTesteColaborador[]
+  atribuicoes TesteAtribuido[]
 }
 
 model PerguntaTestePsicologico {
@@ -355,7 +394,8 @@ model PerguntaTestePsicologico {
   ordem         Int      @default(0)
   obrigatoria   Boolean  @default(true)
 
-  teste         TestePsicologico @relation(fields: [testeId], references: [id], onDelete: Cascade)
+  teste         TestePsicologico           @relation(fields: [testeId], references: [id], onDelete: Cascade)
+  respostas     RespostaTesteColaborador[]
 }
 
 /// Disponibilidade do teste para uma empresa
@@ -372,6 +412,52 @@ model EmpresaTesteDisponivel {
   @@unique([testeId, empresaId])
 }
 
+/// Atribuição de um teste psicológico a um colaborador por um gestor
+/// Cada atribuição gera um token único -> link exclusivo para responder
+model TesteAtribuido {
+  id             String   @id @default(cuid())
+  testeId        String
+  colaboradorId  String
+  atribuidoPorId String
+  token          String   @unique @default(cuid()) // link único: /responder/[token]
+  status         String   @default("pendente")     // pendente, concluido
+  atribuidoEm    DateTime @default(now())
+  respondidoEm   DateTime?
+
+  teste         TestePsicologico @relation(fields: [testeId], references: [id], onDelete: Cascade)
+  colaborador   Colaborador     @relation("RecebedorTeste", fields: [colaboradorId], references: [id])
+  atribuidoPor  Colaborador     @relation("AtribuidorTeste", fields: [atribuidoPorId], references: [id])
+}
+
+/// Resposta de um colaborador a um teste psicológico
+model RespostaTesteColaborador {
+  id              String   @id @default(cuid())
+  testeId         String
+  colaboradorId   String
+  perguntaId      String
+  resposta        String   // JSON: valor da resposta (nota, texto, opção selecionada)
+  respondidoEm    DateTime @default(now())
+
+  teste         TestePsicologico        @relation(fields: [testeId], references: [id], onDelete: Cascade)
+  pergunta      PerguntaTestePsicologico @relation(fields: [perguntaId], references: [id], onDelete: Cascade)
+  colaborador   Colaborador             @relation(fields: [colaboradorId], references: [id])
+
+  @@unique([testeId, colaboradorId, perguntaId])
+}
+
+// ─── Log de Webhooks (Asaas) ────────────────────────
+model WebhookLog {
+  id        String   @id @default(cuid())
+  evento    String   // PAYMENT_RECEIVED, PAYMENT_CONFIRMED, etc.
+  asaasPaymentId String @default("") // ID do pagamento no Asaas
+  externalReference String @default("") // externalReference enviado
+  status    String   @default("") // status mapeado (aprovado, pendente, etc.)
+  payload   String   @default("") // JSON bruto do payload recebido
+  processado Boolean @default(false) // se foi processado com sucesso
+  erro      String?  // mensagem de erro se houver
+  createdAt DateTime @default(now())
+}
+
 model Impacto {
   id            String   @id @default(cuid())
   casoUso       String   // 'sugerir_candidatos' | 'feedback_avaliacao' | 'iniciativa' | 'sentimento' | 'cache'
@@ -384,4 +470,18 @@ model Impacto {
   resposta      String?
   cacheKey      String?
   createdAt     DateTime @default(now())
+}
+
+// ─── Projetos dos Colaboradores ────────────────────────
+model Projeto {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  nome           String
+  descricao      String   @default("")
+  status         String   @default("em_andamento") // em_andamento, concluido, pausado, cancelado
+  dataInicio     DateTime @default(now())
+  dataFim        DateTime?
+  createdAt      DateTime @default(now())
+
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
 }

@@ -30,8 +30,11 @@ import {
   deletarAdmin,
   criarEmpresaPeloAdmin,
   criarAdminSistema,
+  listarColaboradoresDaEmpresa,
+  redefinirSenhaColaborador,
 } from '@/lib/db'
 import type { GastoSistema, Investimento } from '@/lib/types'
+import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { atualizarSessao } from '@/lib/auth'
 
@@ -239,6 +242,27 @@ export async function obterDadosFinanceiros() {
 
 // ─── Perfil do Admin ──────────────────────────────────────
 
+export async function obterInfoAdmin() {
+  const session = await verificarSuporte()
+  const admin = await prisma.colaborador.findUnique({
+    where: { id: session.colaboradorId },
+    select: {
+      id: true,
+      nome: true,
+      email: true,
+      username: true,
+      fotoUrl: true,
+      tema: true,
+      createdAt: true,
+    },
+  })
+  if (!admin) throw new Error('Usuário não encontrado')
+  return {
+    ...admin,
+    createdAt: admin.createdAt.toISOString(),
+  }
+}
+
 export async function atualizarPerfilAction(formData: FormData): Promise<string> {
   const session = await verificarSuporte()
 
@@ -371,4 +395,33 @@ export async function criarEmpresaAdminAction(formData: FormData): Promise<{ ok:
 export async function obterPlanos() {
   await verificarAdmin()
   return listarTodosPlanos()
+}
+
+// ─── Suporte: Redefinir Senha de Colaborador ────────────
+
+export async function listarColaboradoresEmpresaAction(empresaId: string) {
+  await verificarSuporte()
+  return listarColaboradoresDaEmpresa(empresaId)
+}
+
+export async function redefinirSenhaColaboradorAction(
+  colaboradorId: string,
+  novaSenha: string
+): Promise<{ ok: boolean; erro?: string }> {
+  const session = await verificarSuporte()
+
+  // ADMIN_PSICH não pode redefinir senhas
+  if (session.papel === Papel.ADMIN_PSICH) {
+    return { ok: false, erro: 'Apenas Administrador e Suporte podem redefinir senhas' }
+  }
+
+  if (novaSenha.length < 6) {
+    return { ok: false, erro: 'A nova senha deve ter no mínimo 6 caracteres' }
+  }
+
+  const result = await redefinirSenhaColaborador(colaboradorId, novaSenha)
+  if (result.ok) {
+    revalidatePath('/admin/empresas')
+  }
+  return result
 }

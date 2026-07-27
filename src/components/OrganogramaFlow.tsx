@@ -14,8 +14,10 @@ import {
   MiniMap,
   ReactFlowProvider,
   useReactFlow,
+  addEdge,
   type Node,
   type Edge,
+  type Connection,
   Handle,
   Position,
   MarkerType,
@@ -24,7 +26,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import type { Colaborador, Impacto, AcaoSimulacao, Avaliacao, MetricaMensal, RegraImpacto } from '@/lib/types'
-import { Papel } from '@/lib/types'
+import { Papel, calcularPapelSubordinado } from '@/lib/types'
 import {
   atualizarColaboradorAction,
   excluirColaboradorComSubordinados,
@@ -36,11 +38,12 @@ import { processarAcao, calcularCascataPromocoes, analisarEstadoSimulacao, obter
 import type { SugestaoCascata, CandidatoSugerido } from '@/lib/simulacao'
 import { getDadosSimulacao, salvarImpactosAction, carregarImpactosAction, limparImpactosAction } from '@/lib/simulacao-actions'
 import SelectCargo from './SelectCargo'
+import PapelSelect from './PapelSelect'
 
 interface NodeData {
   colaborador: Colaborador
   onToggle: (id: string) => void
-  onEditar: (id: string, nome: string, funcao: string) => void
+  onEditar: (id: string, nome: string, funcao: string, papel?: Papel) => void
   onExcluir: (id: string) => void
   onAdicionar: (id: string) => void
   onSimularDemissao?: (id: string) => void
@@ -59,22 +62,18 @@ interface NodeData {
 }
 
 import {
-  FaCrown, FaBullseye, FaChartLine, FaSearch, FaWrench,
-  FaStar, FaCogs, FaHandshake, FaUser, FaDesktop, FaHeadset,
-} from 'react-icons/fa'
+  HiBuildingOffice2, HiBriefcase, HiUserCircle,
+  HiShieldCheck, HiUserGroup, HiUser,
+} from 'react-icons/hi2'
 
 const ICONE_POR_PAPEL: Record<string, React.ReactNode> = {
-  CEO:               <FaCrown className="text-yellow-500" />,
-  DIRETOR:           <FaBullseye className="text-red-500" />,
-  GERENTE:           <FaChartLine className="text-blue-500" />,
-  SUPERVISOR:        <FaSearch className="text-purple-500" />,
-  GESTOR:            <FaWrench className="text-orange-500" />,
-  LIDER:             <FaStar className="text-amber-400" />,
-  OPERACIONAL:       <FaCogs className="text-zinc-500" />,
-  RH:                <FaHandshake className="text-teal-500" />,
-  COLABORADOR:       <FaUser className="text-sky-500" />,
-  ADMIN_PLATAFORMA:  <FaDesktop className="text-indigo-500" />,
-  ADMIN_SUPORTE:     <FaHeadset className="text-emerald-500" />,
+  CEO:               <HiBuildingOffice2 className="text-sky-600" />,
+  DIRETOR:           <HiBriefcase className="text-sky-600" />,
+  GERENTE:           <HiUserCircle className="text-sky-600" />,
+  SUPERVISOR:        <HiShieldCheck className="text-sky-600" />,
+  GESTOR:            <HiUserGroup className="text-sky-600" />,
+  LIDER:             <HiUser className="text-sky-600" />,
+  OPERACIONAL:       <HiUser className="text-sky-600" />,
 }
 
 function calcularNivel(colaboradores: Colaborador[], id: string): number {
@@ -221,39 +220,42 @@ function OrganogramaNode({
   const [editando, setEditando] = useState(false)
   const [nome, setNome] = useState(colaborador.nome)
   const [funcao, setFuncao] = useState(colaborador.funcao)
+  const [papelEdit, setPapelEdit] = useState(colaborador.papel)
   const nomeRef = useRef<HTMLInputElement>(null)
   const [hover, setHover] = useState(false)
+
+  // Salva as alterações (usado por Enter e onChange de cargo/papel)
+  const salvarEdicao = useCallback((novoNome: string, novaFuncao: string, novoPapel: Papel) => {
+    if (novoNome.trim() && novaFuncao.trim()) {
+      onEditar(colaborador.id, novoNome.trim(), novaFuncao.trim(), novoPapel)
+    }
+    setEditando(false)
+    data.clearEditando?.()
+  }, [colaborador.id, onEditar, data])
 
   // Entrar em modo edição via duplo clique do ReactFlow
   useEffect(() => {
     if (data.editandoNodeId === colaborador.id && !editando) {
       setNome(colaborador.nome)
       setFuncao(colaborador.funcao)
+      setPapelEdit(colaborador.papel)
       setEditando(true)
     }
-  }, [data.editandoNodeId, colaborador.id, colaborador.nome, colaborador.funcao, editando])
+  }, [data.editandoNodeId, colaborador.id, colaborador.nome, colaborador.funcao, colaborador.papel, editando])
 
   useEffect(() => {
     if (editando && nomeRef.current) nomeRef.current.focus()
   }, [editando])
 
-  const handleSalvar = useCallback(() => {
-    if (nome.trim() && funcao.trim()) {
-      onEditar(colaborador.id, nome.trim(), funcao.trim())
-    }
-    setEditando(false)
-    data.clearEditando?.()
-  }, [nome, funcao, colaborador.id, onEditar, data])
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') handleSalvar()
+      if (e.key === 'Enter') salvarEdicao(nome, funcao, papelEdit)
       if (e.key === 'Escape') {
         setEditando(false)
         data.clearEditando?.()
       }
     },
-    [handleSalvar, data]
+    [nome, funcao, papelEdit, salvarEdicao, data]
   )
 
   if (editando) {
@@ -263,6 +265,7 @@ function OrganogramaNode({
           type="target"
           position={Position.Top}
           className="!border-zinc-300"
+          isConnectable={!!modoSimulacao}
         />
         <input
           ref={nomeRef}
@@ -270,19 +273,32 @@ function OrganogramaNode({
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           onKeyDown={handleKeyDown}
-          onBlur={handleSalvar}
+          // Sem onBlur aqui — senão sai da edição antes do usuário interagir com SelectCargo
         />
         <SelectCargo
           value={funcao}
-          onChange={(val) => setFuncao(val)}
-          onBlur={handleSalvar}
+          onChange={(val) => salvarEdicao(nome, val, papelEdit)}
           placeholder="Cargo"
           className="text-xs !px-1 !py-0 !border-zinc-300"
         />
+        <select
+          value={papelEdit}
+          onChange={(e) => salvarEdicao(nome, funcao, e.target.value as Papel)}
+          className="w-full text-[10px] mt-1 border border-zinc-300 rounded bg-white text-zinc-700 px-1 py-0.5 outline-none"
+        >
+          <option value="OPERACIONAL">Operacional</option>
+          <option value="LIDER">Líder</option>
+          <option value="GESTOR">Gestor</option>
+          <option value="SUPERVISOR">Supervisor</option>
+          <option value="GERENTE">Gerente</option>
+          <option value="DIRETOR">Diretor</option>
+          <option value="CEO">CEO</option>
+        </select>
         <Handle
           type="source"
           position={Position.Bottom}
           className="!border-zinc-300"
+          isConnectable={!!modoSimulacao}
         />
       </div>
     )
@@ -305,7 +321,7 @@ function OrganogramaNode({
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <Handle type="target" position={Position.Top} className="!border-zinc-300" />
+        <Handle type="target" position={Position.Top} className="!border-zinc-300" isConnectable={!!modoSimulacao} />
 
         {/* Avatar */}
         <div className="relative">
@@ -348,7 +364,7 @@ function OrganogramaNode({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-xl leading-none">{ICONE_POR_PAPEL[colaborador.papel] || <FaUser className="text-sky-500" />}</span>
+              <span className="text-xl leading-none">{ICONE_POR_PAPEL[colaborador.papel] || <HiUser className="text-sky-500" />}</span>
             )}
           </div>
         </div>
@@ -365,15 +381,26 @@ function OrganogramaNode({
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 onKeyDown={handleKeyDown}
-                onBlur={handleSalvar}
               />
               <SelectCargo
                 value={funcao}
-                onChange={(val) => setFuncao(val)}
-                onBlur={handleSalvar}
+                onChange={(val) => salvarEdicao(nome, val, papelEdit)}
                 placeholder="Cargo"
                 className="text-[9px] !px-0.5 !py-0 !border-zinc-300 text-center"
               />
+              <select
+                value={papelEdit}
+                onChange={(e) => salvarEdicao(nome, funcao, e.target.value as Papel)}
+                className="text-[8px] border border-zinc-300 rounded bg-white text-zinc-700 px-0.5 py-0 outline-none text-center"
+              >
+                <option value="OPERACIONAL">Operacional</option>
+                <option value="LIDER">Líder</option>
+                <option value="GESTOR">Gestor</option>
+                <option value="SUPERVISOR">Supervisor</option>
+                <option value="GERENTE">Gerente</option>
+                <option value="DIRETOR">Diretor</option>
+                <option value="CEO">CEO</option>
+              </select>
             </div>
           ) : (
             <>
@@ -423,7 +450,7 @@ function OrganogramaNode({
           </div>
         )}
 
-        <Handle type="source" position={Position.Bottom} className="!border-zinc-300" />
+        <Handle type="source" position={Position.Bottom} className="!border-zinc-300" isConnectable={!!modoSimulacao} />
       </div>
     )
   }
@@ -449,6 +476,7 @@ function OrganogramaNode({
         type="target"
         position={Position.Top}
         className="!border-zinc-300"
+        isConnectable={!!modoSimulacao}
       />
 
       {/* Status badges */}
@@ -577,18 +605,35 @@ function OrganogramaNode({
         type="source"
         position={Position.Bottom}
         className="!border-zinc-300"
+        isConnectable={!!modoSimulacao}
       />
     </div>
   )
 }
 
-const nodeTypes = { colaborador: OrganogramaNode }
+// Detects whether connecting source → target would create a cycle
+// (i.e., source is already a descendant of target)
+function wouldCreateCycle(colaboradores: Colaborador[], sourceId: string, targetId: string): boolean {
+  const visitados = new Set<string>()
+  function walk(id: string): boolean {
+    if (visitados.has(id)) return false
+    visitados.add(id)
+    for (const c of colaboradores) {
+      if (c.liderImediatoId === id) {
+        if (c.id === sourceId) return true
+        if (walk(c.id)) return true
+      }
+    }
+    return false
+  }
+  return walk(targetId)
+}
 
 // ---------- Inner canvas ----------
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function FlowInner(props: any) {
-  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick, onNodeDoubleClick, onEdgeClick } = props
+  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick, onNodeDoubleClick, onEdgeClick, modoSimulacao, onConnect, onEdgesDelete, nodeTypes: nodeTypesProp } = props
   const reactFlow = useReactFlow()
 
   useEffect(() => {
@@ -606,8 +651,11 @@ function FlowInner(props: any) {
       onNodeClick={onNodeClick}
       onNodeDoubleClick={onNodeDoubleClick}
       onEdgeClick={onEdgeClick}
-      edgesReconnectable={false}
-      nodeTypes={nodeTypes}
+      onConnect={modoSimulacao ? onConnect : undefined}
+      onEdgesDelete={modoSimulacao ? onEdgesDelete : undefined}
+      edgesReconnectable={!!modoSimulacao}
+      nodesConnectable={modoSimulacao}
+      nodeTypes={nodeTypesProp}
       attributionPosition="bottom-left"
       minZoom={0.2}
       maxZoom={2.5}
@@ -643,6 +691,7 @@ export default function OrganogramaFlow({
   const [novoNome, setNovoNome] = useState('')
   const [novaFuncao, setNovaFuncao] = useState('')
   const [novoCpf, setNovoCpf] = useState('')
+  const [novoPapel, setNovoPapel] = useState('')
   const [transferirSubordinados, setTransferirSubordinados] = useState(false)
 
   // Edição inline (duplo clique)
@@ -691,6 +740,8 @@ export default function OrganogramaFlow({
     funcaoAtual: string
     liderAtualId: string | null
   } | null>(null)
+
+  const nodeTypes = useMemo(() => ({ colaborador: OrganogramaNode }), [])
 
   useEffect(() => {
     if (modoSimulacao) {
@@ -755,10 +806,10 @@ export default function OrganogramaFlow({
   }, [dadosVisiveis])
 
   const handleEditar = useCallback(
-    async (id: string, nome: string, funcao: string) => {
-      await atualizarColaboradorAction(id, nome, funcao)
+    async (id: string, nome: string, funcao: string, papel?: Papel) => {
+      await atualizarColaboradorAction(id, nome, funcao, papel)
       setColaboradoresState((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, nome, funcao } : c))
+        prev.map((c) => (c.id === id ? { ...c, nome, funcao, ...(papel !== undefined ? { papel } : {}) } : c))
       )
       setNodes((nds) =>
         nds.map((n) => {
@@ -768,7 +819,12 @@ export default function OrganogramaFlow({
                 ...n,
                 data: {
                   ...d,
-                  colaborador: { ...d.colaborador, nome, funcao },
+                  colaborador: {
+                    ...d.colaborador,
+                    nome,
+                    funcao,
+                    ...(papel !== undefined ? { papel } : {}),
+                  },
                 },
               }
             : n
@@ -926,10 +982,20 @@ export default function OrganogramaFlow({
     } else {
       // Modo normal: persiste no banco imediatamente
       await relocarColaboradorAction(relocarModal.colaboradorId, novoLiderId)
+
+      // Recalcula o papel com base no novo líder
+      let novoPapel = Papel.OPERACIONAL
+      if (novoLiderId) {
+        const lider = colaboradoresState.find((c) => c.id === novoLiderId)
+        if (lider) {
+          novoPapel = calcularPapelSubordinado(lider.papel)
+        }
+      }
+
       setColaboradoresState((prev) =>
         prev.map((c) =>
           c.id === relocarModal.colaboradorId
-            ? { ...c, liderImediatoId: novoLiderId }
+            ? { ...c, liderImediatoId: novoLiderId, papel: novoPapel }
             : c
         )
       )
@@ -1223,6 +1289,87 @@ export default function OrganogramaFlow({
     })
   }, [simulando, colaboradoresState])
 
+  // ─── Conectar/desconectar edges via drag (apenas simulação) ───
+
+  const handleConnect = useCallback((connection: Connection) => {
+    if (!modoSimulacao) return
+    const { source, target } = connection
+    if (!source || !target) return
+
+    // Self-connection guard
+    if (source === target) return
+
+    const base = simulando ?? colaboradoresState
+
+    // Prevent connecting to VAGO nodes
+    const targetCol = base.find((c) => c.id === target)
+    if (!targetCol || targetCol.status === 'vago') return
+
+    // Cycle detection: connecting source → target should not create a cycle
+    if (wouldCreateCycle(base, source, target)) return
+
+    // Immediately add the edge to the edges state so ReactFlow finalizes the connection
+    setEdges((eds) =>
+      addEdge({ source, target } as Connection, eds)
+    )
+
+    // Update the target node's leader in simulando
+    const updated = base.map((c) =>
+      c.id === target
+        ? { ...c, liderImediatoId: source }
+        : c
+    )
+
+    setSimulando(updated)
+
+    // Recalculate impacts
+    if (dadosSimulacao && estadoOriginal) {
+      const novosImpactos = analisarEstadoSimulacao(
+        estadoOriginal,
+        updated,
+        dadosSimulacao.avaliacoes,
+        dadosSimulacao.metricas,
+        dadosSimulacao.regras,
+        dadosSimulacao.scores
+      )
+      setImpactosSimulacao(novosImpactos)
+    }
+  }, [modoSimulacao, simulando, colaboradoresState, dadosSimulacao, estadoOriginal, setEdges])
+
+  const handleEdgesDelete = useCallback((edgesToDelete: Edge[]) => {
+    if (!modoSimulacao) return
+
+    const base = simulando ?? colaboradoresState
+    let updated = [...base]
+
+    for (const edge of edgesToDelete) {
+      // Only process edges for non-vago targets
+      const targetCol = base.find((c) => c.id === edge.target)
+      if (!targetCol || targetCol.status === 'vago') continue
+
+      // Target node loses its leader
+      updated = updated.map((c) =>
+        c.id === edge.target
+          ? { ...c, liderImediatoId: null }
+          : c
+      )
+    }
+
+    setSimulando(updated)
+
+    if (dadosSimulacao && estadoOriginal) {
+      const novosImpactos = analisarEstadoSimulacao(
+        estadoOriginal,
+        updated,
+        dadosSimulacao.avaliacoes,
+        dadosSimulacao.metricas,
+        dadosSimulacao.regras,
+        dadosSimulacao.scores
+      )
+      setImpactosSimulacao(novosImpactos)
+    }
+  }, [modoSimulacao, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
   const handleAdicionarImpactoManual = useCallback(() => {
     if (!impactoManual.trim()) return
     setImpactosSimulacao((prev) => [...prev, {
@@ -1257,11 +1404,13 @@ export default function OrganogramaFlow({
     if (!adicionandoEm || !novoNome.trim() || !novaFuncao.trim()) return
 
     try {
+      const papelSelecionado = novoPapel ? (novoPapel as Papel) : undefined
       const criado = await adicionarColaboradorRapido(
         novoNome.trim(),
         novaFuncao.trim(),
         adicionandoEm,
-        novoCpf.trim() || undefined
+        novoCpf.trim() || undefined,
+        papelSelecionado
       )
 
       // Se marcou "Transferir subordinados", move todos os subordinados diretos do líder para o novo gestor
@@ -1290,12 +1439,14 @@ export default function OrganogramaFlow({
       setAdicionandoEm(null)
       setNovoNome('')
       setNovaFuncao('')
+      setNovoCpf('')
+      setNovoPapel('')
       setTransferirSubordinados(false)
     } catch (err) {
       console.error('Erro ao adicionar colaborador:', err)
       alert(err instanceof Error ? err.message : 'Erro ao adicionar colaborador. Tente atualizar a página.')
     }
-  }, [adicionandoEm, novoNome, novaFuncao, transferirSubordinados, colaboradoresState])
+  }, [adicionandoEm, novoNome, novaFuncao, novoCpf, novoPapel, transferirSubordinados, colaboradoresState])
 
   const onNodeClick = useCallback(
     (_e: React.MouseEvent, node: Node) => {
@@ -1440,7 +1591,9 @@ export default function OrganogramaFlow({
               <span>•</span>
               <span>⟷ religar</span>
               <span>•</span>
-              <span>clique na conexão para religar</span>
+              <span>arraste conexões para religar</span>
+              <span>•</span>
+              <span>clique na edge para religar via modal</span>
               <span>•</span>
               <span>Nenhum dado é salvo até aplicar</span>
             </>
@@ -1562,6 +1715,10 @@ export default function OrganogramaFlow({
           onNodeClick={onNodeClick}
           onNodeDoubleClick={onNodeDoubleClick}
           onEdgeClick={handleEdgeClick}
+          modoSimulacao={modoSimulacao}
+          onConnect={handleConnect}
+          onEdgesDelete={handleEdgesDelete}
+          nodeTypes={nodeTypes}
         />
       </ReactFlowProvider>
 
@@ -1591,12 +1748,11 @@ export default function OrganogramaFlow({
               onKeyDown={(e) => e.key === 'Enter' && handleConfirmarAdicao()}
               autoFocus
             />
-            <input
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
-              placeholder="Função / Cargo"
+            <SelectCargo
               value={novaFuncao}
-              onChange={(e) => setNovaFuncao(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleConfirmarAdicao()}
+              onChange={(val) => setNovaFuncao(val)}
+              placeholder="Função / Cargo"
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
             />
             <input
               className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
@@ -1605,6 +1761,11 @@ export default function OrganogramaFlow({
               onChange={(e) => setNovoCpf(e.target.value.replace(/\D/g, '').slice(0, 11))}
               maxLength={11}
               inputMode="numeric"
+            />
+            <PapelSelect
+              value={novoPapel}
+              onChange={(val) => setNovoPapel(val)}
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
             />
             {lidereAdicionar && obterSubordinados(colaboradoresState, adicionandoEm).length > 0 && (
               <label className="flex items-center gap-2 mb-4 text-xs text-zinc-600 cursor-pointer select-none">
@@ -2148,7 +2309,7 @@ export default function OrganogramaFlow({
               onChange={(val) => setPromocaoModal((prev) => prev ? { ...prev, novoCargo: val } : null)}
               placeholder="Ex: Diretor de Tecnologia"
             />
-
+          
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => { setPromocaoModal(null); setBuscaCandidato('') }}

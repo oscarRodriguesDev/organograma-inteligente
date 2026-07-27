@@ -3750,6 +3750,279 @@ isso parecer ser apenas o processamento demorado, nesse caso precisa ter um load
 
 ---
 
+# Módulo 28 — Meu Desempenho
+
+## Funcionalidade 28.1 — Visualizar Página de Desempenho
+
+### CT168 — Acessar página de desempenho logado
+
+**Descrição:** Usuário autenticado acessa `/meu-desempenho` e visualiza seus dados consolidados.
+
+**Pré-requisitos:**
+- Colaborador logado com dados de métricas, iniciativas e conversas no banco
+
+**Passos:**
+1. Estar logado no sistema
+2. Acessar `/meu-desempenho`
+3. Observar a página
+
+**Resultado esperado:**
+- Cabeçalho com: foto (ou inicial), nome, função, papel (badge), líder (se houver), data de entrada
+- Navegação por abas: 📊 Visão Geral, 📈 Métricas, 💡 Iniciativas, 💬 Feedbacks, ⚠️ Advertências, 🚫 Suspensões
+- Aba "Visão Geral" selecionada por padrão
+- Cards estatísticos na visão geral com totais
+
+**Criticidade:** Alta
+
+---
+
+### CT176 — Acessar sem autenticação
+
+**Descrição:** Tentar acessar `/meu-desempenho` sem estar logado.
+
+**Passos:**
+1. Limpar cookies do navegador
+2. Acessar `/meu-desempenho`
+
+**Resultado esperado:** Redirecionado para `/login`
+
+**Criticidade:** Crítica
+
+---
+
+## Funcionalidade 28.2 — Visão Geral
+
+### CT175 — Visão geral com cards estatísticos
+
+**Descrição:** Visualizar resumo numérico na aba inicial.
+
+**Passos:**
+1. Acessar `/meu-desempenho` (aba Visão Geral padrão)
+2. Observar os cards
+
+**Resultado esperado:**
+- Grid 2-colunas com 6 cards: Métricas, Iniciativas, Aprovadas, Feedbacks, Advertências, Suspensões
+- Advertências e Suspensões em vermelho se > 0
+- Abaixo: total de dias trabalhados e percentual de iniciativas aprovadas (se houver dados)
+
+**Criticidade:** Média
+
+---
+
+## Funcionalidade 28.3 — Navegação por Abas
+
+### CT174 — Navegação entre abas
+
+**Descrição:** Clicar em cada aba e ver o conteúdo correspondente.
+
+**Passos:**
+1. Clicar em cada aba: Visão Geral → Métricas → Iniciativas → Feedbacks → Advertências → Suspensões
+2. Verificar o conteúdo
+
+**Resultado esperado:**
+- Aba ativa destacada (fundo escuro)
+- Conteúdo troca conforme aba selecionada
+- Scroll horizontal suave nas abas em mobile
+- Navegação fluida sem recarregar a página
+
+**Criticidade:** Média
+
+---
+
+## Funcionalidade 28.4 — Métricas
+
+### CT169 — Visualizar seção de métricas
+
+**Descrição:** Acessar a aba de métricas mensais de desempenho.
+
+**Passos:**
+1. Clicar na aba "📈 Métricas"
+
+**Resultado esperado:**
+- Lista de cards mensais ordenados do mais recente para o mais antigo
+- Cada card: mês/ano, dias trabalhados, faltas injustificadas, horas de atraso
+- Faltas e atrasos em vermelho se > 0
+- Observação textual se houver
+
+**Criticidade:** Alta
+
+---
+
+### CT180 — Métricas sem dados (estado vazio)
+
+**Descrição:** Colaborador sem nenhuma métrica registrada.
+
+**Pré-requisitos:** Colaborador sem registros na tabela `MetricaMensal`
+
+**Passos:**
+1. Ir em "📈 Métricas"
+
+**Resultado esperado:** Mensagem "Nenhuma métrica registrada ainda." em card pontilhado
+
+**Criticidade:** Média
+
+---
+
+## Funcionalidade 28.5 — Iniciativas
+
+### CT170 — Visualizar seção de iniciativas
+
+**Descrição:** Acessar a aba de iniciativas do colaborador.
+
+**Passos:**
+1. Clicar na aba "💡 Iniciativas"
+
+**Resultado esperado:**
+- Cards com: título, data, status (badge colorido), descrição, valor/unidade, resultado qualitativo
+- Badges: ⏳ Pendente (amarelo), ✅ Aprovada (verde), ❌ Recusada (vermelho)
+
+**Criticidade:** Alta
+
+---
+
+### CT177 — Aprovar iniciativa (gestor)
+
+**Descrição:** Gestor acessa e aprova iniciativa pendente de subordinado.
+
+**Pré-requisitos:**
+- Logado como gestor (CEO, DIRETOR, GERENTE, SUPERVISOR, GESTOR, RH)
+- Colaborador logado é subordinado do gestor (cadeia de liderança)
+- Colaborador possui iniciativa com status "pendente"
+
+**Passos:**
+1. Clicar em "💡 Iniciativas"
+2. Identificar card com badge "⏳ Pendente"
+3. Clicar em "✅ Aprovar"
+
+**Resultado esperado:**
+- Badge muda para "✅ Aprovada" (verde)
+- Mensagem "Iniciativa aprovada com sucesso!" exibida no topo
+- Dado persistido no banco (status = 'aprovada')
+- Botões de aprovação somem
+
+**Criticidade:** Alta
+
+---
+
+### CT178 — Recusar iniciativa (gestor)
+
+**Descrição:** Gestor recusa iniciativa pendente.
+
+**Passos:**
+1. Ir em "💡 Iniciativas"
+2. Clicar em "❌ Recusar" em iniciativa pendente
+
+**Resultado esperado:**
+- Badge muda para "❌ Recusada" (vermelho)
+- Mensagem de sucesso exibida
+- Botões de aprovação somem
+
+**Criticidade:** Alta
+
+---
+
+### CT182 — Painel gestor não vê botões de aprovação (próprio perfil)
+
+**Descrição:** Colaborador (não gestor dos seus próprios dados) não vê botões de aprovar/recusar em suas iniciativas.
+
+**Passos:**
+1. Logar como colaborador comum
+2. Ir em "💡 Iniciativas"
+3. Verificar iniciativas pendentes
+
+**Resultado esperado:** Botões "Aprovar"/"Recusar" NÃO aparecem. Colaborador vê apenas o status.
+
+**Criticidade:** Média
+
+---
+
+### CT179 — Iniciativas sem dados (estado vazio)
+
+**Descrição:** Colaborador sem nenhuma iniciativa.
+
+**Pré-requisitos:** Colaborador sem registros na tabela `Iniciativa`
+
+**Passos:**
+1. Ir em "💡 Iniciativas"
+
+**Resultado esperado:** Mensagem "Nenhuma iniciativa registrada ainda." em card pontilhado
+
+**Criticidade:** Média
+
+---
+
+## Funcionalidade 28.6 — Feedbacks e Reuniões
+
+### CT171 — Visualizar seção de feedbacks
+
+**Descrição:** Acessar a aba de feedbacks e reuniões.
+
+**Passos:**
+1. Clicar na aba "💬 Feedbacks"
+
+**Resultado esperado:**
+- Cards com: título, tipo (badge roxo), participante, data
+- Resumo da conversa
+- ✅ Pontos Positivos (fundo verde)
+- 🎯 Pontos de Melhoria / Compromissos (fundo laranja)
+- Observações adicionais (se houver)
+
+**Criticidade:** Alta
+
+---
+
+## Funcionalidade 28.7 — Advertências
+
+### CT172 — Visualizar seção de advertências
+
+**Descrição:** Acessar a aba de advertências.
+
+**Passos:**
+1. Clicar na aba "⚠️ Advertências"
+
+**Resultado esperado:**
+- Cards com borda lateral colorida conforme gravidade: 🔵 Leve (azul), 🟡 Média (amarelo), 🔴 Grave (vermelho)
+- Título, descrição, data, tipo (badge)
+- Nome de quem aplicou a advertência
+
+**Criticidade:** Alta
+
+---
+
+### CT181 — Advertências e suspensões vazias
+
+**Descrição:** Colaborador sem advertências ou suspensões.
+
+**Passos:**
+1. Ir em "⚠️ Advertências"
+2. Ir em "🚫 Suspensões"
+
+**Resultado esperado:**
+- "Nenhuma advertência registrada. 🎉"
+- "Nenhuma suspensão registrada. 🎉"
+
+**Criticidade:** Baixa
+
+---
+
+## Funcionalidade 28.8 — Suspensões
+
+### CT173 — Visualizar seção de suspensões
+
+**Descrição:** Acessar a aba de suspensões.
+
+**Passos:**
+1. Clicar na aba "🚫 Suspensões"
+
+**Resultado esperado:**
+- Cards com borda vermelha: motivo, período (data início — data fim), observação
+- Se sem data fim: exibe "(em aberto)"
+- Nome de quem aplicou a suspensão
+
+**Criticidade:** Alta
+
+---
+
 ### Funcionalidades que Não Puderam Ser Analisadas por Falta de Contexto
 
 1. **Regras de cálculo do Score do Colaborador** — O peso exato de cada sub-score (fit cultural, DISC, sentimento, conversas, avaliações, métricas, iniciativas) não foi completamente analisado. Necessário validar com o responsável.

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { getSession } from "@/lib/auth";
+import { listarTestesDisponiveisEmpresa } from "@/lib/db";
 import ThemeProvider from "@/components/ThemeProvider";
 import ToastProvider from "@/components/ToastProvider";
 import NavBar from "@/components/NavBar";
@@ -42,6 +43,17 @@ export default async function RootLayout({
 }>) {
   const session = await getSession();
 
+  // Busca testes disponíveis para a empresa do usuário logado
+  let testesDisponiveis: { id: string; titulo: string; tipo: string }[] = []
+  if (session?.empresaId) {
+    try {
+      const testes = await listarTestesDisponiveisEmpresa(session.empresaId)
+      testesDisponiveis = testes.map(t => ({ id: t.id, titulo: t.titulo, tipo: t.tipo }))
+    } catch {
+      // Silencia erro para não quebrar a navegação
+    }
+  }
+
   return (
     <html
       lang="pt-BR"
@@ -50,7 +62,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
-          <NavBar session={session} />
+          <NavBar session={session} testesDisponiveis={testesDisponiveis} />
           <ToastProvider>
             {children}
           </ToastProvider>

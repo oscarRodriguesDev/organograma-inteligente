@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cadastrarColaborador, listarPossiveisLideres } from '@/lib/actions'
 import SelectCargo from '@/components/SelectCargo'
+import PapelSelect from '@/components/PapelSelect'
 
 export default async function NovoColaborador() {
   const possiveisLideres = await listarPossiveisLideres()
@@ -60,6 +61,16 @@ export default async function NovoColaborador() {
               required
               placeholder="Selecione o cargo"
             />
+          </div>
+
+          <div>
+            <label htmlFor="papel" className="mb-1 block text-sm font-medium">
+              Papel / Nível hierárquico
+            </label>
+            <PapelSelect name="papel" />
+            <p className="mt-1 text-xs text-zinc-400">
+              Se não selecionar, o sistema calcula automaticamente baseado no líder
+            </p>
           </div>
 
           <div>

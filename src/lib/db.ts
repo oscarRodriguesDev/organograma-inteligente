@@ -27,8 +27,12 @@ import type {
   PerguntaTestePsicologico,
   TipoPerguntaTeste,
   EmpresaTesteDisponivel,
+  TesteAtribuido,
+  Advertencia,
+  Suspensao,
+  Projeto,
 } from './types'
-import { Papel } from './types'
+import { Papel, calcularPapelSubordinado } from './types'
 
 
 // ─── Helpers de conversão ────────────────────────────────────
@@ -83,6 +87,7 @@ function iniciativaPrismaParaModelo(i: any): Iniciativa {
     resultado: i.resultado,
     valorResultado: i.valorResultado,
     unidadeMedida: i.unidadeMedida,
+    status: i.status as Iniciativa['status'],
     data: i.data.toISOString(),
   }
 }
@@ -131,11 +136,28 @@ const SENHA_PADRAO = (cpf: string) => {
 }
 
 export async function criarColaborador(
-  dados: Omit<Colaborador, 'id' | 'createdAt'>
+  dados: Omit<Colaborador, 'id' | 'createdAt' | 'papel'> & { papel?: Papel }
 ): Promise<Colaborador> {
-  const papel = dados.papel ?? Papel.OPERACIONAL
   let email = dados.email ?? null
   let senhaHash: string | null = null
+
+  // Se o papel foi explicitamente fornecido, usa ele
+  let papel: Papel
+  if (dados.papel !== undefined) {
+    papel = dados.papel
+  } else {
+    // Calcula o papel com base no líder imediato
+    papel = Papel.OPERACIONAL
+    if (dados.liderImediatoId) {
+      const lider = await prisma.colaborador.findUnique({
+        where: { id: dados.liderImediatoId },
+        select: { papel: true },
+      })
+      if (lider) {
+        papel = calcularPapelSubordinado(lider.papel as Papel)
+      }
+    }
+  }
 
   // Se tem CPF, gera email automático e senha padrão
   if (dados.cpf) {
@@ -169,6 +191,28 @@ export async function atualizarColaborador(
   if (dados.liderImediatoId !== undefined) updateData.liderImediatoId = dados.liderImediatoId
   if (dados.status !== undefined) updateData.status = dados.status
 
+  // Se o papel foi explicitamente fornecido, usa ele (sobrescreve cálculo automático)
+  if (dados.papel !== undefined) {
+    updateData.papel = dados.papel
+  }
+  // Caso contrário, recalcula com base no novo líder
+  else if (dados.liderImediatoId !== undefined) {
+    if (dados.liderImediatoId) {
+      const lider = await prisma.colaborador.findUnique({
+        where: { id: dados.liderImediatoId },
+        select: { papel: true },
+      })
+      if (lider) {
+        updateData.papel = calcularPapelSubordinado(lider.papel as Papel)
+      } else {
+        updateData.papel = Papel.OPERACIONAL
+      }
+    } else {
+      // Sem líder = base da hierarquia
+      updateData.papel = Papel.OPERACIONAL
+    }
+  }
+
   try {
     const data = await prisma.colaborador.update({
       where: { id },
@@ -197,6 +241,10 @@ export async function removerColaborador(id: string): Promise<boolean> {
     await prisma.avaliacao.deleteMany({ where: { avaliadoId: id } })
     await prisma.metricaMensal.deleteMany({ where: { colaboradorId: id } })
     await prisma.iniciativa.deleteMany({ where: { colaboradorId: id } })
+    await prisma.advertencia.deleteMany({ where: { colaboradorId: id } })
+    await prisma.advertencia.deleteMany({ where: { aplicadaPorId: id } })
+    await prisma.suspensao.deleteMany({ where: { colaboradorId: id } })
+    await prisma.suspensao.deleteMany({ where: { aplicadaPorId: id } })
 
     await prisma.colaborador.delete({ where: { id } })
     return true
@@ -264,7 +312,7 @@ export async function listarIniciativas(): Promise<Iniciativa[]> {
 }
 
 export async function criarIniciativa(
-  dados: Omit<Iniciativa, 'id' | 'data'>
+  dados: Omit<Iniciativa, 'id' | 'data' | 'status'> & { status?: string }
 ): Promise<Iniciativa> {
   const data = await prisma.iniciativa.create({
     data: {
@@ -274,6 +322,7 @@ export async function criarIniciativa(
       resultado: dados.resultado,
       valorResultado: dados.valorResultado,
       unidadeMedida: dados.unidadeMedida,
+      status: dados.status ?? 'pendente',
     },
   })
   return iniciativaPrismaParaModelo(data)
@@ -1091,6 +1140,10 @@ export async function criarEmpresaComCEO(dados: {
   ceoSenha: string
   planoId: string
   ciclo: string
+  /** ID do pagamento no Asaas (opcional). Se fornecido, vincula o pagamento real. */
+  pagamentoId?: string
+  /** Método de pagamento usado. Se omitido, assume 'mock' */
+  metodo?: string
 }): Promise<void> {
   const senhaHash = await bcrypt.hash(dados.ceoSenha, 10)
 
@@ -1103,6 +1156,27 @@ export async function criarEmpresaComCEO(dados: {
     valor = valor * (1 - plano.descontoPercentual / 100)
   }
 
+  // ─── Verifica se já existe um pagamento do webhook ────────
+  let pagamentoExistente = null
+  if (dados.pagamentoId && !dados.pagamentoId.startsWith('mock-')) {
+    pagamentoExistente = await prisma.pagamento.findFirst({
+      where: {
+        OR: [
+          { referenciaExterna: dados.pagamentoId },
+          { id: dados.pagamentoId },
+        ],
+      },
+    })
+
+    if (pagamentoExistente && pagamentoExistente.status !== 'aprovado') {
+      // Webhook ainda não confirmou — não podemos criar a conta
+      throw new Error(
+        'Pagamento ainda não foi confirmado. Aguarde o processamento ou tente novamente em instantes.'
+      )
+    }
+  }
+
+  // ─── Cria a empresa com assinatura ────────────────────────
   const empresa = await prisma.empresa.create({
     data: {
       nome: dados.nome,
@@ -1130,27 +1204,52 @@ export async function criarEmpresaComCEO(dados: {
           status: 'ativa',
           ciclo: dados.ciclo,
           dataInicio: new Date(),
-          pagamentos: {
-            create: {
-              valor,
-              metodo: 'cartao_credito',
-              status: 'aprovado',
-              referenciaExterna: `MOCK-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            },
-          },
         },
       },
     },
     include: { assinatura: true },
   })
 
+  const assinaturaId = empresa.assinatura!.id
+
+  // ─── Vincula ou cria o pagamento ──────────────────────────
+  if (pagamentoExistente) {
+    // Pagamento já existe (criado pelo webhook) — vincula à assinatura
+    await prisma.pagamento.update({
+      where: { id: pagamentoExistente.id },
+      data: { assinaturaId },
+    })
+    console.log(
+      `[DB] Pagamento ${pagamentoExistente.id} vinculado à assinatura ${assinaturaId}`
+    )
+  } else {
+    // Cria um novo pagamento
+    const isMock = dados.pagamentoId?.startsWith('mock-') || !dados.pagamentoId
+    const metodoNormalizado = dados.metodo
+      ? dados.metodo.toLowerCase()
+      : (isMock ? 'cartao_credito' : 'pix')
+    await prisma.pagamento.create({
+      data: {
+        assinaturaId,
+        valor,
+        metodo: metodoNormalizado,
+        status: isMock ? 'aprovado' : 'pendente',
+        referenciaExterna: isMock
+          ? `MOCK-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+          : (dados.pagamentoId ?? ''),
+      },
+    })
+  }
+
   // Atualiza dataProximoPagamento da assinatura
   const diasCiclo = dados.ciclo === 'anual' ? 365 : 30
   await prisma.assinatura.update({
-    where: { id: empresa.assinatura!.id },
+    where: { id: assinaturaId },
     data: { dataProximoPagamento: new Date(Date.now() + diasCiclo * 24 * 60 * 60 * 1000) },
   })
 }
+
+
 
 export async function listarScores(ordenarPor?: string): Promise<ScoreColaborador[]> {
   const camposValidos = [
@@ -1449,8 +1548,451 @@ export async function alternarDisponibilidadeEmpresa(
   } catch { return false }
 }
 
+// ─── Listar Testes Disponíveis para Empresa ──────────────
+
+export async function listarTestesDisponiveisEmpresa(empresaId: string): Promise<TestePsicologico[]> {
+  const data = await prisma.testePsicologico.findMany({
+    where: {
+      ativo: true,
+      OR: [
+        // Testes que têm a empresa especificamente associada
+        { empresasDisponiveis: { some: { empresaId, ativo: true } } },
+        // Testes que não têm nenhuma empresa associada (disponível para todas)
+        { empresasDisponiveis: { none: {} } },
+      ],
+    },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      criadoPor: { select: { nome: true } },
+      perguntas: { orderBy: { ordem: 'asc' } },
+      empresasDisponiveis: { where: { empresaId, ativo: true } },
+    },
+  })
+
+  return data.map(t => ({
+    id: t.id,
+    titulo: t.titulo,
+    descricao: t.descricao,
+    instrucoes: t.instrucoes,
+    tipo: t.tipo,
+    criadoPorId: t.criadoPorId,
+    criadoPorNome: t.criadoPor.nome,
+    ativo: t.ativo,
+    createdAt: t.createdAt.toISOString(),
+    updatedAt: t.updatedAt.toISOString(),
+    perguntas: t.perguntas.map(p => ({
+      id: p.id,
+      testeId: p.testeId,
+      pergunta: p.pergunta,
+      tipo: p.tipo as TipoPerguntaTeste,
+      opcoes: JSON.parse(p.opcoes),
+      peso: p.peso,
+      ordem: p.ordem,
+      obrigatoria: p.obrigatoria,
+    })),
+    empresasDisponiveis: t.empresasDisponiveis.map(e => e.empresaId),
+  }))
+}
+
+// ─── Respostas de Testes Psicológicos ────────────────────
+
+export async function salvarRespostasTeste(
+  testeId: string,
+  colaboradorId: string,
+  respostas: { perguntaId: string; resposta: string }[]
+): Promise<boolean> {
+  try {
+    // Remove respostas anteriores do colaborador para este teste
+    await prisma.respostaTesteColaborador.deleteMany({
+      where: { testeId, colaboradorId },
+    })
+
+    // Insere novas respostas
+    await prisma.respostaTesteColaborador.createMany({
+      data: respostas.map(r => ({
+        testeId,
+        colaboradorId,
+        perguntaId: r.perguntaId,
+        resposta: r.resposta,
+      })),
+    })
+
+    // Atualiza a atribuição pendente mais recente
+    const pendente = await prisma.testeAtribuido.findFirst({
+      where: { testeId, colaboradorId, status: 'pendente' },
+      orderBy: { atribuidoEm: 'desc' },
+      select: { id: true },
+    })
+    if (pendente) {
+      await prisma.testeAtribuido.update({
+        where: { id: pendente.id },
+        data: { status: 'concluido', respondidoEm: new Date() },
+      })
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function obterRespostasTeste(
+  testeId: string,
+  colaboradorId: string
+): Promise<{ perguntaId: string; resposta: string }[]> {
+  const data = await prisma.respostaTesteColaborador.findMany({
+    where: { testeId, colaboradorId },
+    select: { perguntaId: true, resposta: true },
+  })
+  return data.map(r => ({ perguntaId: r.perguntaId, resposta: r.resposta }))
+}
+
+// ─── Gestão de Testes (Atribuição por Token) ───────────────
+
+/**
+ * Lista testes psicológicos ativos disponíveis para uma empresa
+ */
+export async function listarTestesAtivosParaEmpresa(empresaId: string): Promise<TestePsicologico[]> {
+  const data = await prisma.testePsicologico.findMany({
+    where: {
+      ativo: true,
+      OR: [
+        { empresasDisponiveis: { some: { empresaId, ativo: true } } },
+        { empresasDisponiveis: { none: {} } },
+      ],
+    },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      criadoPor: { select: { nome: true } },
+      perguntas: { orderBy: { ordem: 'asc' } },
+      _count: { select: { atribuicoes: true } },
+    },
+  })
+
+  return data.map(t => ({
+    id: t.id,
+    titulo: t.titulo,
+    descricao: t.descricao,
+    instrucoes: t.instrucoes,
+    tipo: t.tipo,
+    criadoPorId: t.criadoPorId,
+    criadoPorNome: t.criadoPor.nome,
+    ativo: t.ativo,
+    createdAt: t.createdAt.toISOString(),
+    updatedAt: t.updatedAt.toISOString(),
+    perguntas: t.perguntas.map(p => ({
+      id: p.id,
+      testeId: p.testeId,
+      pergunta: p.pergunta,
+      tipo: p.tipo as TipoPerguntaTeste,
+      opcoes: JSON.parse(p.opcoes),
+      peso: p.peso,
+      ordem: p.ordem,
+      obrigatoria: p.obrigatoria,
+    })),
+    empresasDisponiveis: [],
+  }))
+}
+
+/**
+ * Atribui um teste a um colaborador → gera token único
+ */
+export async function atribuirTesteParaColaborador(
+  testeId: string,
+  colaboradorId: string,
+  atribuidoPorId: string
+): Promise<{ ok: boolean; token?: string; erro?: string }> {
+  try {
+    const atribuicao = await prisma.testeAtribuido.create({
+      data: { testeId, colaboradorId, atribuidoPorId, status: 'pendente' },
+      select: { token: true },
+    })
+    return { ok: true, token: atribuicao.token }
+  } catch (e) {
+    console.error('Erro ao atribuir teste:', e)
+    return { ok: false, erro: 'Erro ao atribuir teste' }
+  }
+}
+
+/**
+ * Atribui um teste a múltiplos colaboradores → gera token para cada um
+ */
+export async function atribuirTesteParaMultiplosColaboradores(
+  testeId: string,
+  colaboradorIds: string[],
+  atribuidoPorId: string
+): Promise<{
+  ok: boolean
+  sucessos: number
+  resultados: { colaboradorId: string; nome: string; token: string; link: string }[]
+  erros: { colaboradorId: string; erro: string }[]
+}> {
+  const resultados: { colaboradorId: string; nome: string; token: string; link: string }[] = []
+  const erros: { colaboradorId: string; erro: string }[] = []
+  let sucessos = 0
+
+  // Busca nomes dos colaboradores
+  const colaboradores = await prisma.colaborador.findMany({
+    where: { id: { in: colaboradorIds } },
+    select: { id: true, nome: true },
+  })
+  const mapNome = new Map(colaboradores.map(c => [c.id, c.nome]))
+
+  const baseUrl = (process.env.NEXT_PUBLIC_URL || 'http://localhost:3000').replace(/\/$/, '')
+
+  for (const colaboradorId of colaboradorIds) {
+    const result = await atribuirTesteParaColaborador(testeId, colaboradorId, atribuidoPorId)
+    if (result.ok && result.token) {
+      sucessos++
+      resultados.push({
+        colaboradorId,
+        nome: mapNome.get(colaboradorId) ?? 'Colaborador',
+        token: result.token,
+        link: `${baseUrl}/responder/${result.token}`,
+      })
+    } else {
+      erros.push({ colaboradorId, erro: result.erro ?? 'Erro desconhecido' })
+    }
+  }
+
+  return { ok: sucessos > 0, sucessos, resultados, erros }
+}
+
+/**
+ * Busca uma atribuição pelo token (público — sem login)
+ */
+export async function buscarAtribuicaoPorToken(
+  token: string
+): Promise<{
+  valida: boolean
+  expirada: boolean
+  atribuicao?: TesteAtribuido & {
+    testeTitulo: string
+    testeDescricao: string
+    testeInstrucoes: string
+    perguntas: {
+      id: string
+      pergunta: string
+      tipo: TipoPerguntaTeste
+      opcoes: string[]
+      peso: number
+      ordem: number
+      obrigatoria: boolean
+    }[]
+    colaboradorNome: string
+  }
+}> {
+  const data = await prisma.testeAtribuido.findUnique({
+    where: { token },
+    include: {
+      teste: {
+        include: {
+          perguntas: { orderBy: { ordem: 'asc' } },
+        },
+      },
+      colaborador: { select: { nome: true } },
+    },
+  })
+
+  if (!data) {
+    return { valida: false, expirada: false }
+  }
+
+  if (data.status === 'concluido') {
+    return { valida: false, expirada: true }
+  }
+
+  return {
+    valida: true,
+    expirada: false,
+    atribuicao: {
+      id: data.id,
+      testeId: data.testeId,
+      colaboradorId: data.colaboradorId,
+      atribuidoPorId: data.atribuidoPorId,
+      token: data.token,
+      status: data.status as TesteAtribuido['status'],
+      atribuidoEm: data.atribuidoEm.toISOString(),
+      respondidoEm: data.respondidoEm?.toISOString() ?? null,
+      testeTitulo: data.teste.titulo,
+      testeDescricao: data.teste.descricao,
+      testeInstrucoes: data.teste.instrucoes,
+      perguntas: data.teste.perguntas.map(p => ({
+        id: p.id,
+        pergunta: p.pergunta,
+        tipo: p.tipo as TipoPerguntaTeste,
+        opcoes: JSON.parse(p.opcoes),
+        peso: p.peso,
+        ordem: p.ordem,
+        obrigatoria: p.obrigatoria,
+      })),
+      colaboradorNome: data.colaborador.nome,
+    },
+  }
+}
+
+/**
+ * Salva respostas de um teste via token (público — sem login)
+ * Só permite se a atribuição estiver pendente
+ */
+export async function salvarRespostasTestePorToken(
+  token: string,
+  respostas: { perguntaId: string; resposta: string }[]
+): Promise<{ ok: boolean; erro?: string }> {
+  try {
+    const atribuicao = await prisma.testeAtribuido.findUnique({
+      where: { token },
+      select: { id: true, testeId: true, colaboradorId: true, status: true },
+    })
+
+    if (!atribuicao) return { ok: false, erro: 'Link inválido' }
+    if (atribuicao.status === 'concluido') return { ok: false, erro: 'Este teste já foi respondido. Cada link só pode ser usado uma vez.' }
+
+    // Salva respostas
+    await prisma.respostaTesteColaborador.deleteMany({
+      where: { testeId: atribuicao.testeId, colaboradorId: atribuicao.colaboradorId },
+    })
+    await prisma.respostaTesteColaborador.createMany({
+      data: respostas.map(r => ({
+        testeId: atribuicao.testeId,
+        colaboradorId: atribuicao.colaboradorId,
+        perguntaId: r.perguntaId,
+        resposta: r.resposta,
+      })),
+    })
+
+    // Marca como concluído
+    await prisma.testeAtribuido.update({
+      where: { id: atribuicao.id },
+      data: { status: 'concluido', respondidoEm: new Date() },
+    })
+
+    return { ok: true }
+  } catch (e) {
+    console.error('Erro ao salvar respostas por token:', e)
+    return { ok: false, erro: 'Erro ao processar respostas' }
+  }
+}
+
+/**
+ * Lista atribuições de uma empresa (com tokens e links)
+ */
+export async function listarAtribuicoesDaEmpresa(empresaId: string): Promise<TesteAtribuido[]> {
+  const data = await prisma.testeAtribuido.findMany({
+    where: { colaborador: { empresaId } },
+    orderBy: { atribuidoEm: 'desc' },
+    include: {
+      teste: { select: { titulo: true } },
+      colaborador: { select: { nome: true, funcao: true } },
+      atribuidoPor: { select: { nome: true } },
+    },
+  })
+
+  const baseUrl = (process.env.NEXT_PUBLIC_URL || 'http://localhost:3000').replace(/\/$/, '')
+
+  return data.map(a => ({
+    id: a.id,
+    testeId: a.testeId,
+    colaboradorId: a.colaboradorId,
+    atribuidoPorId: a.atribuidoPorId,
+    token: a.token,
+    status: a.status as TesteAtribuido['status'],
+    atribuidoEm: a.atribuidoEm.toISOString(),
+    respondidoEm: a.respondidoEm?.toISOString() ?? null,
+    testeTitulo: a.teste.titulo,
+    colaboradorNome: a.colaborador.nome,
+    colaboradorFuncao: a.colaborador.funcao,
+    atribuidoPorNome: a.atribuidoPor.nome,
+  }))
+}
+
+/**
+ * Lista colaboradores da empresa que podem receber testes
+ */
+export async function listarColaboradoresParaAtribuicao(empresaId: string): Promise<{
+  id: string
+  nome: string
+  funcao: string
+  papel: string
+  status: string
+}[]> {
+  const data = await prisma.colaborador.findMany({
+    where: {
+      empresaId,
+      status: 'ativo',
+      papel: { notIn: ['ADMIN_PLATAFORMA', 'ADMIN_SUPORTE', 'ADMIN_PSICH'] },
+    },
+    orderBy: { nome: 'asc' },
+    select: { id: true, nome: true, funcao: true, papel: true, status: true },
+  })
+
+  return data.map(c => ({
+    id: c.id,
+    nome: c.nome,
+    funcao: c.funcao,
+    papel: c.papel,
+    status: c.status,
+  }))
+}
+
 // ═══════════════════════════════════════════════════════════
-// ─── SaaS / Admin ─────────────────────────────────────────
+// ─── Projetos ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+
+export async function listarProjetosDoColaborador(colaboradorId: string): Promise<Projeto[]> {
+  const data = await prisma.projeto.findMany({
+    where: { colaboradorId },
+    orderBy: { createdAt: 'desc' },
+  })
+  return data.map(p => ({
+    id: p.id,
+    colaboradorId: p.colaboradorId,
+    nome: p.nome,
+    descricao: p.descricao,
+    status: p.status as Projeto['status'],
+    dataInicio: p.dataInicio.toISOString(),
+    dataFim: p.dataFim?.toISOString() ?? null,
+    createdAt: p.createdAt.toISOString(),
+  }))
+}
+
+export async function criarProjeto(dados: {
+  colaboradorId: string
+  nome: string
+  descricao?: string
+  dataInicio?: Date
+  dataFim?: Date
+}): Promise<Projeto> {
+  const data = await prisma.projeto.create({
+    data: {
+      colaboradorId: dados.colaboradorId,
+      nome: dados.nome,
+      descricao: dados.descricao ?? '',
+      dataInicio: dados.dataInicio ?? new Date(),
+      dataFim: dados.dataFim ?? null,
+    },
+  })
+  return {
+    id: data.id,
+    colaboradorId: data.colaboradorId,
+    nome: data.nome,
+    descricao: data.descricao,
+    status: data.status as Projeto['status'],
+    dataInicio: data.dataInicio.toISOString(),
+    dataFim: data.dataFim?.toISOString() ?? null,
+    createdAt: data.createdAt.toISOString(),
+  }
+}
+
+export async function atualizarStatusProjeto(id: string, status: string): Promise<boolean> {
+  try {
+    await prisma.projeto.update({ where: { id }, data: { status } })
+    return true
+  } catch { return false }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ─── ONBOARDING ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
 
 export async function buscarPlano(slug: string): Promise<Plano | null> {
@@ -1801,6 +2343,45 @@ export async function alterarSenhaAdmin(
   return { ok: true }
 }
 
+// ─── Admin: Listar Colaboradores de uma Empresa ──────────
+export async function listarColaboradoresDaEmpresa(empresaId: string): Promise<{
+  id: string; nome: string; email: string | null; funcao: string | null;
+  papel: string; status: string; username: string | null
+}[]> {
+  const data = await prisma.colaborador.findMany({
+    where: {
+      empresaId,
+      papel: { notIn: ['ADMIN_PLATAFORMA', 'ADMIN_SUPORTE', 'ADMIN_PSICH'] },
+    },
+    orderBy: { nome: 'asc' },
+    select: { id: true, nome: true, email: true, funcao: true, papel: true, status: true, username: true },
+  })
+  return data
+}
+
+export async function redefinirSenhaColaborador(
+  colaboradorId: string,
+  novaSenha: string
+): Promise<{ ok: boolean; erro?: string }> {
+  try {
+    const colaborador = await prisma.colaborador.findUnique({
+      where: { id: colaboradorId },
+      select: { id: true, empresaId: true },
+    })
+    if (!colaborador) return { ok: false, erro: 'Colaborador não encontrado' }
+    if (!colaborador.empresaId) return { ok: false, erro: 'Não é possível redefinir senha de usuários do sistema' }
+
+    const senhaHash = await bcrypt.hash(novaSenha, 10)
+    await prisma.colaborador.update({
+      where: { id: colaboradorId },
+      data: { senhaHash },
+    })
+    return { ok: true }
+  } catch {
+    return { ok: false, erro: 'Erro ao redefinir senha' }
+  }
+}
+
 // ─── Admin: Gerenciar Admins ──────────────────────────────
 export async function listarAdmins(): Promise<{
   id: string; nome: string; email: string | null; username: string | null;
@@ -1828,6 +2409,133 @@ export async function deletarAdmin(id: string): Promise<boolean> {
 }
 
 // ─── Admin: Criar Empresa com CEO ────────────────────────
+// ═══════════════════════════════════════════════════════════
+// ─── Advertências ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+
+export async function listarAdvertenciasPorColaborador(colaboradorId: string): Promise<(Advertencia & { aplicadaPorNome?: string })[]> {
+  const data = await prisma.advertencia.findMany({
+    where: { colaboradorId },
+    orderBy: { data: 'desc' },
+    include: { aplicadaPor: { select: { nome: true } } },
+  })
+  return data.map(a => ({
+    id: a.id,
+    colaboradorId: a.colaboradorId,
+    titulo: a.titulo,
+    descricao: a.descricao,
+    tipo: a.tipo as Advertencia['tipo'],
+    aplicadaPorId: a.aplicadaPorId,
+    aplicadaPorNome: a.aplicadaPor.nome,
+    data: a.data.toISOString(),
+  }))
+}
+
+export async function criarAdvertencia(dados: {
+  colaboradorId: string
+  titulo: string
+  descricao: string
+  tipo: string
+  aplicadaPorId: string
+}): Promise<Advertencia> {
+  const data = await prisma.advertencia.create({
+    data: {
+      colaboradorId: dados.colaboradorId,
+      titulo: dados.titulo,
+      descricao: dados.descricao,
+      tipo: dados.tipo,
+      aplicadaPorId: dados.aplicadaPorId,
+    },
+    include: { aplicadaPor: { select: { nome: true } } },
+  })
+  return {
+    id: data.id,
+    colaboradorId: data.colaboradorId,
+    titulo: data.titulo,
+    descricao: data.descricao,
+    tipo: data.tipo as Advertencia['tipo'],
+    aplicadaPorId: data.aplicadaPorId,
+    aplicadaPorNome: data.aplicadaPor.nome,
+    data: data.data.toISOString(),
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ─── Suspensões ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+
+export async function listarSuspensoesPorColaborador(colaboradorId: string): Promise<(Suspensao & { aplicadaPorNome?: string })[]> {
+  const data = await prisma.suspensao.findMany({
+    where: { colaboradorId },
+    orderBy: { dataInicio: 'desc' },
+    include: { aplicadaPor: { select: { nome: true } } },
+  })
+  return data.map(s => ({
+    id: s.id,
+    colaboradorId: s.colaboradorId,
+    motivo: s.motivo,
+    dataInicio: s.dataInicio.toISOString(),
+    dataFim: s.dataFim?.toISOString() ?? null,
+    aplicadaPorId: s.aplicadaPorId,
+    aplicadaPorNome: s.aplicadaPor.nome,
+    observacao: s.observacao,
+  }))
+}
+
+export async function criarSuspensao(dados: {
+  colaboradorId: string
+  motivo: string
+  dataInicio: Date
+  dataFim?: Date
+  aplicadaPorId: string
+  observacao?: string
+}): Promise<Suspensao> {
+  const data = await prisma.suspensao.create({
+    data: {
+      colaboradorId: dados.colaboradorId,
+      motivo: dados.motivo,
+      dataInicio: dados.dataInicio,
+      dataFim: dados.dataFim ?? null,
+      aplicadaPorId: dados.aplicadaPorId,
+      observacao: dados.observacao ?? '',
+    },
+    include: { aplicadaPor: { select: { nome: true } } },
+  })
+  return {
+    id: data.id,
+    colaboradorId: data.colaboradorId,
+    motivo: data.motivo,
+    dataInicio: data.dataInicio.toISOString(),
+    dataFim: data.dataFim?.toISOString() ?? null,
+    aplicadaPorId: data.aplicadaPorId,
+    aplicadaPorNome: data.aplicadaPor.nome,
+    observacao: data.observacao,
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ─── Iniciativas (aprovacao) ──────────────────────────────
+// ═══════════════════════════════════════════════════════════
+
+export async function atualizarStatusIniciativa(id: string, status: 'aprovada' | 'recusada'): Promise<boolean> {
+  try {
+    await prisma.iniciativa.update({ where: { id }, data: { status } })
+    return true
+  } catch { return false }
+}
+
+export async function listarIniciativasDoColaborador(colaboradorId: string): Promise<(Iniciativa & { colaboradorNome?: string })[]> {
+  const data = await prisma.iniciativa.findMany({
+    where: { colaboradorId },
+    orderBy: { data: 'desc' },
+    include: { colaborador: { select: { nome: true } } },
+  })
+  return data.map(i => ({
+    ...iniciativaPrismaParaModelo(i),
+    colaboradorNome: i.colaborador.nome,
+  }))
+}
+
 export async function criarEmpresaPeloAdmin(dados: {
   empresaNome: string
   empresaSlug: string

@@ -43,6 +43,23 @@ export function podePromover(promotor: Papel, promovido: Papel): boolean {
   return idxPromotor >= idxPromovido + 1
 }
 
+/**
+ * Calcula o papel de um subordinado com base no papel do líder.
+ * O subordinado recebe o papel imediatamente abaixo do líder na hierarquia.
+ *
+ * Exemplos:
+ *   Líder é GESTOR  → subordinado = LIDER
+ *   Líder é DIRETOR → subordinado = GERENTE
+ *   Líder é CEO     → subordinado = DIRETOR
+ *   Sem líder       → OPERACIONAL (base da hierarquia)
+ */
+export function calcularPapelSubordinado(liderPapel: Papel | null | undefined): Papel {
+  if (!liderPapel) return Papel.OPERACIONAL
+  const idx = HIERARQUIA_PAPEIS.indexOf(liderPapel)
+  if (idx <= 0) return Papel.OPERACIONAL // Se líder é OPERACIONAL ou não encontrado
+  return HIERARQUIA_PAPEIS[idx - 1]
+}
+
 export interface Empresa {
   id: string
   nome: string
@@ -183,7 +200,41 @@ export interface Iniciativa {
   resultado: string
   valorResultado: number
   unidadeMedida: string
+  status: 'pendente' | 'aprovada' | 'recusada'
   data: string
+}
+
+export interface Projeto {
+  id: string
+  colaboradorId: string
+  nome: string
+  descricao: string
+  status: 'em_andamento' | 'concluido' | 'pausado' | 'cancelado'
+  dataInicio: string
+  dataFim: string | null
+  createdAt: string
+}
+
+export interface Advertencia {
+  id: string
+  colaboradorId: string
+  titulo: string
+  descricao: string
+  tipo: 'leve' | 'media' | 'grave'
+  aplicadaPorId: string
+  aplicadaPorNome?: string
+  data: string
+}
+
+export interface Suspensao {
+  id: string
+  colaboradorId: string
+  motivo: string
+  dataInicio: string
+  dataFim: string | null
+  aplicadaPorId: string
+  aplicadaPorNome?: string
+  observacao: string
 }
 
 export const CRITERIOS_AVALIACAO = [
@@ -354,6 +405,23 @@ export interface EmpresaTesteDisponivel {
   empresaNome?: string
   ativo: boolean
   createdAt: string
+}
+
+// ─── Teste Atribuído (Gestão) ───────────────────────────
+export interface TesteAtribuido {
+  id: string
+  testeId: string
+  colaboradorId: string
+  atribuidoPorId: string
+  token: string
+  status: 'pendente' | 'concluido'
+  atribuidoEm: string
+  respondidoEm: string | null
+  // Relacionamentos (opcionais)
+  testeTitulo?: string
+  colaboradorNome?: string
+  colaboradorFuncao?: string
+  atribuidoPorNome?: string
 }
 
 // ─── Score Consolidado ──────────────────────────────────

@@ -1,8 +1,11 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { buscarEmpresa } from '@/lib/admin-actions'
+import { getSession } from '@/lib/auth'
+import { Papel } from '@/lib/types'
+import { buscarEmpresa, listarColaboradoresEmpresaAction } from '@/lib/admin-actions'
 import { AlternarStatusEmpresaButton } from '../alternar-status-button'
 import { ExcluirEmpresaButton } from '../excluir-empresa-button'
+import { RedefinirSenhaButton } from '../redefinir-senha-button'
 
 function formatarData(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR')
@@ -18,7 +21,12 @@ export default async function AdminEmpresaDetalhesPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  const session = await getSession()
   const empresa = await buscarEmpresa(id)
+  const isAdmin = session?.papel === Papel.ADMIN_PLATAFORMA
+  const isSuporte = session?.papel === Papel.ADMIN_SUPORTE
+  const podeRedefinirSenha = isAdmin || isSuporte
+  const colaboradores = podeRedefinirSenha ? await listarColaboradoresEmpresaAction(id) : []
 
   if (!empresa) {
     notFound()
@@ -142,28 +150,99 @@ export default async function AdminEmpresaDetalhesPage({
         </div>
 
         {/* Colaboradores */}
-        <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Colaboradores</h2>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-foreground">{empresa.totalColaboradores}</span>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">total</span>
+        <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground">
+              Colaboradores
+              <span className="ml-2 text-sm font-normal text-zinc-500 dark:text-zinc-400">
+                ({empresa.totalColaboradores} total)
+              </span>
+            </h2>
           </div>
+
+          {colaboradores.length === 0 ? (
+            <p className="text-sm text-zinc-400 dark:text-zinc-500 py-4 text-center">
+              Nenhum colaborador encontrado.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
+                    <th className="text-left px-3 py-2 font-medium text-zinc-500 dark:text-zinc-400">Nome</th>
+                    <th className="text-left px-3 py-2 font-medium text-zinc-500 dark:text-zinc-400">Email</th>
+                    <th className="text-left px-3 py-2 font-medium text-zinc-500 dark:text-zinc-400">Função</th>
+                    <th className="text-left px-3 py-2 font-medium text-zinc-500 dark:text-zinc-400">Papel</th>
+                    <th className="text-center px-3 py-2 font-medium text-zinc-500 dark:text-zinc-400">Status</th>
+                    {podeRedefinirSenha && (
+                      <th className="text-right px-3 py-2 font-medium text-zinc-500 dark:text-zinc-400">Ações</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {colaboradores.map((col) => (
+                    <tr key={col.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                      <td className="px-3 py-2.5 font-medium text-foreground">
+                        <span>{col.nome}</span>
+                        {col.username && (
+                          <span className="ml-1.5 text-xs text-zinc-400">(@{col.username})</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">
+                        {col.email ?? '—'}
+                      </td>
+                      <td className="px-3 py-2.5 text-zinc-600 dark:text-zinc-400">
+                        {col.funcao ?? '—'}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                          {col.papel}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2.5 text-center">
+                        <span
+                          className={`inline-block text-xs px-2 py-0.5 rounded-full ${
+                            col.status === 'ativo'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400'
+                              : col.status === 'inativo'
+                              ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
+                              : 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400'
+                          }`}
+                        >
+                          {col.status}
+                        </span>
+                      </td>
+                      {podeRedefinirSenha && (
+                        <td className="px-3 py-2.5 text-right">
+                          <RedefinirSenhaButton
+                            colaboradorId={col.id}
+                            colaboradorNome={col.nome}
+                          />
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
-        {/* Ações */}
-        <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Ações</h2>
-          <div className="flex flex-wrap gap-3">
-            <AlternarStatusEmpresaButton
-              empresaId={empresa.id}
-              ativa={empresa.ativa}
-            />
-            <ExcluirEmpresaButton
-              empresaId={empresa.id}
-              empresaNome={empresa.nome}
-            />
+        {isAdmin && (
+          <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Ações</h2>
+            <div className="flex flex-wrap gap-3">
+              <AlternarStatusEmpresaButton
+                empresaId={empresa.id}
+                ativa={empresa.ativa}
+              />
+              <ExcluirEmpresaButton
+                empresaId={empresa.id}
+                empresaNome={empresa.nome}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
