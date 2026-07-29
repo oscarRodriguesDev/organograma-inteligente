@@ -153,6 +153,8 @@ model Colaborador {
   pesquisasSentimento  PesquisaSentimento[]
   conversas            Conversa[]            @relation("ConversaColaborador")
   conversasCriadas     Conversa[]            @relation("CriadorConversa")
+  projetos             Projeto[]
+  projetoParticipantes ProjetoParticipante[]
   scores               ScoreColaborador?
   testesCriados        TestePsicologico[]
   testesAtribuidos     TesteAtribuido[]      @relation("AtribuidorTeste")
@@ -162,7 +164,7 @@ model Colaborador {
   advertenciasAplicadas Advertencia[]        @relation("AdvertenciaAplicador")
   suspensoes           Suspensao[]
   suspensoesAplicadas  Suspensao[]           @relation("SuspensaoAplicador")
-  projetos             Projeto[]
+  analisesIA           AnaliseImpactoIA[]
 
   @@unique([empresaId, email])
 }
@@ -175,8 +177,8 @@ model Avaliacao {
   criterios       String
   comentarioGeral String   @default("")
 
-  avaliador Colaborador @relation("Avaliador", fields: [avaliadorId], references: [id])
-  avaliado  Colaborador @relation("Avaliado", fields: [avaliadoId], references: [id])
+  avaliador Colaborador @relation("Avaliador", fields: [avaliadorId], references: [id], onDelete: Cascade)
+  avaliado  Colaborador @relation("Avaliado", fields: [avaliadoId], references: [id], onDelete: Cascade)
 }
 
 model MetricaMensal {
@@ -188,9 +190,10 @@ model MetricaMensal {
   faltasInjustificadas Int
   horasAtraso         Int
   observacao          String   @default("")
+  scorecard           String   @default("{}") // JSON com categorias, pesos, indicadores e nota final
   data                DateTime @default(now())
 
-  colaborador Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
 }
 
 model Iniciativa {
@@ -204,7 +207,7 @@ model Iniciativa {
   status         String   @default("pendente") // pendente, aprovada, recusada
   data           DateTime @default(now())
 
-  colaborador Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
 }
 
 model Advertencia {
@@ -217,7 +220,7 @@ model Advertencia {
   data           DateTime @default(now())
   createdAt      DateTime @default(now())
 
-  colaborador  Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador  Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
   aplicadaPor  Colaborador @relation("AdvertenciaAplicador", fields: [aplicadaPorId], references: [id])
 }
 
@@ -231,7 +234,7 @@ model Suspensao {
   observacao     String    @default("")
   createdAt      DateTime  @default(now())
 
-  colaborador  Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador  Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
   aplicadaPor  Colaborador @relation("SuspensaoAplicador", fields: [aplicadaPorId], references: [id])
 }
 
@@ -277,7 +280,7 @@ model FitCulturalResposta {
   perguntaId     String
   nota           Int      // 1-5
   respondidoEm   DateTime @default(now())
-  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
   pergunta       FitCulturalPergunta @relation(fields: [perguntaId], references: [id])
 }
 
@@ -301,7 +304,7 @@ model RespostaDISC {
   perguntaId     String
   nota           Int      // 1-5
   respondidoEm   DateTime @default(now())
-  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
   pergunta       PerguntaDISC @relation(fields: [perguntaId], references: [id])
 }
 
@@ -314,7 +317,7 @@ model ResultadoDISC {
   pontuacaoS     Int      @default(0)
   pontuacaoC     Int      @default(0)
   data           DateTime @default(now())
-  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
 }
 
 // ─── Pesquisa de Sentimento ────────────────────────────
@@ -328,7 +331,7 @@ model PesquisaSentimento {
   pertencimento  Int?     // 1-5
   comentario     String   @default("")
   respondidoEm   DateTime @default(now())
-  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
 }
 
 // ─── Registro de Conversas ─────────────────────────────
@@ -345,8 +348,8 @@ model Conversa {
   realizadaEm     DateTime @default(now())
   registradaEm    DateTime @default(now())
   criadoPorId     String?
-  colaborador     Colaborador @relation("ConversaColaborador", fields: [colaboradorId], references: [id])
-  criadoPor       Colaborador? @relation("CriadorConversa", fields: [criadoPorId], references: [id])
+  colaborador     Colaborador @relation("ConversaColaborador", fields: [colaboradorId], references: [id], onDelete: Cascade)
+  criadoPor       Colaborador? @relation("CriadorConversa", fields: [criadoPorId], references: [id], onDelete: SetNull)
 }
 
 // ─── Score Consolidado do Colaborador ──────────────────
@@ -362,7 +365,7 @@ model ScoreColaborador {
   scoreMetricas       Float    @default(0)    // 0-10
   scoreIniciativas    Float    @default(0)    // 0-10
   ultimaAtualizacao   DateTime @default(now())
-  colaborador         Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
 }
 
 // ─── Testes Psicológicos (admin_psich) ─────────────
@@ -372,12 +375,12 @@ model TestePsicologico {
   descricao   String   @default("")
   instrucoes  String   @default("")
   tipo        String   @default("personalidade") // personalidade, comportamental, perfil, etc
-  criadoPorId String
+  criadoPorId String?
   ativo       Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  criadoPor   Colaborador                @relation(fields: [criadoPorId], references: [id])
+  criadoPor   Colaborador?               @relation(fields: [criadoPorId], references: [id], onDelete: SetNull)
   perguntas   PerguntaTestePsicologico[]
   empresasDisponiveis EmpresaTesteDisponivel[]
   respostas   RespostaTesteColaborador[]
@@ -425,7 +428,7 @@ model TesteAtribuido {
   respondidoEm   DateTime?
 
   teste         TestePsicologico @relation(fields: [testeId], references: [id], onDelete: Cascade)
-  colaborador   Colaborador     @relation("RecebedorTeste", fields: [colaboradorId], references: [id])
+  colaborador   Colaborador     @relation("RecebedorTeste", fields: [colaboradorId], references: [id], onDelete: Cascade)
   atribuidoPor  Colaborador     @relation("AtribuidorTeste", fields: [atribuidoPorId], references: [id])
 }
 
@@ -440,7 +443,7 @@ model RespostaTesteColaborador {
 
   teste         TestePsicologico        @relation(fields: [testeId], references: [id], onDelete: Cascade)
   pergunta      PerguntaTestePsicologico @relation(fields: [perguntaId], references: [id], onDelete: Cascade)
-  colaborador   Colaborador             @relation(fields: [colaboradorId], references: [id])
+  colaborador   Colaborador             @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
 
   @@unique([testeId, colaboradorId, perguntaId])
 }
@@ -472,6 +475,20 @@ model Impacto {
   createdAt     DateTime @default(now())
 }
 
+// ─── Análises de Impacto da IA (cache) ────────────────
+model AnaliseImpactoIA {
+  id             String   @id @default(cuid())
+  colaboradorId  String
+  tipoAcao       String   // 'demissao' | 'promocao'
+  resultado      String   // JSON completo da análise (AnaliseImpacto)
+  criadoEm       DateTime @default(now())
+  atualizadoEm   DateTime @updatedAt
+
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
+
+  @@unique([colaboradorId, tipoAcao])
+}
+
 // ─── Projetos dos Colaboradores ────────────────────────
 model Projeto {
   id             String   @id @default(cuid())
@@ -483,5 +500,20 @@ model Projeto {
   dataFim        DateTime?
   createdAt      DateTime @default(now())
 
-  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id])
+  colaborador    Colaborador          @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
+  participantes  ProjetoParticipante[]
+}
+
+model ProjetoParticipante {
+  id             String   @id @default(cuid())
+  projetoId      String
+  colaboradorId  String
+  responsabilidade String
+  peso           Int      // 1 a 5
+  createdAt      DateTime @default(now())
+
+  projeto        Projeto    @relation(fields: [projetoId], references: [id], onDelete: Cascade)
+  colaborador    Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
+
+  @@unique([projetoId, colaboradorId])
 }

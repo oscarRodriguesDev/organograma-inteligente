@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { logoutAction } from '@/lib/auth-actions'
+import { listarTestesNavbarAction } from '@/lib/navbar-actions'
 import ThemeToggle from './ThemeToggle'
 
 interface NavBarSession {
@@ -11,6 +12,7 @@ interface NavBarSession {
   empresaId: string
   empresaNome: string
   nome: string
+  funcao: string
   papel: string
   fotoUrl?: string | null
   username?: string | null
@@ -18,11 +20,10 @@ interface NavBarSession {
 
 interface NavBarProps {
   session: NavBarSession | null
-  testesDisponiveis?: { id: string; titulo: string; tipo: string }[]
 }
 
 function showDevAlert() {
-  alert('🚧 Esse recurso ainda está em desenvolvimento')
+  alert('Esse recurso ainda está em desenvolvimento')
 }
 
 // ─── Item de menu ativo ──────────────────────────
@@ -63,9 +64,11 @@ function DisabledNavItem({ label }: { label: string }) {
 function TestesDropdown({
   testes,
   pathname,
+  onOpen,
 }: {
   testes: { id: string; titulo: string; tipo: string }[]
   pathname: string
+  onOpen?: () => void
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -86,7 +89,10 @@ function TestesDropdown({
     <div ref={ref} className="relative">
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          if (!open) onOpen?.()
+          setOpen(!open)
+        }}
         className={`
           flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200
           ${isActive || open
@@ -310,8 +316,20 @@ function ColaboradoresDropdown({ pathname }: { pathname: string }) {
 //  NavBar Principal
 // ═══════════════════════════════════════════════════════
 
-export default function NavBar({ session, testesDisponiveis = [] }: NavBarProps) {
+export default function NavBar({ session }: NavBarProps) {
   const pathname = usePathname()
+  const [testesDisponiveis, setTestesDisponiveis] = useState<{ id: string; titulo: string; tipo: string }[]>([])
+  const [testesCarregados, setTestesCarregados] = useState(false)
+
+  const carregarTestes = useCallback(async () => {
+    if (testesCarregados) return
+    try {
+      const testes = await listarTestesNavbarAction()
+      setTestesDisponiveis(testes)
+    } catch { /* silencia */ }
+    setTestesCarregados(true)
+  }, [testesCarregados])
+
   const isAdmin = session?.papel === 'ADMIN_PLATAFORMA' || session?.papel === 'ADMIN_SUPORTE' || session?.papel === 'ADMIN_PSICH'
   const isSuperAdmin = session?.papel === 'ADMIN_PLATAFORMA'
   const isPsichAdmin = session?.papel === 'ADMIN_PSICH'
@@ -408,17 +426,16 @@ export default function NavBar({ session, testesDisponiveis = [] }: NavBarProps)
             <NavLink href="/meu-desempenho" label="Meu Desempenho" isActive={pathname.startsWith('/meu-desempenho')} />
             <ColaboradoresDropdown pathname={pathname} />
 
-            <DisabledNavItem label="Regras" />
             {session && ['GESTOR', 'SUPERVISOR', 'GERENTE', 'DIRETOR', 'CEO', 'RH', 'ADMIN_PLATAFORMA', 'ADMIN_SUPORTE'].includes(session.papel) && (
               <NavLink href="/gestao/testes" label="Gestão" isActive={pathname.startsWith('/gestao')} />
             )}
-            <TestesDropdown testes={testesDisponiveis} pathname={pathname} />
+            <TestesDropdown testes={testesDisponiveis} pathname={pathname} onOpen={carregarTestes} />
 
             <span className="mx-2 w-px h-5 bg-zinc-200 dark:border-zinc-700" />
           </div>
 
           {/* Mobile menu - dropdown compacto */}
-          <MobileMenu session={session} pathname={pathname} testesDisponiveis={testesDisponiveis} />
+            <MobileMenu session={session} pathname={pathname} testesDisponiveis={testesDisponiveis} onCarregarTestes={carregarTestes} />
 
           {/* User area - desktop */}
           <div className="hidden md:flex items-center gap-3">
@@ -466,10 +483,12 @@ function MobileMenu({
   session,
   pathname,
   testesDisponiveis,
+  onCarregarTestes,
 }: {
   session: NavBarSession
   pathname: string
   testesDisponiveis: { id: string; titulo: string; tipo: string }[]
+  onCarregarTestes?: () => void
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -487,6 +506,11 @@ function MobileMenu({
   useEffect(() => {
     setOpen(false)
   }, [pathname])
+
+  // Carrega testes ao abrir o menu mobile
+  useEffect(() => {
+    if (open) onCarregarTestes?.()
+  }, [open, onCarregarTestes])
 
   return (
     <div ref={ref} className="md:hidden">
@@ -513,8 +537,6 @@ function MobileMenu({
             <MobileColaboradoresSection pathname={pathname} />
 
             <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
-
-            <MobileDisabled label="Regras" />
 
             {['GESTOR', 'SUPERVISOR', 'GERENTE', 'DIRETOR', 'CEO', 'RH', 'ADMIN_PLATAFORMA', 'ADMIN_SUPORTE'].includes(session.papel) && (
               <MobileLink

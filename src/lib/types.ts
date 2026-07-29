@@ -180,6 +180,25 @@ export interface Avaliacao {
   comentarioGeral: string
 }
 
+export interface ScorecardIndicador {
+  nome: string
+  valor: number
+  meta: number
+  nota: number // 0-10
+}
+
+export interface ScorecardCategoria {
+  nome: string
+  peso: number // peso percentual (ex: 20 = 20%)
+  nota: number // 0-10 (calculada automaticamente)
+  indicadores: ScorecardIndicador[]
+}
+
+export interface Scorecard {
+  categorias: ScorecardCategoria[]
+  notaFinal: number // 0-10 (soma ponderada)
+}
+
 export interface MetricaMensal {
   id: string
   colaboradorId: string
@@ -189,6 +208,7 @@ export interface MetricaMensal {
   faltasInjustificadas: number
   horasAtraso: number
   observacao: string
+  scorecard: Scorecard
   data: string
 }
 
@@ -213,6 +233,24 @@ export interface Projeto {
   dataInicio: string
   dataFim: string | null
   createdAt: string
+  participantes?: ProjetoParticipante[]
+}
+
+export interface ProjetoParticipante {
+  id: string
+  projetoId: string
+  colaboradorId: string
+  responsabilidade: string
+  peso: number // 1 a 5
+  createdAt: string
+  colaborador?: ColaboradorResumo
+}
+
+export interface ColaboradorResumo {
+  id: string
+  nome: string
+  funcao: string
+  fotoUrl: string | null
 }
 
 export interface Advertencia {
@@ -389,7 +427,7 @@ export interface TestePsicologico {
   descricao: string
   instrucoes: string
   tipo: string
-  criadoPorId: string
+  criadoPorId: string | null
   criadoPorNome?: string
   ativo: boolean
   createdAt: string

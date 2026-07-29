@@ -17,12 +17,13 @@ async function main() {
     return
   }
 
-  const email = 'ceo@teste.com'
-  const senha = '123456'
+  const cpf = '12345678901'
+  const email = `${cpf}@${empresa.slug}.com`
+  const senha = cpf.slice(0, 6)
 
-  // Remove CEO anterior com mesmo email se existir
+  // Remove CEO anterior com mesmo CPF se existir
   const existente = await prisma.colaborador.findFirst({
-    where: { email, papel: 'CEO' },
+    where: { cpf, empresaId: empresa.id },
   })
   if (existente) {
     await prisma.colaborador.delete({ where: { id: existente.id } })
@@ -37,6 +38,7 @@ async function main() {
       nome: 'CEO de Teste',
       funcao: 'CEO',
       email,
+      cpf,
       papel: 'CEO',
       status: 'ativo',
       username: 'ceo_teste',
@@ -47,6 +49,7 @@ async function main() {
   console.log(`✅ CEO criado com sucesso!`)
   console.log(`   Empresa: ${empresa.nome} (${empresa.slug})`)
   console.log(`   Email: ${email}`)
+  console.log(`   CPF: ${cpf}`)
   console.log(`   Senha: ${senha}`)
   console.log(`   Papel: CEO`)
   console.log(`\n📋 Faça login com:`)

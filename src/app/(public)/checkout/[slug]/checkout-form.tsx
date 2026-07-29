@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { processarPagamentoMock, criarCheckoutAsaasAction, finalizarPagamentoCartaoAction } from '@/lib/public-actions'
+import { FaBolt, FaFileAlt, FaCreditCard } from 'react-icons/fa'
 
 interface PlanoData {
   id: string
@@ -52,10 +53,10 @@ export function CheckoutForm({ plano }: { plano: PlanoData }) {
   const preco = precoComDesconto(precoBase)
   const temDesconto = preco !== precoBase
 
-  const metodosDisponiveis: { value: MetodoPagamento; label: string; icon: string }[] = [
-    { value: 'PIX', label: 'Pix', icon: '⚡' },
-    { value: 'BOLETO', label: 'Boleto', icon: '📄' },
-    { value: 'CREDIT_CARD', label: 'Cartão de Crédito', icon: '💳' },
+  const metodosDisponiveis: { value: MetodoPagamento; label: string; icon: React.ReactNode }[] = [
+    { value: 'PIX', label: 'Pix', icon: <FaBolt /> },
+    { value: 'BOLETO', label: 'Boleto', icon: <FaFileAlt /> },
+    { value: 'CREDIT_CARD', label: 'Cartão de Crédito', icon: <FaCreditCard /> },
   ]
 
   async function handlePixOuBoleto(formData: FormData) {

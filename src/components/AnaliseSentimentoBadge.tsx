@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { FaSmile, FaFrown, FaMeh, FaBrain, FaHourglassHalf } from 'react-icons/fa'
 
 interface Props {
   colaboradorId: string
@@ -66,9 +67,9 @@ export default function AnaliseSentimentoBadge({ colaboradorId, colaboradorNome 
   }
 
   const iconePorSentimento = {
-    positivo: '😊',
-    negativo: '😟',
-    neutro: '😐',
+    positivo: <FaSmile className="text-green-500 inline" />,
+    negativo: <FaFrown className="text-red-500 inline" />,
+    neutro: <FaMeh className="text-zinc-500 inline" />,
   }
 
   return (
@@ -81,7 +82,7 @@ export default function AnaliseSentimentoBadge({ colaboradorId, colaboradorNome 
           ${analise ? corPorSentimento[analise.sentimento] : 'border-zinc-300 text-zinc-500'}"
         title="Analisar sentimento dos comentários"
       >
-        {loading ? '⏳' : analise ? `${iconePorSentimento[analise.sentimento]} ${Math.round(analise.score * 100)}%` : '🧠 Sentimento'}
+        {loading ? <FaHourglassHalf className="animate-pulse inline" /> : analise ? <>{iconePorSentimento[analise.sentimento]} {Math.round(analise.score * 100)}%</> : <><FaBrain className="inline" /> Sentimento</>}
       </button>
 
       {aberto && analise && (

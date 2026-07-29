@@ -6,6 +6,7 @@ import type {
   Avaliacao,
   Iniciativa,
   MetricaMensal,
+  Scorecard,
   RegraImpacto,
   Impacto,
   Cargo,
@@ -65,6 +66,11 @@ function avPrismaParaModelo(a: any): Avaliacao {
 }
 
 function metricaPrismaParaModelo(m: any): MetricaMensal {
+  let scorecard: Scorecard = { categorias: [], notaFinal: 0 }
+  try {
+    const parsed = typeof m.scorecard === 'string' ? JSON.parse(m.scorecard) : m.scorecard
+    if (parsed && parsed.categorias) scorecard = parsed
+  } catch {}
   return {
     id: m.id,
     colaboradorId: m.colaboradorId,
@@ -74,6 +80,7 @@ function metricaPrismaParaModelo(m: any): MetricaMensal {
     faltasInjustificadas: m.faltasInjustificadas,
     horasAtraso: m.horasAtraso,
     observacao: m.observacao,
+    scorecard,
     data: m.data.toISOString(),
   }
 }
@@ -123,14 +130,14 @@ export async function buscarColaborador(id: string): Promise<Colaborador | undef
 }
 
 /** Gera email no formato cpf@empresa_slug.com */
-async function gerarEmailPorCPF(cpf: string, empresaId: string): Promise<string> {
+export async function gerarEmailPorCPF(cpf: string, empresaId: string): Promise<string> {
   const empresa = await prisma.empresa.findUnique({ where: { id: empresaId }, select: { slug: true } })
   const slug = empresa?.slug ?? 'empresa'
   const cpfLimpo = cpf.replace(/\D/g, '')
   return `${cpfLimpo}@${slug}.com`
 }
 
-const SENHA_PADRAO = (cpf: string) => {
+export const SENHA_PADRAO = (cpf: string) => {
   const apenasNumeros = cpf.replace(/\D/g, '')
   return apenasNumeros.slice(0, 6)
 }
@@ -138,6 +145,12 @@ const SENHA_PADRAO = (cpf: string) => {
 export async function criarColaborador(
   dados: Omit<Colaborador, 'id' | 'createdAt' | 'papel'> & { papel?: Papel }
 ): Promise<Colaborador> {
+  // CPF é obrigatório para colaboradores de empresa (não admins de plataforma)
+  const isAdminPlataforma = dados.papel && ['ADMIN_PLATAFORMA', 'ADMIN_SUPORTE', 'ADMIN_PSICH'].includes(dados.papel)
+  if (dados.empresaId && !isAdminPlataforma && !dados.cpf) {
+    throw new Error('CPF é obrigatório para colaboradores da empresa')
+  }
+
   let email = dados.email ?? null
   let senhaHash: string | null = null
 
@@ -226,9 +239,11 @@ export async function atualizarColaborador(
 
 export async function removerColaborador(id: string): Promise<boolean> {
   try {
-    // Proteção: nunca permitir excluir o último ADMIN_PLATAFORMA ou ADMIN_SUPORTE
-    const alvo = await prisma.colaborador.findUnique({ where: { id }, select: { papel: true } })
-    if (alvo && (alvo.papel === 'ADMIN_PLATAFORMA' || alvo.papel === 'ADMIN_SUPORTE' || alvo.papel === 'ADMIN_PSICH')) {
+    // Proteção: nunca permitir excluir o último ADMIN_PLATAFORMA, ADMIN_SUPORTE ou ADMIN_PSICH
+    const alvo = await prisma.colaborador.findUnique({ where: { id }, select: { papel: true, liderImediatoId: true } })
+    if (!alvo) return false
+
+    if (alvo.papel === 'ADMIN_PLATAFORMA' || alvo.papel === 'ADMIN_SUPORTE' || alvo.papel === 'ADMIN_PSICH') {
       const total = await prisma.colaborador.count({ where: { papel: alvo.papel } })
       if (total <= 1) {
         const nomePapel = alvo.papel === 'ADMIN_PLATAFORMA' ? 'Administrador da Plataforma' : alvo.papel === 'ADMIN_SUPORTE' ? 'Administrador de Suporte' : 'Administrador Psicólogo'
@@ -236,16 +251,14 @@ export async function removerColaborador(id: string): Promise<boolean> {
       }
     }
 
-    // Remove registros relacionados antes de excluir o colaborador
-    await prisma.avaliacao.deleteMany({ where: { avaliadorId: id } })
-    await prisma.avaliacao.deleteMany({ where: { avaliadoId: id } })
-    await prisma.metricaMensal.deleteMany({ where: { colaboradorId: id } })
-    await prisma.iniciativa.deleteMany({ where: { colaboradorId: id } })
-    await prisma.advertencia.deleteMany({ where: { colaboradorId: id } })
-    await prisma.advertencia.deleteMany({ where: { aplicadaPorId: id } })
-    await prisma.suspensao.deleteMany({ where: { colaboradorId: id } })
-    await prisma.suspensao.deleteMany({ where: { aplicadaPorId: id } })
+    // Transfere subordinados para o líder do colaborador sendo excluído
+    // (evita erro de FK no auto-relacionamento, pois não há cascade aqui)
+    await prisma.colaborador.updateMany({
+      where: { liderImediatoId: id },
+      data: { liderImediatoId: alvo.liderImediatoId },
+    })
 
+    // As demais exclusões em cascata são tratadas pelo banco (ON DELETE CASCADE)
     await prisma.colaborador.delete({ where: { id } })
     return true
   } catch {
@@ -364,6 +377,7 @@ export async function criarMetrica(
       faltasInjustificadas: dados.faltasInjustificadas,
       horasAtraso: dados.horasAtraso,
       observacao: dados.observacao,
+      scorecard: JSON.stringify(dados.scorecard),
     },
   })
   return metricaPrismaParaModelo(data)
@@ -1136,8 +1150,7 @@ export async function criarEmpresaComCEO(dados: {
   contatoNome: string
   contatoEmail: string
   ceoNome: string
-  ceoEmail: string
-  ceoSenha: string
+  ceoCpf: string
   planoId: string
   ciclo: string
   /** ID do pagamento no Asaas (opcional). Se fornecido, vincula o pagamento real. */
@@ -1145,7 +1158,13 @@ export async function criarEmpresaComCEO(dados: {
   /** Método de pagamento usado. Se omitido, assume 'mock' */
   metodo?: string
 }): Promise<void> {
-  const senhaHash = await bcrypt.hash(dados.ceoSenha, 10)
+  // Valida CPF
+  const cpfLimpo = dados.ceoCpf.replace(/\D/g, '')
+  if (cpfLimpo.length !== 11) throw new Error('CPF do CEO deve ter exatamente 11 dígitos')
+
+  // Gera email e senha a partir do CPF
+  const email = `${cpfLimpo}@${dados.slug}.com`
+  const senhaHash = await bcrypt.hash(SENHA_PADRAO(dados.ceoCpf), 10)
 
   // Busca o plano para obter o preço
   const plano = await prisma.plano.findUnique({ where: { id: dados.planoId } })
@@ -1188,7 +1207,8 @@ export async function criarEmpresaComCEO(dados: {
       colaboradores: {
         create: {
           nome: dados.ceoNome,
-          email: dados.ceoEmail,
+          email,
+          cpf: cpfLimpo,
           senhaHash,
           funcao: 'CEO',
           papel: Papel.CEO,
@@ -1297,7 +1317,7 @@ export async function listarTestesPsicologicos(): Promise<TestePsicologico[]> {
     instrucoes: t.instrucoes,
     tipo: t.tipo,
     criadoPorId: t.criadoPorId,
-    criadoPorNome: t.criadoPor.nome,
+    criadoPorNome: t.criadoPor?.nome ?? '',
     ativo: t.ativo,
     createdAt: t.createdAt.toISOString(),
     updatedAt: t.updatedAt.toISOString(),
@@ -1332,7 +1352,7 @@ export async function buscarTestePsicologico(id: string): Promise<TestePsicologi
     instrucoes: data.instrucoes,
     tipo: data.tipo,
     criadoPorId: data.criadoPorId,
-    criadoPorNome: data.criadoPor.nome,
+    criadoPorNome: data.criadoPor?.nome ?? '',
     ativo: data.ativo,
     createdAt: data.createdAt.toISOString(),
     updatedAt: data.updatedAt.toISOString(),
@@ -1402,7 +1422,7 @@ export async function criarTestePsicologico(dados: {
     instrucoes: data.instrucoes,
     tipo: data.tipo,
     criadoPorId: data.criadoPorId,
-    criadoPorNome: data.criadoPor.nome,
+    criadoPorNome: data.criadoPor?.nome ?? '',
     ativo: data.ativo,
     createdAt: data.createdAt.toISOString(),
     updatedAt: data.updatedAt.toISOString(),
@@ -1486,7 +1506,7 @@ export async function atualizarTestePsicologico(
     instrucoes: data.instrucoes,
     tipo: data.tipo,
     criadoPorId: data.criadoPorId,
-    criadoPorNome: data.criadoPor.nome,
+    criadoPorNome: data.criadoPor?.nome ?? '',
     ativo: data.ativo,
     createdAt: data.createdAt.toISOString(),
     updatedAt: data.updatedAt.toISOString(),
@@ -1576,7 +1596,7 @@ export async function listarTestesDisponiveisEmpresa(empresaId: string): Promise
     instrucoes: t.instrucoes,
     tipo: t.tipo,
     criadoPorId: t.criadoPorId,
-    criadoPorNome: t.criadoPor.nome,
+    criadoPorNome: t.criadoPor?.nome ?? '',
     ativo: t.ativo,
     createdAt: t.createdAt.toISOString(),
     updatedAt: t.updatedAt.toISOString(),
@@ -1676,7 +1696,7 @@ export async function listarTestesAtivosParaEmpresa(empresaId: string): Promise<
     instrucoes: t.instrucoes,
     tipo: t.tipo,
     criadoPorId: t.criadoPorId,
-    criadoPorNome: t.criadoPor.nome,
+    criadoPorNome: t.criadoPor?.nome ?? '',
     ativo: t.ativo,
     createdAt: t.createdAt.toISOString(),
     updatedAt: t.updatedAt.toISOString(),
@@ -1943,6 +1963,15 @@ export async function listarProjetosDoColaborador(colaboradorId: string): Promis
   const data = await prisma.projeto.findMany({
     where: { colaboradorId },
     orderBy: { createdAt: 'desc' },
+    include: {
+      participantes: {
+        include: {
+          colaborador: {
+            select: { id: true, nome: true, funcao: true, fotoUrl: true },
+          },
+        },
+      },
+    },
   })
   return data.map(p => ({
     id: p.id,
@@ -1953,7 +1982,51 @@ export async function listarProjetosDoColaborador(colaboradorId: string): Promis
     dataInicio: p.dataInicio.toISOString(),
     dataFim: p.dataFim?.toISOString() ?? null,
     createdAt: p.createdAt.toISOString(),
+    participantes: p.participantes.map(pp => ({
+      id: pp.id,
+      projetoId: pp.projetoId,
+      colaboradorId: pp.colaboradorId,
+      responsabilidade: pp.responsabilidade,
+      peso: pp.peso,
+      createdAt: pp.createdAt.toISOString(),
+      colaborador: pp.colaborador,
+    })),
   }))
+}
+
+export async function buscarProjetoComParticipantes(projetoId: string): Promise<Projeto | null> {
+  const data = await prisma.projeto.findUnique({
+    where: { id: projetoId },
+    include: {
+      participantes: {
+        include: {
+          colaborador: {
+            select: { id: true, nome: true, funcao: true, fotoUrl: true },
+          },
+        },
+      },
+    },
+  })
+  if (!data) return null
+  return {
+    id: data.id,
+    colaboradorId: data.colaboradorId,
+    nome: data.nome,
+    descricao: data.descricao,
+    status: data.status as Projeto['status'],
+    dataInicio: data.dataInicio.toISOString(),
+    dataFim: data.dataFim?.toISOString() ?? null,
+    createdAt: data.createdAt.toISOString(),
+    participantes: data.participantes.map(pp => ({
+      id: pp.id,
+      projetoId: pp.projetoId,
+      colaboradorId: pp.colaboradorId,
+      responsabilidade: pp.responsabilidade,
+      peso: pp.peso,
+      createdAt: pp.createdAt.toISOString(),
+      colaborador: pp.colaborador,
+    })),
+  }
 }
 
 export async function criarProjeto(dados: {
@@ -1962,6 +2035,11 @@ export async function criarProjeto(dados: {
   descricao?: string
   dataInicio?: Date
   dataFim?: Date
+  participantes?: Array<{
+    colaboradorId: string
+    responsabilidade: string
+    peso: number
+  }>
 }): Promise<Projeto> {
   const data = await prisma.projeto.create({
     data: {
@@ -1970,6 +2048,22 @@ export async function criarProjeto(dados: {
       descricao: dados.descricao ?? '',
       dataInicio: dados.dataInicio ?? new Date(),
       dataFim: dados.dataFim ?? null,
+      participantes: {
+        create: dados.participantes?.map(p => ({
+          colaboradorId: p.colaboradorId,
+          responsabilidade: p.responsabilidade,
+          peso: p.peso,
+        })) ?? [],
+      },
+    },
+    include: {
+      participantes: {
+        include: {
+          colaborador: {
+            select: { id: true, nome: true, funcao: true, fotoUrl: true },
+          },
+        },
+      },
     },
   })
   return {
@@ -1981,6 +2075,15 @@ export async function criarProjeto(dados: {
     dataInicio: data.dataInicio.toISOString(),
     dataFim: data.dataFim?.toISOString() ?? null,
     createdAt: data.createdAt.toISOString(),
+    participantes: data.participantes.map(pp => ({
+      id: pp.id,
+      projetoId: pp.projetoId,
+      colaboradorId: pp.colaboradorId,
+      responsabilidade: pp.responsabilidade,
+      peso: pp.peso,
+      createdAt: pp.createdAt.toISOString(),
+      colaborador: pp.colaborador,
+    })),
   }
 }
 
@@ -2272,6 +2375,7 @@ export async function obterAdminPorEmail(email: string): Promise<SessionPayload 
     empresaNome: 'Sistema',
     nome: data.nome,
     email: data.email!,
+    funcao: data.funcao,
     papel: Papel.ADMIN_PLATAFORMA,
   }
 }
@@ -2540,33 +2644,32 @@ export async function criarEmpresaPeloAdmin(dados: {
   empresaNome: string
   empresaSlug: string
   ceoNome: string
-  ceoEmail: string
-  ceoSenha: string
+  ceoCpf: string
 }): Promise<{ ok: boolean; erro?: string }> {
+  // Valida CPF
+  const cpfLimpo = dados.ceoCpf.replace(/\D/g, '')
+  if (cpfLimpo.length !== 11) return { ok: false, erro: 'CPF do CEO deve ter exatamente 11 dígitos' }
+
   // Verifica se slug já existe
   const slugExiste = await prisma.empresa.findUnique({ where: { slug: dados.empresaSlug } })
   if (slugExiste) return { ok: false, erro: 'Slug já está em uso' }
 
-  // Verifica se email do CEO já está em uso
-  const emailExiste = await prisma.colaborador.findFirst({
-    where: { email: dados.ceoEmail, empresaId: { not: null } },
-  })
-  if (emailExiste) return { ok: false, erro: 'Email do CEO já está cadastrado em outra empresa' }
+  // Gera email automático baseado no CPF
+  const email = `${cpfLimpo}@${dados.empresaSlug}.com`
+  const senhaHash = await bcrypt.hash(SENHA_PADRAO(dados.ceoCpf), 10)
 
-  const senhaHash = await bcrypt.hash(dados.ceoSenha, 10)
-
-  // Cria empresa + CEO + cargos default + assinatura grátis
   const empresa = await prisma.empresa.create({
     data: {
       nome: dados.empresaNome,
       slug: dados.empresaSlug,
       contatoNome: dados.ceoNome,
-      contatoEmail: dados.ceoEmail,
+      contatoEmail: email,
       colaboradores: {
         create: {
           nome: dados.ceoNome,
           funcao: 'CEO',
-          email: dados.ceoEmail,
+          email,
+          cpf: cpfLimpo,
           senhaHash,
           papel: 'CEO',
           username: dados.ceoNome,

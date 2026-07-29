@@ -14,13 +14,13 @@ async function main() {
 
   // Cria CEO
   const ceo = await prisma.colaborador.create({
-    data: { nome: 'Carlos Almeida', funcao: 'CEO', empresaId: 'empresa_default' }
+    data: { nome: 'Carlos Almeida', funcao: 'CEO', cpf: '10000000001', email: '10000000001@empresa-default.com', empresaId: 'empresa_default' }
   })
   console.log('CEO criado:', ceo.nome, '|', ceo.id)
 
   // Cria CTO
   const cto = await prisma.colaborador.create({
-    data: { nome: 'Roberta Mendes', funcao: 'CTO', liderImediatoId: ceo.id, empresaId: 'empresa_default' }
+    data: { nome: 'Roberta Mendes', funcao: 'CTO', cpf: '10000000002', email: '10000000002@empresa-default.com', liderImediatoId: ceo.id, empresaId: 'empresa_default' }
   })
   console.log('CTO criado:', cto.nome)
 

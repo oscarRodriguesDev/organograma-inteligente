@@ -12,7 +12,7 @@ export default async function Home() {
     if (session.papel === Papel.ADMIN_PLATAFORMA) {
       redirect('/admin')
     }
-    redirect('/organograma')
+    redirect('/meu-desempenho')
   }
 
   const planos = await listarPlanos()

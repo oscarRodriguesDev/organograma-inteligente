@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { getSession } from '@/lib/auth'
 import { Papel } from '@/lib/types'
 import { obterDadosDashboard, listarEmpresas } from '@/lib/admin-actions'
+import { MdBusiness, MdTrendingUp, MdAttachMoney, MdBarChart } from 'react-icons/md'
+import { FaUsers, FaDollarSign } from 'react-icons/fa'
 
 function formatarMoeda(valor: number): string {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -23,11 +25,11 @@ export default async function AdminDashboard() {
     listarEmpresas().catch(() => []),
   ])
 
-  const cards = [
+  const cards: { titulo: string; valor: string | number; icone: React.ReactNode; cor: string; fundo: string; link: string }[] = [
     {
       titulo: 'Empresas Ativas',
       valor: dados?.totalEmpresasAtivas ?? 0,
-      icone: '🏢',
+      icone: <MdBusiness className="text-2xl" />,
       cor: 'text-blue-600 dark:text-blue-400',
       fundo: 'bg-blue-50 dark:bg-blue-950/30',
       link: '/admin/empresas',
@@ -35,7 +37,7 @@ export default async function AdminDashboard() {
     {
       titulo: 'Receita do Mês',
       valor: formatarMoeda(dados?.receitaMes ?? 0),
-      icone: '💵',
+      icone: <FaDollarSign className="text-2xl" />,
       cor: 'text-emerald-600 dark:text-emerald-400',
       fundo: 'bg-emerald-50 dark:bg-emerald-950/30',
       link: '/admin/financeiro',
@@ -43,7 +45,7 @@ export default async function AdminDashboard() {
     {
       titulo: 'Investimento Total',
       valor: formatarMoeda(dados?.totalInvestimentos ?? 0),
-      icone: '📈',
+      icone: <MdTrendingUp className="text-2xl" />,
       cor: 'text-sky-600 dark:text-sky-400',
       fundo: 'bg-sky-50 dark:bg-sky-950/30',
       link: '/admin/investimentos',
@@ -51,7 +53,7 @@ export default async function AdminDashboard() {
     {
       titulo: 'Total Colaboradores',
       valor: dados?.totalColaboradores ?? 0,
-      icone: '👥',
+      icone: <FaUsers className="text-2xl" />,
       cor: 'text-violet-600 dark:text-violet-400',
       fundo: 'bg-violet-50 dark:bg-violet-950/30',
       link: '/admin/empresas',
@@ -59,7 +61,7 @@ export default async function AdminDashboard() {
     {
       titulo: 'Gastos do Mês',
       valor: formatarMoeda(dados?.gastosMes ?? 0),
-      icone: '💰',
+      icone: <MdAttachMoney className="text-2xl" />,
       cor: 'text-rose-600 dark:text-rose-400',
       fundo: 'bg-rose-50 dark:bg-rose-950/30',
       link: '/admin/gastos',
@@ -84,7 +86,7 @@ export default async function AdminDashboard() {
             className={`${card.fundo} rounded-xl p-6 border border-zinc-200 dark:border-zinc-800 hover:shadow-md transition-shadow`}
           >
             <div className="flex items-center justify-between mb-4">
-              <span className="text-2xl">{card.icone}</span>
+              {card.icone}
             </div>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">{card.titulo}</p>
             <p className={`text-2xl font-bold ${card.cor}`}>
@@ -103,7 +105,7 @@ export default async function AdminDashboard() {
               href="/admin/empresas"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
-              <span className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-lg">🏢</span>
+              <span className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-lg"><MdBusiness /></span>
               <div>
                 <p className="text-sm font-medium text-foreground">Gerenciar Empresas</p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">{empresas.length} empresas cadastradas</p>
@@ -113,7 +115,7 @@ export default async function AdminDashboard() {
               href="/admin/investimentos"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
-              <span className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center text-lg">📈</span>
+              <span className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center text-lg"><MdTrendingUp /></span>
               <div>
                 <p className="text-sm font-medium text-foreground">Registrar Investimentos</p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">Controle de capital investido</p>
@@ -123,7 +125,7 @@ export default async function AdminDashboard() {
               href="/admin/gastos"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
-              <span className="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center text-lg">💰</span>
+              <span className="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center text-lg"><MdAttachMoney /></span>
               <div>
                 <p className="text-sm font-medium text-foreground">Registrar Gastos</p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">Controle de despesas do sistema</p>
@@ -133,7 +135,7 @@ export default async function AdminDashboard() {
               href="/admin/financeiro"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
             >
-              <span className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-lg">📈</span>
+              <span className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-lg"><MdBarChart /></span>
               <div>
                 <p className="text-sm font-medium text-foreground">Indicadores Financeiros</p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">Receita, gastos e lucro</p>

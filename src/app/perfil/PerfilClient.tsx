@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { atualizarPerfilColaboradorAction, alterarSenhaColaboradorAction } from '@/lib/colaborador-actions'
 import type { AcoesColaborador } from '@/lib/permissions'
 import Link from 'next/link'
+import { FaCamera, FaCommentDots, FaEdit } from 'react-icons/fa'
+import { GiFizzingFlask } from 'react-icons/gi'
+import { MdBarChart } from 'react-icons/md'
 
 interface InfoPerfil {
   id: string
@@ -149,29 +152,29 @@ export default function PerfilClient({ perfil }: { perfil: InfoPerfil }) {
           {acoes.podeAlterarFoto && (
             <Link href="/perfil" onClick={(e) => { e.preventDefault(); fileInputRef.current?.click() }}
               className="flex items-center gap-2 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-sm">
-              📷 Alterar Foto
+              <FaCamera className="inline" /> Alterar Foto
             </Link>
           )}
           {acoes.podeFazerTestes && (
             <>
-              <button type="button" onClick={() => alert('🚧 Esse recurso ainda está em desenvolvimento')}
+              <button type="button" onClick={() => alert('Esse recurso ainda está em desenvolvimento')}
                 className="flex items-center gap-2 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-600 cursor-not-allowed select-none text-sm w-full text-left">
-                🧪 Fit Cultural
+                <GiFizzingFlask className="inline" /> Fit Cultural
               </button>
-              <button type="button" onClick={() => alert('🚧 Esse recurso ainda está em desenvolvimento')}
+              <button type="button" onClick={() => alert('Esse recurso ainda está em desenvolvimento')}
                 className="flex items-center gap-2 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-600 cursor-not-allowed select-none text-sm w-full text-left">
-                📊 Teste DISC
+                <MdBarChart className="inline" /> Teste DISC
               </button>
-              <button type="button" onClick={() => alert('🚧 Esse recurso ainda está em desenvolvimento')}
+              <button type="button" onClick={() => alert('Esse recurso ainda está em desenvolvimento')}
                 className="flex items-center gap-2 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-600 cursor-not-allowed select-none text-sm w-full text-left">
-                💭 Pesquisa Sentimento
+                <FaCommentDots className="inline" /> Pesquisa Sentimento
               </button>
             </>
           )}
           {acoes.podeSolicitarTestes && (
             <Link href="/avaliacoes/nova"
               className="flex items-center gap-2 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-sm">
-              📝 Solicitar Avaliação
+              <FaEdit className="inline" /> Solicitar Avaliação
             </Link>
           )}
           {acoes.podeReuniao1a1 && (

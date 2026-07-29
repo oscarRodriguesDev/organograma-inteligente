@@ -104,31 +104,22 @@ export function CriarEmpresaAdminForm() {
               />
             </div>
             <div>
-              <label htmlFor="ceoEmail" className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
-                Email do CEO (login) *
+              <label htmlFor="ceoCpf" className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
+                CPF do CEO *
               </label>
               <input
-                type="email"
-                id="ceoEmail"
-                name="ceoEmail"
+                type="text"
+                id="ceoCpf"
+                name="ceoCpf"
                 required
-                placeholder="ceo@empresa.com"
+                inputMode="numeric"
+                maxLength={11}
+                placeholder="Apenas números — gera login automático"
                 className="w-full px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-700 rounded-lg bg-transparent text-foreground placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
               />
-            </div>
-            <div>
-              <label htmlFor="ceoSenha" className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">
-                Senha do CEO *
-              </label>
-              <input
-                type="password"
-                id="ceoSenha"
-                name="ceoSenha"
-                required
-                minLength={6}
-                placeholder="Mínimo 6 caracteres"
-                className="w-full px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-700 rounded-lg bg-transparent text-foreground placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
-              />
+              <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                O email (cpf@slug.com) e a senha (6 primeiros dígitos) serão gerados automaticamente
+              </p>
             </div>
           </div>
         </div>

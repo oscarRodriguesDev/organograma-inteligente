@@ -2,13 +2,14 @@ import Link from 'next/link'
 import { listarPesquisasSentimento } from '@/lib/db'
 import { listarColaboradores } from '@/lib/db'
 import { registrarSentimentoAction } from './actions'
+import { FaGrinHearts, FaSmile, FaMeh, FaFrownOpen, FaAngry } from 'react-icons/fa'
 
 const SENTIMENTOS = [
-  { value: 'muito_positivo', emoji: '😍', label: 'Muito Positivo' },
-  { value: 'positivo', emoji: '😊', label: 'Positivo' },
-  { value: 'neutro', emoji: '😐', label: 'Neutro' },
-  { value: 'negativo', emoji: '😟', label: 'Negativo' },
-  { value: 'muito_negativo', emoji: '😡', label: 'Muito Negativo' },
+  { value: 'muito_positivo', emoji: <FaGrinHearts className="text-xl" />, label: 'Muito Positivo' },
+  { value: 'positivo', emoji: <FaSmile className="text-xl" />, label: 'Positivo' },
+  { value: 'neutro', emoji: <FaMeh className="text-xl" />, label: 'Neutro' },
+  { value: 'negativo', emoji: <FaFrownOpen className="text-xl" />, label: 'Negativo' },
+  { value: 'muito_negativo', emoji: <FaAngry className="text-xl" />, label: 'Muito Negativo' },
 ]
 
 function badgeSentimento(sentimento: string) {
@@ -17,7 +18,7 @@ function badgeSentimento(sentimento: string) {
   const cor = sentimento === 'muito_positivo' || sentimento === 'positivo' ? 'text-green-600 bg-green-50 border-green-200'
     : sentimento === 'negativo' || sentimento === 'muito_negativo' ? 'text-red-600 bg-red-50 border-red-200'
     : 'text-zinc-600 bg-zinc-50 border-zinc-200'
-  return <span className={`rounded-lg border px-2 py-0.5 text-xs font-medium ${cor}`}>{s.emoji} {s.label}</span>
+  return <span className={`rounded-lg border px-2 py-0.5 text-xs font-medium ${cor} flex items-center gap-1`}>{s.emoji} {s.label}</span>
 }
 
 export default async function PesquisaSentimento() {
@@ -53,7 +54,7 @@ export default async function PesquisaSentimento() {
                   <label key={s.value}
                     className="flex flex-1 cursor-pointer flex-col items-center gap-1 rounded-lg border border-zinc-200 p-3 text-xs has-[:checked]:border-black has-[:checked]:bg-zinc-50">
                     <input type="radio" name="sentimento" value={s.value} required className="sr-only" />
-                    <span className="text-xl">{s.emoji}</span>
+                    <span className="text-xl flex items-center">{s.emoji}</span>
                     <span className="text-zinc-600">{s.label}</span>
                   </label>
                 ))}

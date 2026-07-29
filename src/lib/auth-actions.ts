@@ -41,11 +41,11 @@ export async function loginAction(formData: FormData) {
   })
 
   revalidatePath('/')
-  // Redireciona admin para /admin, outros para /
+  // Redireciona admin para /admin, outros para Meu Desempenho
   if (session.papel === Papel.ADMIN_PLATAFORMA || session.papel === Papel.ADMIN_SUPORTE || session.papel === Papel.ADMIN_PSICH) {
     redirect('/admin')
   }
-  redirect('/')
+  redirect('/meu-desempenho')
 }
 
 export async function logoutAction() {

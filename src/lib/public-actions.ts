@@ -226,8 +226,7 @@ export async function criarContaAction(formData: FormData) {
   const contatoNome = formData.get('contatoNome')?.toString() ?? ''
   const contatoEmail = formData.get('contatoEmail')?.toString() ?? ''
   const ceoNome = formData.get('ceoNome')?.toString() ?? ''
-  const ceoEmail = formData.get('ceoEmail')?.toString() ?? ''
-  const ceoSenha = formData.get('ceoSenha')?.toString() ?? ''
+  const ceoCpf = formData.get('ceoCpf')?.toString() ?? ''
   const sessionToken = formData.get('sessionToken')?.toString() ?? ''
 
   if (!sessionToken) {
@@ -242,8 +241,14 @@ export async function criarContaAction(formData: FormData) {
 
   const { planoId, ciclo, pagamentoId, metodo } = session
 
-  if (!nome || !slug || !ceoNome || !ceoEmail || !ceoSenha || !planoId) {
+  if (!nome || !slug || !ceoNome || !ceoCpf || !planoId) {
     throw new Error('Campos obrigatórios não preenchidos')
+  }
+
+  // Valida CPF
+  const cpfLimpo = ceoCpf.replace(/\D/g, '')
+  if (cpfLimpo.length !== 11) {
+    throw new Error('CPF do CEO deve ter exatamente 11 dígitos')
   }
 
   // Para pagamento real (não mock), verifica se o webhook já confirmou
@@ -272,8 +277,7 @@ export async function criarContaAction(formData: FormData) {
     contatoNome,
     contatoEmail,
     ceoNome,
-    ceoEmail,
-    ceoSenha,
+    ceoCpf: cpfLimpo,
     planoId,
     ciclo,
     pagamentoId,

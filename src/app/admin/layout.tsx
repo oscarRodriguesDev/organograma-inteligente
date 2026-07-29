@@ -3,27 +3,29 @@ import { Papel } from '@/lib/types'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { logoutAction } from '@/lib/auth-actions'
+import { MdDashboard, MdBusiness, MdAssignment, MdTrendingUp, MdAttachMoney, MdBarChart, MdLock, MdPerson, MdEdit } from 'react-icons/md'
+import { FaUsers } from 'react-icons/fa'
 
-const navItemsSystem = [
-  { href: '/admin', label: 'Dashboard', icon: '📊' },
-  { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
-  { href: '/admin/planos', label: 'Planos', icon: '📋' },
-  { href: '/admin/investimentos', label: 'Investimentos', icon: '📈' },
-  { href: '/admin/gastos', label: 'Gastos', icon: '💰' },
-  { href: '/admin/financeiro', label: 'Financeiro', icon: '📊' },
-  { href: '/admin/usuarios', label: 'Admins', icon: '🔐' },
-  { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
+const navItemsSystem: { href: string; label: string; icon: React.ReactNode }[] = [
+  { href: '/admin', label: 'Dashboard', icon: <MdDashboard /> },
+  { href: '/admin/empresas', label: 'Empresas', icon: <MdBusiness /> },
+  { href: '/admin/planos', label: 'Planos', icon: <MdAssignment /> },
+  { href: '/admin/investimentos', label: 'Investimentos', icon: <MdTrendingUp /> },
+  { href: '/admin/gastos', label: 'Gastos', icon: <MdAttachMoney /> },
+  { href: '/admin/financeiro', label: 'Financeiro', icon: <MdBarChart /> },
+  { href: '/admin/usuarios', label: 'Admins', icon: <MdLock /> },
+  { href: '/admin/perfil', label: 'Perfil', icon: <MdPerson /> },
 ]
 
-const navItemsSuporte = [
-  { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
-  { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
+const navItemsSuporte: { href: string; label: string; icon: React.ReactNode }[] = [
+  { href: '/admin/empresas', label: 'Empresas', icon: <MdBusiness /> },
+  { href: '/admin/perfil', label: 'Perfil', icon: <MdPerson /> },
 ]
 
-const navItemsPsich = [
-  { href: '/admin/testes-psicologicos', label: 'Testes', icon: '📝' },
-  { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
-  { href: '/admin/perfil', label: 'Perfil', icon: '👤' },
+const navItemsPsich: { href: string; label: string; icon: React.ReactNode }[] = [
+  { href: '/admin/testes-psicologicos', label: 'Testes', icon: <MdEdit /> },
+  { href: '/admin/empresas', label: 'Empresas', icon: <MdBusiness /> },
+  { href: '/admin/perfil', label: 'Perfil', icon: <MdPerson /> },
 ]
 
 export default async function AdminLayout({

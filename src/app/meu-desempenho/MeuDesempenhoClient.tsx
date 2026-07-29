@@ -4,17 +4,19 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { aprovarIniciativaAction, criarIniciativaAction } from './actions'
 import type { DadosDesempenho } from './actions'
+import { MdBarChart, MdTrendingUp, MdFolder, MdWarning, MdBlock } from 'react-icons/md'
+import { FaLightbulb, FaComment, FaCheckCircle, FaTimesCircle, FaSyncAlt, FaCircle } from 'react-icons/fa'
 
 type TabKey = 'visao-geral' | 'metricas' | 'iniciativas' | 'conversas' | 'advertencias' | 'suspensoes' | 'projetos'
 
-const TABS: { key: TabKey; label: string; icon: string }[] = [
-  { key: 'visao-geral', label: 'Visão Geral', icon: '📊' },
-  { key: 'metricas', label: 'Métricas', icon: '📈' },
-  { key: 'iniciativas', label: 'Iniciativas', icon: '💡' },
-  { key: 'conversas', label: 'Feedbacks', icon: '💬' },
-  { key: 'advertencias', label: 'Advertências', icon: '⚠️' },
-  { key: 'suspensoes', label: 'Suspensões', icon: '🚫' },
-  { key: 'projetos', label: 'Projetos', icon: '📁' },
+const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+  { key: 'visao-geral', label: 'Visão Geral', icon: <MdBarChart /> },
+  { key: 'metricas', label: 'Métricas', icon: <MdTrendingUp /> },
+  { key: 'iniciativas', label: 'Iniciativas', icon: <FaLightbulb /> },
+  { key: 'conversas', label: 'Feedbacks', icon: <FaComment /> },
+  { key: 'advertencias', label: 'Advertências', icon: <MdWarning /> },
+  { key: 'suspensoes', label: 'Suspensões', icon: <MdBlock /> },
+  { key: 'projetos', label: 'Projetos', icon: <MdFolder /> },
 ]
 
 function formatDate(dateStr: string) {
@@ -28,20 +30,20 @@ function formatDateTime(dateStr: string) {
   })
 }
 
-function tipoMetricaLabel(tipo: string): string {
-  const labels: Record<string, string> = {
-    leve: '🔵 Leve',
-    media: '🟡 Média',
-    grave: '🔴 Grave',
+function tipoMetricaLabel(tipo: string): React.ReactNode {
+  const labels: Record<string, React.ReactNode> = {
+    leve: <><FaCircle className="text-blue-500 inline" /> Leve</>,
+    media: <><FaCircle className="text-yellow-500 inline" /> Média</>,
+    grave: <><FaCircle className="text-red-500 inline" /> Grave</>,
   }
   return labels[tipo] ?? tipo
 }
 
-function statusIniciativaLabel(status: string): { label: string; class: string } {
-  const map: Record<string, { label: string; class: string }> = {
-    pendente: { label: '⏳ Pendente', class: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-300' },
-    aprovada: { label: '✅ Aprovada', class: 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-300' },
-    recusada: { label: '❌ Recusada', class: 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300' },
+function statusIniciativaLabel(status: string): { label: React.ReactNode; class: string } {
+  const map: Record<string, { label: React.ReactNode; class: string }> = {
+    pendente: { label: <><FaSyncAlt className="inline animate-spin" /> Pendente</>, class: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-300' },
+    aprovada: { label: <><FaCheckCircle className="inline" /> Aprovada</>, class: 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-300' },
+    recusada: { label: <><FaTimesCircle className="inline" /> Recusada</>, class: 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300' },
   }
   return map[status] ?? { label: status, class: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400' }
 }
@@ -159,15 +161,15 @@ export default function MeuDesempenhoClient({
 
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground mb-3">📊 Visão Geral</h2>
+        <h2 className="text-base font-semibold text-foreground mb-3 flex items-center gap-1"><MdBarChart className="inline" /> Visão Geral</h2>
 
         <div className="grid grid-cols-2 gap-3">
-          <CardStat label="Métricas" value={totalMetricas.toString()} icon="📈" />
-          <CardStat label="Iniciativas" value={totalIniciativas.toString()} icon="💡" />
-          <CardStat label="Aprovadas" value={iniciativasAprovadas.toString()} icon="✅" />
-          <CardStat label="Feedbacks" value={totalConversas.toString()} icon="💬" />
-          <CardStat label="Advertências" value={totalAdvertencias.toString()} icon="⚠️" color={totalAdvertencias > 0 ? 'text-red-500' : ''} />
-          <CardStat label="Suspensões" value={totalSuspensoes.toString()} icon="🚫" color={totalSuspensoes > 0 ? 'text-red-500' : ''} />
+          <CardStat label="Métricas" value={totalMetricas.toString()} icon={<MdTrendingUp />} />
+          <CardStat label="Iniciativas" value={totalIniciativas.toString()} icon={<FaLightbulb />} />
+          <CardStat label="Aprovadas" value={iniciativasAprovadas.toString()} icon={<FaCheckCircle className="text-emerald-500" />} />
+          <CardStat label="Feedbacks" value={totalConversas.toString()} icon={<FaComment />} />
+          <CardStat label="Advertências" value={totalAdvertencias.toString()} icon={<MdWarning className={totalAdvertencias > 0 ? 'text-red-500' : ''} />} color={totalAdvertencias > 0 ? 'text-red-500' : ''} />
+          <CardStat label="Suspensões" value={totalSuspensoes.toString()} icon={<MdBlock className={totalSuspensoes > 0 ? 'text-red-500' : ''} />} color={totalSuspensoes > 0 ? 'text-red-500' : ''} />
         </div>
 
         {metricas.length > 0 && (
@@ -189,11 +191,11 @@ export default function MeuDesempenhoClient({
     )
   }
 
-  function CardStat({ label, value, icon, color }: { label: string; value: string; icon: string; color?: string }) {
+  function CardStat({ label, value, icon, color }: { label: string; value: string; icon: React.ReactNode; color?: string }) {
     return (
       <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-lg">{icon}</span>
+          <span className="text-lg flex items-center">{icon}</span>
           <span className={`text-xl font-bold ${color ?? 'text-foreground'}`}>{value}</span>
         </div>
         <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
@@ -209,7 +211,7 @@ export default function MeuDesempenhoClient({
 
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground mb-2">📈 Métricas de Desempenho</h2>
+        <h2 className="text-base font-semibold text-foreground mb-2 flex items-center gap-1"><MdTrendingUp className="inline" /> Métricas de Desempenho</h2>
         {metricas.map((m) => (
           <div key={m.id} className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4">
             <div className="flex items-center justify-between mb-3">
@@ -246,7 +248,7 @@ export default function MeuDesempenhoClient({
     return (
       <div className="space-y-3">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-base font-semibold text-foreground">💡 Iniciativas</h2>
+          <h2 className="text-base font-semibold text-foreground flex items-center gap-1"><FaLightbulb className="inline" /> Iniciativas</h2>
           <div className="flex items-center gap-2">
             {!isProprio && (
               <p className="text-[11px] text-zinc-400 hidden sm:block">Clique para aprovar/recusar</p>
@@ -305,14 +307,14 @@ export default function MeuDesempenhoClient({
                         onClick={() => handleAprovarIniciativa(i.id, 'aprovada')}
                         className="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors"
                       >
-                        ✅ Aprovar
+                        <FaCheckCircle className="inline" /> Aprovar
                       </button>
                       <button
                         type="button"
                         onClick={() => handleAprovarIniciativa(i.id, 'recusada')}
                         className="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors"
                       >
-                        ❌ Recusar
+                        <FaTimesCircle className="inline" /> Recusar
                       </button>
                     </div>
                   )}
@@ -345,7 +347,7 @@ export default function MeuDesempenhoClient({
 
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground mb-2">💬 Feedbacks e Reuniões</h2>
+        <h2 className="text-base font-semibold text-foreground mb-2 flex items-center gap-1"><FaComment className="inline" /> Feedbacks e Reuniões</h2>
         {conversas.map((c) => (
           <div key={c.id} className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4">
             <div className="flex items-center justify-between mb-2">
@@ -372,14 +374,14 @@ export default function MeuDesempenhoClient({
 
             {c.pontosPositivos && (
               <div className="rounded-lg bg-green-50 dark:bg-green-950/20 px-3 py-2 mb-1.5">
-                <p className="text-[11px] font-medium text-green-600 dark:text-green-400 mb-0.5">✅ Pontos Positivos</p>
+                <p className="text-[11px] font-medium text-green-600 dark:text-green-400 mb-0.5 flex items-center gap-1"><FaCheckCircle className="inline" /> Pontos Positivos</p>
                 <p className="text-xs text-green-700 dark:text-green-300">{c.pontosPositivos}</p>
               </div>
             )}
 
             {c.pontosMelhoria && (
               <div className="rounded-lg bg-amber-50 dark:bg-amber-950/20 px-3 py-2">
-                <p className="text-[11px] font-medium text-amber-600 dark:text-amber-400 mb-0.5">🎯 Pontos de Melhoria / Compromissos</p>
+                <p className="text-[11px] font-medium text-amber-600 dark:text-amber-400 mb-0.5 flex items-center gap-1"><MdTrendingUp className="inline" /> Pontos de Melhoria / Compromissos</p>
                 <p className="text-xs text-amber-700 dark:text-amber-300">{c.pontosMelhoria}</p>
               </div>
             )}
@@ -399,12 +401,12 @@ export default function MeuDesempenhoClient({
   // ─── Seção: Advertências ───────────────────────────────
   function SecaoAdvertencias() {
     if (advertencias.length === 0) {
-      return <EmptyState message="Nenhuma advertência registrada. 🎉" />
+      return <EmptyState message="Nenhuma advertência registrada." />
     }
 
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground mb-2">⚠️ Advertências</h2>
+        <h2 className="text-base font-semibold text-foreground mb-2 flex items-center gap-1"><MdWarning className="inline" /> Advertências</h2>
         {advertencias.map((a) => (
           <div key={a.id} className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 border-l-4"
             style={{
@@ -437,18 +439,18 @@ export default function MeuDesempenhoClient({
   // ─── Seção: Projetos ──────────────────────────────────
   function SecaoProjetos() {
     if (projetos.length === 0) {
-      return <EmptyState message="Nenhum projeto registrado. 🎯" />
+      return <EmptyState message="Nenhum projeto registrado." />
     }
 
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground mb-2">📁 Projetos</h2>
+        <h2 className="text-base font-semibold text-foreground mb-2 flex items-center gap-1"><MdFolder className="inline" /> Projetos</h2>
         {projetos.map((p) => {
-          const statusLabel: Record<string, { label: string; class: string }> = {
-            em_andamento: { label: '🔄 Em andamento', class: 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300' },
-            concluido: { label: '✅ Concluído', class: 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-300' },
-            pausado: { label: '⏸️ Pausado', class: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-300' },
-            cancelado: { label: '❌ Cancelado', class: 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300' },
+          const statusLabel: Record<string, { label: React.ReactNode; class: string }> = {
+            em_andamento: { label: <><FaSyncAlt className="inline animate-spin" /> Em andamento</>, class: 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300' },
+            concluido: { label: <><FaCheckCircle className="inline" /> Concluído</>, class: 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-300' },
+            pausado: { label: <><MdBlock className="inline text-yellow-500" /> Pausado</>, class: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-300' },
+            cancelado: { label: <><FaTimesCircle className="inline" /> Cancelado</>, class: 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300' },
           }
           const st = statusLabel[p.status] ?? { label: p.status, class: 'bg-zinc-100 text-zinc-600' }
           return (
@@ -478,12 +480,12 @@ export default function MeuDesempenhoClient({
   // ─── Seção: Suspensões ─────────────────────────────────
   function SecaoSuspensoes() {
     if (suspensoes.length === 0) {
-      return <EmptyState message="Nenhuma suspensão registrada. 🎉" />
+      return <EmptyState message="Nenhuma suspensão registrada." />
     }
 
     return (
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground mb-2">🚫 Suspensões</h2>
+        <h2 className="text-base font-semibold text-foreground mb-2 flex items-center gap-1"><MdBlock className="inline" /> Suspensões</h2>
         {suspensoes.map((s) => (
           <div key={s.id} className="bg-white dark:bg-zinc-950 rounded-xl border border-red-200 dark:border-red-900/50 p-4">
             <div className="flex items-start justify-between gap-2 mb-1">
@@ -586,7 +588,7 @@ function NovaIniciativaModal({ onClose, onSuccess }: { onClose: () => void; onSu
       <div className="relative w-full sm:max-w-md bg-white dark:bg-zinc-900 rounded-t-2xl sm:rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-700 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-zinc-100 dark:border-zinc-800">
-          <h3 className="text-sm font-semibold text-foreground">💡 Nova Iniciativa</h3>
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-1"><FaLightbulb className="inline" /> Nova Iniciativa</h3>
           <button
             type="button"
             onClick={onClose}

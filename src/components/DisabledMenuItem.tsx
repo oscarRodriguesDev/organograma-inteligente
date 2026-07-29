@@ -6,7 +6,7 @@ interface Props {
 
 export default function DisabledMenuItem({ label }: Props) {
   function handleClick() {
-    alert('🚧 Esse recurso ainda está em desenvolvimento')
+    alert('Esse recurso ainda está em desenvolvimento')
   }
 
   return (

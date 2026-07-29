@@ -60,10 +60,29 @@ export default async function ListaProjetos() {
                   return (
                     <tr key={projeto.id} className="hover:bg-zinc-50">
                       <td className="px-4 py-3 font-medium">
-                        <div>{projeto.nome}</div>
+                        <Link href={`/projetos/${projeto.id}`} className="hover:underline">
+                          {projeto.nome}
+                        </Link>
                         {projeto.descricao && (
                           <div className="mt-0.5 text-xs text-zinc-400 line-clamp-1">
                             {projeto.descricao}
+                          </div>
+                        )}
+                        {projeto.participantes && projeto.participantes.length > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {projeto.participantes.slice(0, 3).map((pp) => (
+                              <span
+                                key={pp.id}
+                                className="inline-block rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-600"
+                              >
+                                {pp.colaborador?.nome?.split(' ')[0]}
+                              </span>
+                            ))}
+                            {projeto.participantes.length > 3 && (
+                              <span className="text-[10px] text-zinc-400">
+                                +{projeto.participantes.length - 3}
+                              </span>
+                            )}
                           </div>
                         )}
                       </td>
@@ -82,6 +101,12 @@ export default async function ListaProjetos() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/projetos/${projeto.id}`}
+                            className="text-xs text-zinc-600 hover:text-zinc-800"
+                          >
+                            Detalhes
+                          </Link>
                           {projeto.status !== 'concluido' && projeto.status !== 'cancelado' && (
                             <form
                               action={atualizarStatusProjetoAction.bind(

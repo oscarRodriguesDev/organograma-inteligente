@@ -15,6 +15,7 @@ export interface SessionPayload {
   empresaNome: string
   nome: string
   email: string
+  funcao: string
   papel: Papel
   tema?: string
   fotoUrl?: string
@@ -79,6 +80,7 @@ export async function autenticarPorEmailSenha(
     empresaNome: colaborador.empresa?.nome ?? 'Sistema',
     nome: colaborador.nome,
     email: colaborador.email!,
+    funcao: colaborador.funcao,
     papel: colaborador.papel as Papel,
     tema: colaborador.tema ?? 'system',
     fotoUrl: colaborador.fotoUrl ?? undefined,

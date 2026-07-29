@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { FaRobot } from 'react-icons/fa'
 
 interface Props {
   /** IDs dos elementos select de avaliador e avaliado */
@@ -95,7 +96,7 @@ export default function GerarFeedbackButton({
         disabled={loading}
         className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
       >
-        {loading ? 'Gerando...' : '🤖 Gerar Feedback com IA'}
+        {loading ? 'Gerando...' : <><FaRobot className="inline-block mb-0.5" /> Gerar Feedback com IA</>}
       </button>
       {erro && <span className="text-xs text-red-500">{erro}</span>}
     </div>

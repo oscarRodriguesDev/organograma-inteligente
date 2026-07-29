@@ -1,10 +1,21 @@
+import { redirect } from 'next/navigation'
+import { getSession } from '@/lib/auth'
 import { loginAction } from '@/lib/auth-actions'
+import { Papel } from '@/lib/types'
 
 export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ erro?: string; sucesso?: string }>
 }) {
+  const session = await getSession()
+  if (session) {
+    if (session.papel === Papel.ADMIN_PLATAFORMA || session.papel === Papel.ADMIN_SUPORTE || session.papel === Papel.ADMIN_PSICH) {
+      redirect('/admin')
+    }
+    redirect('/meu-desempenho')
+  }
+
   const { erro, sucesso } = await searchParams
 
   return (

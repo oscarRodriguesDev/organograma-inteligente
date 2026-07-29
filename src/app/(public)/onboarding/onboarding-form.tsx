@@ -128,32 +128,22 @@ export function OnboardingForm({
               </div>
 
               <div>
-                <label htmlFor="ceoEmail" className="mb-1 block text-sm font-medium">
-                  Email do CEO <span className="text-red-500">*</span>
+                <label htmlFor="ceoCpf" className="mb-1 block text-sm font-medium">
+                  CPF do CEO <span className="text-red-500">*</span>
                 </label>
                 <input
-                  id="ceoEmail"
-                  name="ceoEmail"
-                  type="email"
+                  id="ceoCpf"
+                  name="ceoCpf"
+                  type="text"
                   required
+                  inputMode="numeric"
+                  maxLength={11}
                   className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-transparent focus:border-zinc-500 focus:outline-none"
-                  placeholder="ceo@empresa.com"
+                  placeholder="Apenas números"
                 />
-              </div>
-
-              <div>
-                <label htmlFor="ceoSenha" className="mb-1 block text-sm font-medium">
-                  Senha do CEO <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="ceoSenha"
-                  name="ceoSenha"
-                  type="password"
-                  required
-                  minLength={6}
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm bg-transparent focus:border-zinc-500 focus:outline-none"
-                  placeholder="Mínimo 6 caracteres"
-                />
+                <p className="mt-1 text-xs text-zinc-400">
+                  O email (cpf@empresa.com) e senha (6 primeiros dígitos do CPF) serão gerados automaticamente
+                </p>
               </div>
             </div>
           </fieldset>

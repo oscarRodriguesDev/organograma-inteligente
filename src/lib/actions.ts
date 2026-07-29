@@ -15,8 +15,10 @@ import {
   garantirCargo,
 } from './db'
 import { prisma } from './prisma'
+import { gerarEmailPorCPF, SENHA_PADRAO } from './db'
 import { CRITERIOS_AVALIACAO, Papel } from './types'
-import type { Colaborador } from './types'
+import bcrypt from 'bcryptjs'
+import type { Colaborador, Scorecard } from './types'
 import { getSession } from './auth'
 
 // ─── Helpers de validação ─────────────────────────
@@ -29,8 +31,8 @@ function validarNome(nome: string): string | null {
   return null
 }
 
-function validarCPF(cpf?: string): string | null {
-  if (!cpf) return null // CPF é opcional
+function validarCPF(cpf: string): string | null {
+  if (!cpf) return 'CPF é obrigatório'
   const digitos = cpf.replace(/\D/g, '')
   if (digitos.length !== CPF_LENGTH) return `CPF deve ter exatamente ${CPF_LENGTH} dígitos numéricos`
   return null
@@ -40,7 +42,7 @@ export async function cadastrarColaborador(formData: FormData) {
   const nome = formData.get('nome')?.toString().trim() ?? ''
   const funcao = formData.get('funcao')?.toString().trim() ?? ''
   const liderImediatoId = formData.get('liderImediatoId')?.toString() || null
-  const cpf = formData.get('cpf')?.toString().trim() || undefined
+  const cpf = formData.get('cpf')?.toString().trim() ?? ''
   const papelStr = formData.get('papel')?.toString().trim() || undefined
 
   const erroNome = validarNome(nome)
@@ -118,7 +120,7 @@ export async function adicionarColaboradorRapido(
   nome: string,
   funcao: string,
   liderImediatoId: string | null,
-  cpf?: string,
+  cpf: string,
   papel?: Papel
 ) {
   const erroNome = validarNome(nome)
@@ -209,7 +211,13 @@ export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
         }
       }
     } else if (isContratadoSimulacao) {
-      // Novo contratado via simulação
+      // Novo contratado via simulação — gera login automático se tiver CPF
+      let email: string | undefined
+      let senhaHash: string | null = null
+      if (col.cpf) {
+        email = await gerarEmailPorCPF(col.cpf, empresaId)
+        senhaHash = await bcrypt.hash(SENHA_PADRAO(col.cpf), 10)
+      }
       try {
         await prisma.colaborador.create({
           data: {
@@ -217,19 +225,28 @@ export async function aplicarSimulacaoAction(colaboradores: Colaborador[]) {
             nome: col.nome,
             funcao: col.funcao,
             empresaId,
+            cpf: col.cpf ?? null,
+            email: email ?? null,
+            senhaHash,
             papel: Papel.OPERACIONAL,
             liderImediatoId: col.liderImediatoId,
             status: col.status || 'ativo',
           },
         })
       } catch {
-        // Já existe — atualiza
-        await atualizarColaborador(col.id, {
+        // Já existe — atualiza via prisma (incluindo cpf/email/senha)
+        const updateData: any = {
           nome: col.nome,
           funcao: col.funcao,
           liderImediatoId: col.liderImediatoId,
-          status: col.status,
-        })
+          status: col.status || 'ativo',
+        }
+        if (col.cpf) {
+          updateData.cpf = col.cpf
+          updateData.email = email ?? null
+          updateData.senhaHash = senhaHash
+        }
+        await prisma.colaborador.update({ where: { id: col.id }, data: updateData })
       }
     } else if (idsExistentes.has(col.id)) {
       // Colaborador real existente → atualiza
@@ -333,10 +350,18 @@ export async function cadastrarMetrica(formData: FormData) {
   const faltasInjustificadas = Number(formData.get('faltasInjustificadas')) || 0
   const horasAtraso = Number(formData.get('horasAtraso')) || 0
   const observacao = formData.get('observacao')?.toString().trim() || ''
+  const scorecardStr = formData.get('scorecard')?.toString()
 
   if (!colaboradorId || !mes || !ano) return
 
-  await criarMetrica({ colaboradorId, mes, ano, diasTrabalhados, faltasInjustificadas, horasAtraso, observacao })
+  let scorecard: Scorecard = { categorias: [], notaFinal: 0 }
+  if (scorecardStr) {
+    try {
+      scorecard = JSON.parse(scorecardStr)
+    } catch { /* ignora JSON inválido */ }
+  }
+
+  await criarMetrica({ colaboradorId, mes, ano, diasTrabalhados, faltasInjustificadas, horasAtraso, observacao, scorecard })
   revalidatePath('/metricas')
   redirect('/metricas')
 }

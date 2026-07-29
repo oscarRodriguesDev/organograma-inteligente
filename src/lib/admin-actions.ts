@@ -373,16 +373,15 @@ export async function criarEmpresaAdminAction(formData: FormData): Promise<{ ok:
   const empresaNome = formData.get('empresaNome')?.toString() ?? ''
   const empresaSlug = formData.get('empresaSlug')?.toString() ?? ''
   const ceoNome = formData.get('ceoNome')?.toString() ?? ''
-  const ceoEmail = formData.get('ceoEmail')?.toString() ?? ''
-  const ceoSenha = formData.get('ceoSenha')?.toString() ?? ''
+  const ceoCpf = formData.get('ceoCpf')?.toString() ?? ''
 
-  if (!empresaNome || !empresaSlug || !ceoNome || !ceoEmail || !ceoSenha) {
+  if (!empresaNome || !empresaSlug || !ceoNome || !ceoCpf) {
     return { ok: false, erro: 'Preencha todos os campos' }
   }
   if (ceoNome.length > 120) return { ok: false, erro: 'Nome do CEO deve ter no máximo 120 caracteres' }
-  if (ceoSenha.length < 6) return { ok: false, erro: 'A senha do CEO deve ter no mínimo 6 caracteres' }
+  if (ceoCpf.replace(/\D/g, '').length !== 11) return { ok: false, erro: 'CPF do CEO deve ter exatamente 11 dígitos' }
 
-  const result = await criarEmpresaPeloAdmin({ empresaNome, empresaSlug, ceoNome, ceoEmail, ceoSenha })
+  const result = await criarEmpresaPeloAdmin({ empresaNome, empresaSlug, ceoNome, ceoCpf })
   if (result.ok) {
     revalidatePath('/admin/empresas')
     revalidatePath('/admin')

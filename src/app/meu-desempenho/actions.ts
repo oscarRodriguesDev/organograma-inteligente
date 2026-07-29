@@ -43,39 +43,97 @@ export async function obterDadosDesempenho(colaboradorId: string): Promise<Dados
     throw new Error('Sem permissão para visualizar este desempenho')
   }
 
-  const colaborador = await prisma.colaborador.findUnique({
-    where: { id: colaboradorId },
-    select: {
-      id: true,
-      nome: true,
-      email: true,
-      funcao: true,
-      papel: true,
-      fotoUrl: true,
-      username: true,
-      liderImediatoId: true,
-      createdAt: true,
-    },
-  })
-
-  if (!colaborador) throw new Error('Colaborador não encontrado')
-
-  // Se não é o próprio usuário, verifica se é lider/gestor do colaborador
-  if (!isProprio && session.papel !== 'ADMIN_PLATAFORMA' && session.papel !== 'ADMIN_SUPORTE') {
-    // Verifica se o usuário logado está na cadeia de liderança do colaborador
-    const isLider = await verificarLideranca(session.colaboradorId, colaboradorId)
-    if (!isLider) {
-      throw new Error('Você não tem permissão para ver o desempenho deste colaborador')
-    }
+  // Se não é o próprio usuário, busca dados do colaborador e verifica liderança
+  let colaboradorData: {
+    id: string
+    nome: string
+    email: string | null
+    funcao: string
+    papel: string
+    fotoUrl: string | null
+    username: string | null
+    liderNome: string | null
+    createdAt: string
   }
 
-  let liderNome: string | null = null
-  if (colaborador.liderImediatoId) {
-    const lider = await prisma.colaborador.findUnique({
-      where: { id: colaborador.liderImediatoId },
-      select: { nome: true },
+  if (isProprio) {
+    // Usa dados do token JWT (sem query ao banco)
+    colaboradorData = {
+      id: session.colaboradorId,
+      nome: session.nome,
+      email: session.email,
+      funcao: session.funcao,
+      papel: session.papel,
+      fotoUrl: session.fotoUrl ?? null,
+      username: session.username ?? null,
+      liderNome: null, // Session não tem liderNome; busca se necessário
+      createdAt: '', // Session não tem createdAt; query separada abaixo
+    }
+    // Só busca liderNome se o session tiver o campo (não tem por padrão)
+    // Para o próprio usuário, liderNome é opcional; buscamos apenas 1 campo leve
+    if (isProprio) {
+      const liderData = await prisma.colaborador.findUnique({
+        where: { id: session.colaboradorId },
+        select: {
+          liderImediatoId: true,
+          createdAt: true,
+        },
+      })
+      if (liderData?.liderImediatoId) {
+        const lider = await prisma.colaborador.findUnique({
+          where: { id: liderData.liderImediatoId },
+          select: { nome: true },
+        })
+        colaboradorData.liderNome = lider?.nome ?? null
+      }
+      colaboradorData.createdAt = liderData?.createdAt.toISOString() ?? ''
+    }
+  } else {
+    // Busca dados completos do colaborador (não é o próprio)
+    const colaborador = await prisma.colaborador.findUnique({
+      where: { id: colaboradorId },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        funcao: true,
+        papel: true,
+        fotoUrl: true,
+        username: true,
+        liderImediatoId: true,
+        createdAt: true,
+      },
     })
-    liderNome = lider?.nome ?? null
+    if (!colaborador) throw new Error('Colaborador não encontrado')
+
+    // Verifica liderança
+    if (session.papel !== 'ADMIN_PLATAFORMA' && session.papel !== 'ADMIN_SUPORTE') {
+      const isLider = await verificarLideranca(session.colaboradorId, colaboradorId)
+      if (!isLider) {
+        throw new Error('Você não tem permissão para ver o desempenho deste colaborador')
+      }
+    }
+
+    let liderNome: string | null = null
+    if (colaborador.liderImediatoId) {
+      const lider = await prisma.colaborador.findUnique({
+        where: { id: colaborador.liderImediatoId },
+        select: { nome: true },
+      })
+      liderNome = lider?.nome ?? null
+    }
+
+    colaboradorData = {
+      id: colaborador.id,
+      nome: colaborador.nome,
+      email: colaborador.email,
+      funcao: colaborador.funcao,
+      papel: colaborador.papel,
+      fotoUrl: colaborador.fotoUrl,
+      username: colaborador.username,
+      liderNome,
+      createdAt: colaborador.createdAt.toISOString(),
+    }
   }
 
   const [metricas, iniciativas, conversas, advertencias, suspensoes, projetos] = await Promise.all([
@@ -88,17 +146,7 @@ export async function obterDadosDesempenho(colaboradorId: string): Promise<Dados
   ])
 
   return {
-    colaborador: {
-      id: colaborador.id,
-      nome: colaborador.nome,
-      email: colaborador.email,
-      funcao: colaborador.funcao,
-      papel: colaborador.papel,
-      fotoUrl: colaborador.fotoUrl,
-      username: colaborador.username,
-      liderNome,
-      createdAt: colaborador.createdAt.toISOString(),
-    },
+    colaborador: colaboradorData,
     metricas,
     iniciativas,
     conversas,

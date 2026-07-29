@@ -100,13 +100,20 @@ async function seed() {
   })
 
   // ── Estrutura hierárquica ──
-  const cols: { id: string; nome: string; funcao: string; liderImediatoId: string | null; empresaId: string; createdAt: Date }[] = []
+  // Helper para gerar CPFs fictícios (apenas para seed)
+  let cpfCounter = 10000000000
+  const gerarCPF = () => {
+    const n = (++cpfCounter).toString()
+    return n.slice(0, 11)
+  }
+
+  const cols: { id: string; nome: string; funcao: string; cpf?: string; email?: string; senhaHash?: string; liderImediatoId: string | null; empresaId: string; createdAt: Date }[] = []
   let idCounter = 0
   const newId = () => (++idCounter).toString()
 
   // CEO
   const ceoId = newId()
-  cols.push({ id: ceoId, nome: 'Carlos Almeida', funcao: 'Chief Executive Officer (CEO)', liderImediatoId: null, empresaId: 'empresa_default', createdAt: new Date('2025-01-15T08:00:00.000Z') })
+  cols.push({ id: ceoId, nome: 'Carlos Almeida', funcao: 'Chief Executive Officer (CEO)', cpf: gerarCPF(), empresaId: 'empresa_default', liderImediatoId: null, createdAt: new Date('2025-01-15T08:00:00.000Z') })
 
   // Diretores
   const diretores = [
@@ -119,7 +126,7 @@ async function seed() {
   for (const d of diretores) {
     const id = newId()
     diretoresIds.push(id)
-    cols.push({ id, nome: d.nome, funcao: d.funcao, liderImediatoId: ceoId, empresaId: 'empresa_default', createdAt: new Date('2025-01-15T08:00:00.000Z') })
+    cols.push({ id, nome: d.nome, funcao: d.funcao, cpf: gerarCPF(), empresaId: 'empresa_default', liderImediatoId: ceoId, createdAt: new Date('2025-01-15T08:00:00.000Z') })
   }
 
   // Gerentes
@@ -139,7 +146,7 @@ async function seed() {
   for (const g of gerentes) {
     const id = newId()
     gerentesIds.push(id)
-    cols.push({ id, nome: g.nome, funcao: g.funcao, liderImediatoId: diretoresIds[g.dirIdx], empresaId: 'empresa_default', createdAt: new Date('2025-03-01T08:00:00.000Z') })
+    cols.push({ id, nome: g.nome, funcao: g.funcao, cpf: gerarCPF(), empresaId: 'empresa_default', liderImediatoId: diretoresIds[g.dirIdx], createdAt: new Date('2025-03-01T08:00:00.000Z') })
   }
 
   // Analistas
@@ -156,8 +163,9 @@ async function seed() {
       cols.push({
         id, nome: nomesDisponiveis[nomeIdx++],
         funcao: pick(areaCargos),
-        liderImediatoId: gerentesIds[g],
+        cpf: gerarCPF(),
         empresaId: 'empresa_default',
+        liderImediatoId: gerentesIds[g],
         createdAt: new Date(`2025-06-${String(rand(1, 15)).padStart(2, '0')}T08:00:00.000Z`),
       })
     }

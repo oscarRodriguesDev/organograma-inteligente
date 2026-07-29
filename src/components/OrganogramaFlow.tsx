@@ -39,6 +39,10 @@ import type { SugestaoCascata, CandidatoSugerido } from '@/lib/simulacao'
 import { getDadosSimulacao, salvarImpactosAction, carregarImpactosAction, limparImpactosAction } from '@/lib/simulacao-actions'
 import SelectCargo from './SelectCargo'
 import PapelSelect from './PapelSelect'
+import { useStateWithHistory } from '@/lib/use-history'
+import { FaRobot, FaCheckCircle, FaArrowRight, FaCircle, FaPalette, FaHourglassHalf, FaUndo, FaRedo } from 'react-icons/fa'
+import { MdWarning } from 'react-icons/md'
+import { GiCrystalBall } from 'react-icons/gi'
 
 interface NodeData {
   colaborador: Colaborador
@@ -685,7 +689,14 @@ export default function OrganogramaFlow({
   colaboradores: Colaborador[]
   aiSugestaoCandidatos?: boolean
 }) {
-  const [colaboradoresState, setColaboradoresState] = useState(colaboradores)
+  const {
+    state: colaboradoresState,
+    setState: setColaboradoresState,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+  } = useStateWithHistory(colaboradores, 10)
   const [expandidos, setExpandidos] = useState<Set<string>>(new Set())
   const [adicionandoEm, setAdicionandoEm] = useState<string | null>(null)
   const [novoNome, setNovoNome] = useState('')
@@ -727,8 +738,34 @@ export default function OrganogramaFlow({
     cargoVagoFuncao: string
     nome: string
     funcao: string
+    cpf: string
   } | null>(null)
   const [impactoManual, setImpactoManual] = useState('')
+  const [analisesAgente, setAnalisesAgente] = useState<Record<string, { tipo: 'demissao' | 'promocao'; analise: any; carregando: boolean }>>({})
+
+  /** Força a regeneração de uma análise (ignora cache) */
+  const handleRegenerarAnalise = useCallback((colaboradorId: string, tipoAcao: 'demissao' | 'promocao') => {
+    const key = `${tipoAcao}_${colaboradorId}`
+    setAnalisesAgente((prev) => ({ ...prev, [key]: { tipo: tipoAcao, analise: null, carregando: true } }))
+    fetch('/api/ai/analisar-impacto', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ colaboradorId, tipoAcao, regenerar: true }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setAnalisesAgente((prev) => ({
+          ...prev,
+          [key]: { tipo: tipoAcao, analise: data.dados ?? data, carregando: false },
+        }))
+      })
+      .catch(() => {
+        setAnalisesAgente((prev) => ({
+          ...prev,
+          [key]: { tipo: tipoAcao, analise: null, carregando: false },
+        }))
+      })
+  }, [])
   const [buscaCandidato, setBuscaCandidato] = useState('')
   const [subordinadosModal, setSubordinadosModal] = useState<{
     colaborador: Colaborador
@@ -917,7 +954,35 @@ export default function OrganogramaFlow({
       )
       setImpactosSimulacao(novosImpactos)
       setSugestoesCascata(cascata)
-    }, [simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+      // ─── Chamar Analista de Impacto (IA) ───────────────
+      const col = base.find((c) => c.id === id)
+      if (col && !col.id.startsWith('vago_')) {
+        const key = `demissao_${id}`
+        // Só chama se não tiver análise ainda (cache via estado)
+        if (!analisesAgente[key]?.analise && !analisesAgente[key]?.carregando) {
+          setAnalisesAgente((prev) => ({ ...prev, [key]: { tipo: 'demissao', analise: null, carregando: true } }))
+          fetch('/api/ai/analisar-impacto', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ colaboradorId: id, tipoAcao: 'demissao', regenerar: false }),
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              setAnalisesAgente((prev) => ({
+                ...prev,
+                [key]: { tipo: 'demissao', analise: data.dados ?? data, carregando: false },
+              }))
+            })
+            .catch(() => {
+              setAnalisesAgente((prev) => ({
+                ...prev,
+                [key]: { tipo: 'demissao', analise: null, carregando: false },
+              }))
+            })
+        }
+      }
+    }, [simulando, colaboradoresState, dadosSimulacao, estadoOriginal, analisesAgente])
 
   const handleContratar = useCallback((id: string) => {
     const base = simulando ?? colaboradoresState
@@ -928,6 +993,7 @@ export default function OrganogramaFlow({
       cargoVagoFuncao: col.funcao,
       nome: '',
       funcao: col.funcao,
+      cpf: '',
     })
   }, [simulando, colaboradoresState])
 
@@ -1157,7 +1223,35 @@ export default function OrganogramaFlow({
     })
 
     setPreencherVaga(null)
-  }, [preencherVaga, simulando, colaboradoresState, dadosSimulacao, estadoOriginal])
+
+    // ─── Chamar Analista de Impacto (IA) para a promoção ─────
+    const promovido = base.find((c) => c.id === candidatoId)
+    if (promovido && !promovido.id.startsWith('contratado_') && !promovido.id.startsWith('vago_')) {
+      const key = `promocao_${candidatoId}`
+      // Só chama se não tiver análise ainda (cache via estado)
+      if (!analisesAgente[key]?.analise && !analisesAgente[key]?.carregando) {
+        setAnalisesAgente((prev) => ({ ...prev, [key]: { tipo: 'promocao', analise: null, carregando: true } }))
+        fetch('/api/ai/analisar-impacto', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ colaboradorId: candidatoId, tipoAcao: 'promocao', regenerar: false }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            setAnalisesAgente((prev) => ({
+              ...prev,
+              [key]: { tipo: 'promocao', analise: data.dados ?? data, carregando: false },
+            }))
+          })
+          .catch(() => {
+            setAnalisesAgente((prev) => ({
+              ...prev,
+              [key]: { tipo: 'promocao', analise: null, carregando: false },
+            }))
+          })
+      }
+    }
+  }, [preencherVaga, simulando, colaboradoresState, dadosSimulacao, estadoOriginal, analisesAgente])
 
   const handleConfirmarContratar = useCallback(() => {
     if (!contratarModal || !contratarModal.nome.trim() || !contratarModal.funcao.trim()) return
@@ -1172,6 +1266,7 @@ export default function OrganogramaFlow({
       empresaId: vago.empresaId,
       nome: contratarModal.nome.trim(),
       funcao: contratarModal.funcao.trim(),
+      cpf: contratarModal.cpf.trim() || undefined,
       papel: Papel.OPERACIONAL,
       liderImediatoId: vago.liderImediatoId,
       createdAt: new Date().toISOString(),
@@ -1409,7 +1504,7 @@ export default function OrganogramaFlow({
         novoNome.trim(),
         novaFuncao.trim(),
         adicionandoEm,
-        novoCpf.trim() || undefined,
+        novoCpf.trim(),
         papelSelecionado
       )
 
@@ -1622,8 +1717,28 @@ export default function OrganogramaFlow({
                 : 'bg-white border-zinc-300 text-zinc-600 hover:bg-zinc-50'
             }`}
           >
-            {modoSimulacao ? '🔮 Sair da Simulação' : '🔮 Simular'}
+            {modoSimulacao ? <><GiCrystalBall className="inline" /> Sair da Simulação</> : <><GiCrystalBall className="inline" /> Simular</>}
           </button>
+
+          {/* Undo / Redo */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={undo}
+              disabled={!canUndo}
+              className="px-2 py-1.5 text-xs rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors bg-white disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Desfazer (Shift+Z)"
+            >
+              <FaUndo className="inline" />
+            </button>
+            <button
+              onClick={redo}
+              disabled={!canRedo}
+              className="px-2 py-1.5 text-xs rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors bg-white disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Refazer (Shift+R)"
+            >
+              <FaRedo className="inline" />
+            </button>
+          </div>
 
           {/* Visual toggle: Formal / Lúdico */}
           <button
@@ -1635,7 +1750,7 @@ export default function OrganogramaFlow({
             }`}
             title="Alternar entre visual formal e lúdico"
           >
-            {modoVisual === 'ludico' ? '🎨 Formal' : '🎨 Lúdico'}
+            {modoVisual === 'ludico' ? <><FaPalette className="inline" /> Formal</> : <><FaPalette className="inline" /> Lúdico</>}
           </button>
 
           {/* Expandir/Recolher Tudo */}
@@ -1644,7 +1759,7 @@ export default function OrganogramaFlow({
             className="px-3 py-1.5 text-xs rounded-lg border border-zinc-300 text-zinc-600 hover:bg-zinc-50 transition-colors bg-white"
             title={expandidos.size === 0 ? 'Expandir todos os nós' : 'Recolher todos os nós'}
           >
-            {expandidos.size === 0 ? '⬇ Expandir Tudo' : '⬆ Recolher Tudo'}
+            {expandidos.size === 0 ? 'Expandir Tudo' : 'Recolher Tudo'}
           </button>
 
           {/* Count */}
@@ -1755,13 +1870,15 @@ export default function OrganogramaFlow({
               className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
             />
             <input
-              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-3 text-sm outline-none focus:border-blue-500"
-              placeholder="CPF (apenas números) — gera login automático"
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-1 text-sm outline-none focus:border-blue-500"
+              placeholder="CPF (apenas números) — gera login automático *"
               value={novoCpf}
               onChange={(e) => setNovoCpf(e.target.value.replace(/\D/g, '').slice(0, 11))}
               maxLength={11}
               inputMode="numeric"
+              required
             />
+            <p className="text-xs text-zinc-400 mb-3">Campo obrigatório — o email e senha são gerados automaticamente a partir do CPF</p>
             <PapelSelect
               value={novoPapel}
               onChange={(val) => setNovoPapel(val)}
@@ -1788,7 +1905,7 @@ export default function OrganogramaFlow({
               <button
                 onClick={handleConfirmarAdicao}
                 className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
-                disabled={!novoNome.trim() || !novaFuncao.trim()}
+                disabled={!novoNome.trim() || !novaFuncao.trim() || !novoCpf.trim()}
               >
                 Adicionar
               </button>
@@ -1865,12 +1982,83 @@ export default function OrganogramaFlow({
                     <span className={`text-lg ${
                       imp.tipo === 'positivo' ? 'text-emerald-500' : imp.tipo === 'negativo' ? 'text-red-500' : 'text-zinc-400'
                     }`}>
-                      {imp.tipo === 'positivo' ? '✅' : imp.tipo === 'negativo' ? '⚠️' : '➡️'}
+                      {imp.tipo === 'positivo' ? <FaCheckCircle /> : imp.tipo === 'negativo' ? <MdWarning /> : <FaArrowRight />}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Análises do Agente de IA */}
+            {Object.entries(analisesAgente).length > 0 && (
+              <div className="border-t border-zinc-200 pt-3 mb-3">
+                    <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                  <FaRobot className="inline" /> Análise Inteligente
+                </h4>
+                <div className="space-y-2">
+                  {Object.entries(analisesAgente).map(([key, item]) => (
+                    <div key={key} className="rounded-lg border border-violet-200 bg-violet-50 p-3 text-sm">
+                      {item.carregando ? (
+                        <div className="flex items-center gap-2 text-violet-600">
+                          <FaHourglassHalf className="animate-pulse" />
+                          <span>Analisando {item.tipo === 'demissao' ? 'demissão' : 'promoção'}...</span>
+                        </div>
+                      ) : item.analise ? (
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold text-violet-800 uppercase text-xs flex items-center gap-1">
+                              {item.tipo === 'demissao' ? <><FaCircle className="text-red-500" /> Análise de Demissão</> : <><FaCircle className="text-green-500" /> Análise de Promoção</>}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const colId = key.replace(/^(demissao|promocao)_/, '')
+                                  handleRegenerarAnalise(colId, item.tipo)
+                                }}
+                                className="text-[10px] font-medium text-violet-600 hover:text-violet-800 underline"
+                                title="Gerar nova análise (ignora cache)"
+                              >
+                                Nova Análise
+                              </button>
+                              <span className={`text-xs font-bold ${item.analise.scoreFavoravel >= 7 ? 'text-emerald-600' : item.analise.scoreFavoravel >= 5 ? 'text-amber-600' : 'text-red-600'}`}>
+                                Score: {item.analise.scoreFavoravel?.toFixed(1) ?? '?'}/10
+                              </span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                item.analise.nivelRisco === 'baixo' ? 'bg-emerald-100 text-emerald-700' :
+                                item.analise.nivelRisco === 'medio' ? 'bg-amber-100 text-amber-700' :
+                                'bg-red-100 text-red-700'
+                              }`}>
+                                {item.analise.nivelRisco}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-xs text-zinc-700 mb-2">{item.analise.resumo}</p>
+                          <p className="text-xs font-medium text-zinc-700 mb-1">Recomendação:</p>
+                          <p className="text-xs text-zinc-600 mb-2">{item.analise.recomendacao}</p>
+                          {item.analise.riscos?.length > 0 && (
+                            <div className="mb-1">
+                              <p className="text-xs font-medium text-red-600 mb-0.5">Riscos:</p>
+                              <ul className="list-disc list-inside text-xs text-red-600 space-y-0.5">
+                                {item.analise.riscos.map((r: string, i: number) => <li key={i}>{r}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                          {item.analise.oportunidades?.length > 0 && (
+                            <div>
+                              <p className="text-xs font-medium text-emerald-600 mb-0.5">Oportunidades:</p>
+                              <ul className="list-disc list-inside text-xs text-emerald-600 space-y-0.5">
+                                {item.analise.oportunidades.map((o: string, i: number) => <li key={i}>{o}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Adicionar impacto manual */}
             <div className="border-t border-zinc-200 pt-3">
@@ -2242,6 +2430,18 @@ export default function OrganogramaFlow({
               placeholder="Ex: Diretor de Tecnologia"
             />
 
+            <label className="text-xs text-zinc-500 mb-1 block mt-3">CPF (apenas números) — gera login automático</label>
+            <input
+              className="w-full border border-zinc-300 rounded-lg px-3 py-2 mb-1 text-sm outline-none focus:border-emerald-500"
+              placeholder="000.000.000-00"
+              value={contratarModal.cpf}
+              onChange={(e) => setContratarModal((prev) => prev ? { ...prev, cpf: e.target.value.replace(/\D/g, '').slice(0, 11) } : null)}
+              maxLength={11}
+              inputMode="numeric"
+              required
+            />
+            <p className="text-xs text-zinc-400 mb-3">Obrigatório — gera email e senha automáticos para acesso ao sistema</p>
+
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setContratarModal(null)}
@@ -2252,7 +2452,7 @@ export default function OrganogramaFlow({
               <button
                 onClick={handleConfirmarContratar}
                 className="px-4 py-2 text-sm rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors disabled:opacity-50"
-                disabled={!contratarModal.nome.trim() || !contratarModal.funcao.trim()}
+                disabled={!contratarModal.nome.trim() || !contratarModal.funcao.trim() || !contratarModal.cpf.trim()}
               >
                 + Contratar
               </button>
