@@ -158,6 +158,7 @@ export interface Colaborador {
   createdAt: string
   status?: 'ativo' | 'vago'
   fotoUrl?: string | null
+  perfilComportamental?: string | null // JSON - análise de perfil comportamental
 }
 
 export interface ColaboradorFormData {

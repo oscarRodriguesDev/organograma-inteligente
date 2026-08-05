@@ -51,6 +51,7 @@ function colPrismaParaModelo(p: any): Colaborador {
     createdAt: p.createdAt.toISOString(),
     status: p.status as 'ativo' | 'vago',
     fotoUrl: p.fotoUrl ?? undefined,
+    perfilComportamental: p.perfilComportamental ?? undefined,
   }
 }
 

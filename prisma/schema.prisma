@@ -138,7 +138,8 @@ model Colaborador {
   tema            String   @default("system") // light | dark | system
   createdAt       DateTime @default(now())
   status          String   @default("ativo")
-
+  perfilComportamental String? // JSON - análise de perfil comportamental (gerada pelo agente analista-perfil-comportamental)
+ 
   empresa      Empresa?      @relation(fields: [empresaId], references: [id])
   lider        Colaborador?  @relation("LiderSubordinados", fields: [liderImediatoId], references: [id])
   subordinados Colaborador[] @relation("LiderSubordinados")
